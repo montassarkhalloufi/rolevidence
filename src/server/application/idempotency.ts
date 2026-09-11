@@ -1,25 +1,23 @@
 import type { AnalysisOutput } from "./analyze.ts";
 import { AppError } from "./errors.ts";
 
-export type AnalysisEntry = {
+export type AnalysisEntry<T = AnalysisOutput> = {
   fingerprint: string;
-  result: Promise<AnalysisOutput>;
+  result: Promise<T>;
 };
 
-export interface AnalysisStore {
-  get(key: string): AnalysisEntry | undefined;
-  set(key: string, entry: AnalysisEntry): void;
+export interface AnalysisStore<T = AnalysisOutput> {
+  get(key: string): AnalysisEntry<T> | undefined;
+  set(key: string, entry: AnalysisEntry<T>): void;
   settle(key: string): void;
 }
 
-export function createIdempotentAnalysis(store: AnalysisStore) {
+export function createIdempotentAnalysis<T = AnalysisOutput>(
+  store: AnalysisStore<T>,
+) {
   let active = false;
 
-  return (
-    key: string,
-    fingerprint: string,
-    execute: () => Promise<AnalysisOutput>,
-  ) => {
+  return (key: string, fingerprint: string, execute: () => Promise<T>) => {
     const previous = store.get(key);
 
     if (previous) {
@@ -42,7 +40,7 @@ export function createIdempotentAnalysis(store: AnalysisStore) {
 
     // Reserve before execution, including synchronous failures. Store failures as well:
     // a lost provider response must not cause an automatic second paid request.
-    const deferred = Promise.withResolvers<AnalysisOutput>();
+    const deferred = Promise.withResolvers<T>();
 
     store.set(key, { fingerprint, result: deferred.promise });
     active = true;

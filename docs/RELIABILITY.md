@@ -72,3 +72,27 @@ Raw artifacts (ignored by Git; fictional inputs only):
 The checks verify expected categories, complete criterion counts, source-quote presence and trace metadata; they do not prove semantic entailment of every sentence. A denylist catches some explicit manipulations and can exclude educational quotations; arbitrary encodings/paraphrases and attacks in other sources remain unproven. Numeric/work-mode grammars intentionally defer unsupported wording. Rare variability remains possible despite three passing repetitions. The model never verifies the candidate’s actual competence.
 
 Final offline verification: 52 backend/evaluation tests and 4 React tests passed (56 total), along with types, lint, architecture, OpenAPI consistency, formatting and production build.
+
+## v0.2 provider adapter verification (2026-09-11)
+
+`npm run eval:providers` executes fictional cases through the actual LangChain
+adapters for each locally configured provider. It never runs in CI. The first
+OpenAI attempt was rejected before generation because a nested nullable object
+lacked `additionalProperties:false`. The schema is now explicitly strict and an
+offline test checks the serialized full schema, not just a minimal example.
+
+After correction, five OpenAI smoke checks passed: JavaScript does not establish
+Java, explicit TypeScript practice, remote/hybrid preference mismatch, salary
+without units, and quoted public-offer field extraction. Model returned:
+`gpt-4.1-mini-2025-04-14`. Local observations:
+`artifacts/evaluations/providers-1789127930495/observations.json`.
+These are migration smoke/calibration checks, not a new independent benchmark or
+a general reliability claim. The earlier v3.7 calibration record remains relevant
+but does not establish Anthropic parity.
+
+No Anthropic or LangSmith key was configured for this run. Both provider adapters
+have simulated HTTP serialization, schema parsing, token accounting, invalid-output
+and no-retry tests. OpenAI tests explicitly assert Responses transport and
+`store:false`. Incomplete outputs are rejected even if their JSON parses. LangSmith
+is checked through a fake sink for privacy and failure isolation; hosted delivery
+has not been tested. A configured model is not necessarily available to an account.

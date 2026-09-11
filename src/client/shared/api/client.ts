@@ -7,9 +7,12 @@ import {
 import { fr } from "../i18n/fr.ts";
 import { z } from "zod";
 import { AnalysisResponse, Bootstrap } from "../../../shared/analysis.ts";
-import type { DocumentsInput } from "../../../shared/analysis.ts";
+import type { AnalysisInputData as DocumentsInput } from "../../../shared/analysis.ts";
 
-async function request(path: string, init?: RequestInit): Promise<unknown> {
+export async function request(
+  path: string,
+  init?: RequestInit,
+): Promise<unknown> {
   const response = await fetch(path, init);
 
   const body: unknown = await response.json();
@@ -23,7 +26,7 @@ async function request(path: string, init?: RequestInit): Promise<unknown> {
   return body;
 }
 
-const jsonRequest = (documents: DocumentsInput): RequestInit => ({
+export const jsonRequest = (documents: unknown): RequestInit => ({
   method: "POST",
   headers: {
     "Content-Type": "application/json",

@@ -42,7 +42,7 @@ export function requestMetadata(
 }
 
 export const localRequestGuard: RequestHandler = (req, _res, next) => {
-  if (req.method !== "POST") {
+  if (["GET", "HEAD", "OPTIONS"].includes(req.method)) {
     next();
 
     return;

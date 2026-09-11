@@ -1,3 +1,4 @@
+import type { AnalysisOutput } from "../application/analyze.ts";
 import type {
   AnalysisEntry,
   AnalysisStore,
@@ -8,11 +9,11 @@ export const IDEMPOTENCY_TTL_MS = 5 * 60_000;
 
 export const IDEMPOTENCY_CAPACITY = 100;
 
-export function createMemoryAnalysisStore(
+export function createMemoryAnalysisStore<T = AnalysisOutput>(
   ttlMs = IDEMPOTENCY_TTL_MS,
   capacity = IDEMPOTENCY_CAPACITY,
-): AnalysisStore {
-  const entries = new Map<string, AnalysisEntry>();
+): AnalysisStore<T> {
+  const entries = new Map<string, AnalysisEntry<T>>();
 
   return {
     get: (key) => entries.get(key),
