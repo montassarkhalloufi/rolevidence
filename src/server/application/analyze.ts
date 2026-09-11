@@ -6,13 +6,14 @@ import type {
 import { classifyRequirements } from "../domain/classify.ts";
 
 export type ModelMetadata = {
+  provider?: "openai" | "anthropic" | undefined;
   responseId: string;
   model: string;
   durationMs: number;
   inputTokens: number | null;
   outputTokens: number | null;
-  promptVersion?: string;
-  schemaVersion?: string;
+  promptVersion?: string | undefined;
+  schemaVersion?: string | undefined;
 };
 
 export type AnalysisOutput = {

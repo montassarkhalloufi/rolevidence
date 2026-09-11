@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Badge } from "../../../shared/ui/badge.tsx";
 import { CodeBlock } from "../../../shared/ui/code-block.tsx";
 import { Card } from "../../../shared/ui/card.tsx";
@@ -44,15 +45,17 @@ export function ResultsPanel({
   result: AnalysisResponseData | null;
   loading: boolean;
 }) {
+  const titleId = useId();
+
   return (
     <Card asChild>
       <section
         className="min-w-0"
-        aria-labelledby="results-title"
+        aria-labelledby={titleId}
         aria-busy={loading}
       >
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-editorial text-2xl" id="results-title">
+          <h2 className="font-editorial text-2xl" id={titleId}>
             <span className="mr-2 text-muted-foreground">02 /</span>
             {fr.analysisTitle}
           </h2>
@@ -138,7 +141,10 @@ function resultLabel(loading: boolean, result: AnalysisResponseData | null) {
 function AnalysisMetadata({ result }: { result: AnalysisResponseData }) {
   return (
     <div className="flex flex-wrap gap-3 py-4 text-xs text-muted-foreground">
-      <span>{result.metadata.model}</span>
+      <span>
+        {result.metadata.provider} · {result.metadata.model}
+      </span>
+      <span>{result.metadata.promptVersion}</span>
       <span>{(result.metadata.durationMs / 1000).toFixed(1)} s</span>
       <span>
         {result.metadata.inputTokens ?? "—"}

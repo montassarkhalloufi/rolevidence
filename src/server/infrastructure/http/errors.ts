@@ -5,6 +5,7 @@ import type { AppErrorCode } from "../../application/errors.ts";
 import { AppError } from "../../application/errors.ts";
 
 const statuses: Record<AppErrorCode, number> = {
+  STORAGE_ERROR: 507,
   INVALID_INPUT: 400,
   INVALID_IDEMPOTENCY_KEY: 400,
   MISSING_FILE: 400,

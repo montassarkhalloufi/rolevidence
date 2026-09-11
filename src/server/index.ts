@@ -1,25 +1,31 @@
-import { createOpenAITransport } from "./infrastructure/openai-client.ts";
-import { createAnalysisRequest } from "./adapters/openai/request.ts";
+import { configureProviders } from "./infrastructure/providers.ts";
+import { openDatabase } from "./infrastructure/persistence/database.ts";
+import { createDossierRepository } from "./infrastructure/persistence/dossiers.ts";
 import { loadConfig } from "./infrastructure/config.ts";
-import { createAnalysisService } from "./application/analyze.ts";
-import { createOpenAIGateway } from "./adapters/openai/gateway.ts";
 import { readExampleDocuments } from "./infrastructure/documents.ts";
 import { createApp } from "./infrastructure/http/app.ts";
 
 const config = loadConfig();
 
-const service = createAnalysisService(
-  config.OPENAI_MODEL,
-  createOpenAIGateway(createOpenAITransport(config.OPENAI_API_KEY)),
-  createAnalysisRequest,
-);
+const { providers, extractOffer, fallback } = configureProviders(config);
+
+if (!fallback) {
+  throw new Error("No provider adapters available");
+}
+
+const database = openDatabase(config.DATABASE_PATH);
+
+const dossiers = createDossierRepository(database);
 
 const app = createApp({
-  service,
+  service: fallback,
+  providers,
+  extractOffer,
+  dossiers,
   observe: (event) => console.log(JSON.stringify(event)),
   readDocuments: readExampleDocuments,
   model: config.OPENAI_MODEL,
-  configured: Boolean(config.OPENAI_API_KEY),
+  configured: providers.options.some((option) => option.configured),
 });
 
 const server = app.listen(config.PORT, "127.0.0.1", () =>
@@ -31,5 +37,5 @@ server.on("error", () => {
   process.exitCode = 1;
 });
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
-  process.on(signal, () => server.close());
+  process.on(signal, () => server.close(() => database.close()));
 }

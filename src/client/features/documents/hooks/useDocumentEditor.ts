@@ -14,7 +14,7 @@ export function useDocumentEditor(
 
   const [active, setActive] = useState<"profile" | "job">("profile");
 
-  const [notice, setNotice] = useState<string>(fr.exampleLoaded);
+  const [notice, setNotice] = useState<string>(fr.documentReady);
 
   const [error, setError] = useState("");
 

@@ -1,26 +1,42 @@
-# Implementation status
+# Implementation status — 0.2.0
 
 ## Available
 
-- One-profile/one-offer analysis for job seekers and recruiters through a shared React interface.
-- Local PDF/DOCX/TXT extraction, editable texts and optional candidate preferences.
-- Structured model interpretation, original source quotations, conservative unknowns and explicit review states.
-- Request preview, safe error responses and bounded in-memory idempotency.
-- Domain, application, adapters and infrastructure with checked inward dependencies.
-- Versioned HTTP routes, generated OpenAPI, request IDs and completion logs without document bodies.
-- Strict TypeScript, lint/formatting, architecture checks, backend tests, React interaction tests and production build.
-- Shared token-based UI primitives and browser regression checks at 375px and 1280px for focus, native controls, loading, evidence disclosures and overflow.
+- Local dossiers for job seekers and recruiters: create, search, rename, explicitly
+  save and delete; SQLite migration 1 and optimistic revisions.
+- Immutable analysis history with exact submitted texts/preferences, source
+  provenance, timestamps and model/prompt/schema metadata.
+- OpenAI Responses and Anthropic structured output through LangChain model
+  adapters. No agent loop or model tools. Model selection is restricted to the
+  server-configured options. Keys never reach the browser.
+- Public offer URL retrieval with public-address pinning, redirect validation,
+  time/size bounds, JobPosting/HTML parsing, quoted field proposals and editable
+  review before adoption. Text pasting remains available for inaccessible pages.
+- Optional content-free LangSmith technical events. Automatic SDK tracing is
+  disabled; unavailable telemetry never blocks analysis.
+- Existing local CV extraction, preferences, evidence checks, context preview,
+  error handling and bounded process-local paid-request idempotency.
+- Four backend layers, feature-oriented React, TanStack Query, shadcn-based
+  primitives, Tailwind semantic tokens, generated OpenAPI and executable checks.
 
 ## Boundaries
 
-- Local single-user deployment; no authentication for shared or public access.
-- No durable workspace, campaigns, batch processing, interactive clarification or report export.
-- Parsing has resource limits but is not an OS security sandbox. Scanned PDFs without text are not supported.
-- Results are retained temporarily in RAM for idempotency. Restart, expiry or another process can cause a new provider call.
-- Tests with fake transports validate software behavior, not model accuracy. See RELIABILITY.md for live evaluation provenance and limitations.
-- Accessibility lint and DOM interaction tests do not establish a complete screen-reader/mobile audit.
-- ESLint 9 is retained for compatibility with the installed accessibility plugin; upgrade the related toolchain together rather than forcing peer dependencies.
+SQLite files are unencrypted local data; original CV binaries are not archived.
+Deletion cascades through stored analyses but cannot erase user backups or OS
+snapshots. Idempotency caches remain process-local and may retain deleted dossier
+snapshots temporarily. Stop the server before copying the SQLite file for backup;
+restore with a compatible release. Unknown newer schema versions fail closed.
 
-## Maintenance
+Only HTTP(S) pages on default ports are imported. Login walls, browser-rendered
+content, compressed responses, oversized pages and multiple JobPostings can require
+manual text pasting. No bypass, cookies or remote browsing agent is provided.
+Quoted fields can still be semantically wrong; review remains necessary.
 
-Keep this page focused on current behavior. Update ROADMAP.md for planned capabilities, CHANGELOG.md for releases and the relevant ADR for architectural decisions. User documentation and contributor instructions remain available in the public repository.
+Anthropic contract tests use simulated HTTP responses. Without an Anthropic key,
+no live Anthropic accuracy or account compatibility claim is made. LangSmith's
+actual hosted delivery is likewise unevaluated without a key. OpenAI's v0.2 smoke
+results and the previous larger calibration suite are documented in RELIABILITY.md.
+
+No batch comparisons, interactive clarification, report export, RAG, LangGraph,
+Deep Agents or multi-user/public hosting. Accessibility tests do not replace a
+complete assistive-technology audit. The parser worker is not an OS sandbox.

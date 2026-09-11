@@ -1,3 +1,4 @@
+import { ModelSelection, ProviderOption } from "./providers.ts";
 import {
   DOCUMENT_MAX_CHARACTERS,
   MAX_ANNUAL_SALARY_EUR,
@@ -138,6 +139,7 @@ export type DocumentsInput = z.infer<typeof Documents>;
 export const AnalysisResponse = z.object({
   analysis: Analysis,
   metadata: z.object({
+    provider: z.enum(["openai", "anthropic"]).optional(),
     responseId: z.string(),
     model: z.string(),
     durationMs: z.number(),
@@ -154,6 +156,16 @@ export const Bootstrap = z.object({
   documents: Documents,
   model: z.string(),
   configured: z.boolean(),
+  providers: z.array(ProviderOption).optional(),
+  dossiersEnabled: z.boolean().optional(),
 });
 
 export type BootstrapData = z.infer<typeof Bootstrap>;
+
+export const AnalysisInput = Documents.extend({
+  selection: ModelSelection.optional(),
+  dossierId: z.uuid().optional(),
+  dossierRevision: z.number().int().positive().optional(),
+});
+
+export type AnalysisInputData = z.infer<typeof AnalysisInput>;

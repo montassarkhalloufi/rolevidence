@@ -42,6 +42,7 @@ export function createExtractionSchema(catalog: SourceCatalog) {
             ),
           candidateDuration: z.enum(["exact", "lower_bound", "unknown"]),
         })
+        .strict()
         .nullable()
         .describe(
           "Required for duration requirements. A plus sign or at least means lower_bound, never exact. Null for other criteria.",

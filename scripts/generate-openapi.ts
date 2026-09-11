@@ -1,3 +1,15 @@
+import {
+  Dossier,
+  DossierDraft,
+  DossierSave,
+  DossierPage,
+  AnalysisPage,
+} from "../src/shared/dossiers.ts";
+import {
+  OfferImportInput,
+  OfferImportResponse,
+} from "../src/shared/offer-imports.ts";
+import { AnalysisInput } from "../src/shared/analysis.ts";
 import { readFile, writeFile } from "node:fs/promises";
 import { z } from "zod";
 import {
@@ -42,18 +54,123 @@ const headers = [
   },
 ];
 
-const body = { required: true, content: json("Documents") };
+const body = { required: true, content: json("AnalysisInput") };
 
 const contract = {
   openapi: "3.1.0",
   info: {
     title: "Rolevidence local API",
-    version: "1.1.0",
+    version: "1.2.0",
     description:
       "Single-user localhost API. Not authenticated or suitable for public exposure.",
   },
   servers: [{ url: "http://127.0.0.1:3001" }],
   paths: {
+    "/api/v1/dossiers": {
+      get: {
+        operationId: "listDossiers",
+        parameters: [
+          {
+            in: "query",
+            name: "q",
+            schema: { type: "string", maxLength: 120 },
+          },
+          {
+            in: "query",
+            name: "offset",
+            schema: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100000,
+              default: 0,
+            },
+          },
+          {
+            in: "query",
+            name: "limit",
+            schema: { type: "integer", minimum: 1, maximum: 50, default: 20 },
+          },
+        ],
+        responses: { 200: response("DossierPage"), default: problem },
+      },
+    },
+    "/api/v1/dossiers/{id}": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      get: {
+        operationId: "getDossier",
+        responses: { 200: response("Dossier"), default: problem },
+      },
+      put: {
+        operationId: "saveDossier",
+        parameters: headers,
+        requestBody: { required: true, content: json("DossierSave") },
+        responses: {
+          201: response("Dossier"),
+          200: response("Dossier"),
+          409: problem,
+          507: problem,
+          default: problem,
+        },
+      },
+      delete: {
+        operationId: "deleteDossier",
+        parameters: headers,
+        requestBody: { required: true, content: json("DeleteDossier") },
+        responses: { 200: response("Deleted"), 409: problem, default: problem },
+      },
+    },
+    "/api/v1/dossiers/{id}/analyses": {
+      get: {
+        operationId: "listDossierAnalyses",
+        parameters: [
+          {
+            in: "path",
+            name: "id",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+          },
+          {
+            in: "query",
+            name: "offset",
+            schema: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100000,
+              default: 0,
+            },
+          },
+          {
+            in: "query",
+            name: "limit",
+            schema: { type: "integer", minimum: 1, maximum: 50, default: 20 },
+          },
+        ],
+        responses: { 200: response("AnalysisPage"), default: problem },
+      },
+    },
+    "/api/v1/offer-imports": {
+      post: {
+        operationId: "importPublicOffer",
+        parameters: [
+          ...headers,
+          {
+            name: "Idempotency-Key",
+            in: "header",
+            required: true,
+            schema: { type: "string", pattern: "^[A-Za-z0-9_-]{16,128}$" },
+          },
+        ],
+        requestBody: { required: true, content: json("OfferImportInput") },
+        responses: { 200: response("OfferImportResponse"), default: problem },
+      },
+    },
     "/api/v1/bootstrap": {
       get: {
         operationId: "getBootstrap",
@@ -154,6 +271,18 @@ const contract = {
   },
   components: {
     schemas: {
+      AnalysisInput: schema(AnalysisInput),
+      Dossier: schema(Dossier),
+      DossierDraft: schema(DossierDraft),
+      DossierSave: schema(DossierSave),
+      DossierPage: schema(DossierPage),
+      AnalysisPage: schema(AnalysisPage),
+      OfferImportInput: schema(OfferImportInput),
+      OfferImportResponse: schema(OfferImportResponse),
+      DeleteDossier: schema(
+        z.object({ revision: z.number().int().positive() }).strict(),
+      ),
+      Deleted: schema(z.object({ deleted: z.literal(true) })),
       Documents: {
         ...schema(Documents),
         description:
