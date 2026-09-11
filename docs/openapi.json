@@ -1,0 +1,1214 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Rolevidence local API",
+    "version": "1.1.0",
+    "description": "Single-user localhost API. Not authenticated or suitable for public exposure."
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3001"
+    }
+  ],
+  "paths": {
+    "/api/v1/bootstrap": {
+      "get": {
+        "operationId": "getBootstrap",
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bootstrap"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis-context": {
+      "post": {
+        "operationId": "previewAnalysis",
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Documents"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Provider request preview; no LLM call",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analyses": {
+      "post": {
+        "operationId": "analyzeDocuments",
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z0-9_-]{16,128}$"
+            },
+            "description": "Same validated input replays the outcome for five minutes after settlement, in this process only. Conflict returns 409. Failed outcomes also replay."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Documents"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisResponse"
+                }
+              }
+            },
+            "headers": {
+              "Idempotency-Replayed": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "true",
+                    "false"
+                  ]
+                }
+              },
+              "X-Request-Id": {
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/resume-extractions": {
+      "post": {
+        "operationId": "extractResume",
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "cv"
+                ],
+                "properties": {
+                  "cv": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "One PDF, DOCX or UTF-8 TXT; maximum 5 MiB. PDF up to 20 pages. Extracted text up to 16000 characters."
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResumeText"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Documents": {
+        "type": "object",
+        "properties": {
+          "preferences": {
+            "type": "object",
+            "properties": {
+              "minimumAnnualSalary": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000000
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "workMode": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "enum": [
+                      "onsite",
+                      "hybrid",
+                      "remote"
+                    ]
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "remoteDaysPerWeek": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "minimumAnnualSalary",
+              "workMode",
+              "remoteDaysPerWeek"
+            ],
+            "additionalProperties": false
+          },
+          "profile": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000
+          },
+          "job": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16000
+          }
+        },
+        "required": [
+          "profile",
+          "job"
+        ],
+        "additionalProperties": false,
+        "description": "Remote days are only accepted with hybrid work mode. Salary is fixed gross annual EUR excluding bonuses. Omitted preferences are treated as empty."
+      },
+      "AnalysisResponse": {
+        "type": "object",
+        "properties": {
+          "analysis": {
+            "type": "object",
+            "properties": {
+              "matches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "interpretation": {
+                      "type": "object",
+                      "properties": {
+                        "describedPractice": {
+                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "relation": {
+                          "type": "string",
+                          "enum": [
+                            "equivalence",
+                            "indirect_evidence",
+                            "contradiction",
+                            "insufficient_information"
+                          ]
+                        },
+                        "justification": {
+                          "type": "string",
+                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                        }
+                      },
+                      "required": [
+                        "describedPractice",
+                        "relation",
+                        "justification"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "evidenceState": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "contradicted",
+                        "insufficient_information"
+                      ]
+                    },
+                    "verification": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "enum": [
+                                "UNVERIFIED_QUOTES",
+                                "MISSING_CANDIDATE_INFORMATION",
+                                "INCOMPARABLE_EXPERIENCE",
+                                "MISSING_REQUIREMENT_ANALYSIS"
+                              ]
+                            },
+                            "missingQuotes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "candidate",
+                                  "job"
+                                ]
+                              }
+                            },
+                            "proposedCandidateQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "proposedJobQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "missingQuotes",
+                            "proposedCandidateQuote",
+                            "proposedJobQuote"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "profileQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "preferencesQuote": {
+                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jobQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "interpretation",
+                    "evidenceState",
+                    "verification",
+                    "explanation",
+                    "profileQuote",
+                    "preferencesQuote",
+                    "jobQuote"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "gaps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "interpretation": {
+                      "type": "object",
+                      "properties": {
+                        "describedPractice": {
+                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "relation": {
+                          "type": "string",
+                          "enum": [
+                            "equivalence",
+                            "indirect_evidence",
+                            "contradiction",
+                            "insufficient_information"
+                          ]
+                        },
+                        "justification": {
+                          "type": "string",
+                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                        }
+                      },
+                      "required": [
+                        "describedPractice",
+                        "relation",
+                        "justification"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "evidenceState": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "contradicted",
+                        "insufficient_information"
+                      ]
+                    },
+                    "verification": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "enum": [
+                                "UNVERIFIED_QUOTES",
+                                "MISSING_CANDIDATE_INFORMATION",
+                                "INCOMPARABLE_EXPERIENCE",
+                                "MISSING_REQUIREMENT_ANALYSIS"
+                              ]
+                            },
+                            "missingQuotes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "candidate",
+                                  "job"
+                                ]
+                              }
+                            },
+                            "proposedCandidateQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "proposedJobQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "missingQuotes",
+                            "proposedCandidateQuote",
+                            "proposedJobQuote"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "profileQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "preferencesQuote": {
+                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jobQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "interpretation",
+                    "evidenceState",
+                    "verification",
+                    "explanation",
+                    "profileQuote",
+                    "preferencesQuote",
+                    "jobQuote"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "unknowns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "interpretation": {
+                      "type": "object",
+                      "properties": {
+                        "describedPractice": {
+                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "relation": {
+                          "type": "string",
+                          "enum": [
+                            "equivalence",
+                            "indirect_evidence",
+                            "contradiction",
+                            "insufficient_information"
+                          ]
+                        },
+                        "justification": {
+                          "type": "string",
+                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                        }
+                      },
+                      "required": [
+                        "describedPractice",
+                        "relation",
+                        "justification"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "evidenceState": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "contradicted",
+                        "insufficient_information"
+                      ]
+                    },
+                    "verification": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "enum": [
+                                "UNVERIFIED_QUOTES",
+                                "MISSING_CANDIDATE_INFORMATION",
+                                "INCOMPARABLE_EXPERIENCE",
+                                "MISSING_REQUIREMENT_ANALYSIS"
+                              ]
+                            },
+                            "missingQuotes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "candidate",
+                                  "job"
+                                ]
+                              }
+                            },
+                            "proposedCandidateQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "proposedJobQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "missingQuotes",
+                            "proposedCandidateQuote",
+                            "proposedJobQuote"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "profileQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "preferencesQuote": {
+                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jobQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "interpretation",
+                    "evidenceState",
+                    "verification",
+                    "explanation",
+                    "profileQuote",
+                    "preferencesQuote",
+                    "jobQuote"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "needsReview": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "subject": {
+                      "type": "string"
+                    },
+                    "interpretation": {
+                      "type": "object",
+                      "properties": {
+                        "describedPractice": {
+                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "relation": {
+                          "type": "string",
+                          "enum": [
+                            "equivalence",
+                            "indirect_evidence",
+                            "contradiction",
+                            "insufficient_information"
+                          ]
+                        },
+                        "justification": {
+                          "type": "string",
+                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                        }
+                      },
+                      "required": [
+                        "describedPractice",
+                        "relation",
+                        "justification"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "evidenceState": {
+                      "type": "string",
+                      "enum": [
+                        "supported",
+                        "contradicted",
+                        "insufficient_information"
+                      ]
+                    },
+                    "verification": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "code": {
+                              "type": "string",
+                              "enum": [
+                                "UNVERIFIED_QUOTES",
+                                "MISSING_CANDIDATE_INFORMATION",
+                                "INCOMPARABLE_EXPERIENCE",
+                                "MISSING_REQUIREMENT_ANALYSIS"
+                              ]
+                            },
+                            "missingQuotes": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "enum": [
+                                  "candidate",
+                                  "job"
+                                ]
+                              }
+                            },
+                            "proposedCandidateQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "proposedJobQuote": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "missingQuotes",
+                            "proposedCandidateQuote",
+                            "proposedJobQuote"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "profileQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "preferencesQuote": {
+                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jobQuote": {
+                      "description": "Citation exacte ou null si absente.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "subject",
+                    "interpretation",
+                    "evidenceState",
+                    "verification",
+                    "explanation",
+                    "profileQuote",
+                    "preferencesQuote",
+                    "jobQuote"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "matches",
+              "gaps",
+              "unknowns",
+              "needsReview"
+            ],
+            "additionalProperties": false
+          },
+          "metadata": {
+            "type": "object",
+            "properties": {
+              "responseId": {
+                "type": "string"
+              },
+              "model": {
+                "type": "string"
+              },
+              "durationMs": {
+                "type": "number"
+              },
+              "inputTokens": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "outputTokens": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "promptVersion": {
+                "type": "string"
+              },
+              "schemaVersion": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "responseId",
+              "model",
+              "durationMs",
+              "inputTokens",
+              "outputTokens"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "analysis",
+          "metadata"
+        ],
+        "additionalProperties": false
+      },
+      "Bootstrap": {
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "object",
+            "properties": {
+              "preferences": {
+                "type": "object",
+                "properties": {
+                  "minimumAnnualSalary": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 1000000
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "workMode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": [
+                          "onsite",
+                          "hybrid",
+                          "remote"
+                        ]
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "remoteDaysPerWeek": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 4
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "minimumAnnualSalary",
+                  "workMode",
+                  "remoteDaysPerWeek"
+                ],
+                "additionalProperties": false
+              },
+              "profile": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16000
+              },
+              "job": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 16000
+              }
+            },
+            "required": [
+              "profile",
+              "job"
+            ],
+            "additionalProperties": false
+          },
+          "model": {
+            "type": "string"
+          },
+          "configured": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "documents",
+          "model",
+          "configured"
+        ],
+        "additionalProperties": false
+      },
+      "ResumeText": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string"
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "required": [
+          "type",
+          "title",
+          "status",
+          "detail",
+          "code",
+          "requestId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      }
+    }
+  }
+}

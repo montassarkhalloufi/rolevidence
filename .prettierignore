@@ -1,0 +1,16 @@
+node_modules/
+dist/
+artifacts/
+coverage/
+package-lock.json
+docs/openapi.json
+tests/fixtures/
+data/profile.md
+data/job.md
+.env*
+
+.local/
+storage/
+uploads/
+backups/
+private/
