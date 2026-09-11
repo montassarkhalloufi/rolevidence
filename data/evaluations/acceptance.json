@@ -1,0 +1,58 @@
+[
+  {
+    "id": "italian-absent",
+    "profile": "Développement de services C#. Français courant.",
+    "job": "Italien professionnel requis.",
+    "expected": "insufficient_information"
+  },
+  {
+    "id": "csharp-production",
+    "profile": "Je développe et maintiens des services C# en production.",
+    "job": "Expérience C# en production requise.",
+    "expected": "equivalence"
+  },
+  {
+    "id": "unit-tests-only",
+    "profile": "Écriture de tests unitaires avec NUnit. Les tests d’intégration ne sont pas documentés.",
+    "job": "Écriture de tests unitaires et d’intégration requise.",
+    "expected": "indirect_evidence",
+    "alternative": [
+      {
+        "subjectPattern": "unitaires",
+        "relation": "equivalence"
+      },
+      {
+        "subjectPattern": "intégration",
+        "relation": "insufficient_information"
+      }
+    ]
+  },
+  {
+    "id": "rag-production-explicit",
+    "profile": "Déploiement et maintenance d’un RAG en production pour un catalogue documentaire interne.",
+    "job": "Expérience de déploiement d’un RAG en production requise.",
+    "expected": "equivalence"
+  },
+  {
+    "id": "salary-usd",
+    "profile": "Profil fictif.",
+    "job": "Salaire : 85000 USD brut annuel fixe.",
+    "preferences": {
+      "minimumAnnualSalary": 60000,
+      "workMode": null,
+      "remoteDaysPerWeek": null
+    },
+    "expected": "insufficient_information"
+  },
+  {
+    "id": "remote-versus-hybrid",
+    "profile": "Profil fictif sans modalités de travail.",
+    "job": "Télétravail : hybride.",
+    "preferences": {
+      "minimumAnnualSalary": null,
+      "workMode": "remote",
+      "remoteDaysPerWeek": null
+    },
+    "expected": "contradiction"
+  }
+]

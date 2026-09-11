@@ -1,0 +1,3 @@
+Camille Martin
+Developpeuse TypeScript et Node.js.
+Tests avec Jest.

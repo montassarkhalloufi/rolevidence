@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@source "../../";
+
+:root {
+  --background: #f8f9f6;
+  --foreground: #192722;
+  --card: #fdfefa;
+  --primary: #244e40;
+  --primary-foreground: #ffffff;
+  --muted: #edf2e9;
+  --muted-foreground: #566258;
+  --border: #dfe4dd;
+  --input: #84958a;
+  --accent: #e4ece1;
+  --ring: #417759;
+  --success: #28603f;
+  --success-background: #e4f0e4;
+  --warning: #805012;
+  --warning-background: #fff0d7;
+  --destructive: #8a3022;
+  --destructive-background: #fff0eb;
+  --neutral: #566258;
+  --neutral-background: #ebeeeb;
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-accent: var(--accent);
+  --color-ring: var(--ring);
+  --color-success: var(--success);
+  --color-success-background: var(--success-background);
+  --color-warning: var(--warning);
+  --color-warning-background: var(--warning-background);
+  --color-destructive: var(--destructive);
+  --color-destructive-background: var(--destructive-background);
+  --color-neutral: var(--neutral);
+  --color-neutral-background: var(--neutral-background);
+  --radius-sm: calc(var(--radius) - 0.125rem);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 0.25rem);
+  --font-editorial: Georgia, "Times New Roman", serif;
+}

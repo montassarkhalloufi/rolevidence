@@ -1,0 +1,43 @@
+# Dependencies and generated output
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.cache/
+.vite/
+playwright-report/
+test-results/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+.envrc
+.npmrc
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Private documents, runtime state and local evaluation traces
+artifacts/
+.local/
+storage/
+uploads/
+backups/
+private/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.log
+
+# Machine/editor state; keep shared VS Code settings
+.DS_Store
+Thumbs.db
+.idea/
+*.swp
+*.swo
+*~
+.codex/
+.agents/

@@ -1,0 +1,19 @@
+# Security and privacy
+
+## Supported deployment
+
+The initial release is an unauthenticated, single-user local application. Keep the server on loopback. Public hosting, shared access and reverse proxies are outside the supported configuration.
+
+The API key belongs in `.env`, never in client code, screenshots or issue reports. Analysis sends input texts and preferences to OpenAI; local parsing and request preview do not call the provider. `store: false` is not a promise of zero provider retention.
+
+Uploads have size/time limits and run in a parser worker. This worker is not an operating-system security sandbox. Do not import untrusted files without considering this boundary. The analysis model has no tool access.
+
+## Reporting
+
+Do not post credentials, personal CVs or exploit details in a public issue. Use the repository's private vulnerability reporting channel when enabled. If unavailable, open a minimal issue requesting a private contact channel without sensitive details.
+
+Provide the release version, operating system, affected component and a minimal fictional reproduction. Rotate any exposed credentials through the provider; removing a file from the current tree does not remove it from Git history.
+
+## Data and traces
+
+Runtime artifacts, uploads, local databases and secrets are excluded by `.gitignore`. Ignore rules are not a substitute for reviewing staged files. The current UI does not persist drafts; planned storage requires explicit save/delete and backup behavior. Evaluation traces contain document text and must use fictional fixtures only.

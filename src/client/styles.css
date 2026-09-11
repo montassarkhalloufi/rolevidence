@@ -1,0 +1,17 @@
+@reference "./shared/styles/tokens.css";
+
+@layer base {
+  body {
+    @apply m-0 bg-background font-sans text-foreground antialiased;
+    font-synthesis: none;
+  }
+  :where(a, summary):focus-visible {
+    @apply outline-2 outline-offset-4 outline-ring;
+  }
+  :where(button, summary):not(:disabled) {
+    cursor: pointer;
+  }
+  :where(button, input, select, textarea) {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
