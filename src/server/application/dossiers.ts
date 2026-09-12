@@ -25,6 +25,14 @@ export type OfferProvenance = {
 };
 
 export type DossierDraft = {
+  tracking?:
+    | {
+        status: "preparing" | "applied" | "interview" | "offer" | "closed";
+        notes: string;
+        preparation: string;
+        interview: string;
+      }
+    | undefined;
   title: string;
   purpose: "job_search" | "recruiting";
   documents: DocumentsInput & {

@@ -81,3 +81,17 @@ Analysis metadata optionally includes `preparationVersion` and `contextPassages`
 Documents optionally include `clarifications` (16,000 characters) and `reviewedJobQuotes` (up to 128 original passages). Both participate in snapshots and idempotency fingerprints. Findings optionally include `clarificationQuote`; it is never labelled as CV evidence. Exact original job text is required for a manual reinclusion to have any effect.
 
 `GET /api/v1/dossiers/:id/backup` exports format `rolevidence-backup-v1`, dossier and up to 100 analyses within 8 MiB. `POST /api/v1/dossiers/restore` accepts that format (8 MiB body), validates source/dossier linkage, and returns 201 + Location for an isolated copy. Restoration is transactional; existing dossiers are unchanged. Each explicit successful POST creates a new copy; no automatic client retry. Normal dossier bodies retain the 2 MiB limit. Restored results are user-imported historical data, not reverified model executions.
+
+## v0.4 campaigns and durable analyses
+
+- `GET /api/v1/campaigns?offset=0`: stable creation/ID ordering, 20 summaries per page, offset up to 100,000.
+- `PUT /api/v1/campaigns/{uuid}`: validated title, baseId/baseRevision and 2–10 named document texts. Copies the shared side according to the source dossier's purpose. Identical UUID/input replays (201); changed input returns 409. All members are created transactionally.
+- `GET /api/v1/campaigns/{uuid}`: members with latest immutable analyses. A changed dossier does not rewrite that result.
+- `DELETE /api/v1/campaigns/{uuid}`: removes grouping, retains dossiers/history. Deleting a dossier independently removes its memberships.
+- `PUT /api/v1/analysis-jobs/{uuid}`: `{ dossierId, revision }`, requires complete saved inputs. Returns 202 and Location while accepted/stopped; completed replay returns 200. Same UUID/input never starts another call; changed identity returns 409. One active job, no implicit queue.
+- `GET /api/v1/analysis-jobs/{uuid}` and `GET /api/v1/dossiers/{uuid}/latest-job`: actual stage, completed/total batches, attempt, status and optional saved result. Latest may be null. Raw checkpoint responses are never part of the public job DTO.
+- `POST /api/v1/analysis-jobs/{uuid}/cancel` and `/resume`: `{ attempt }`, compared with the observed attempt. Cancel requests transport abort and returns current state (200); poll until cancellation settles. Resume returns 202, increments attempt and retains original sources. Stale attempts conflict. These commands are never automatically retried by the client.
+
+All mutations require the local request guard. Campaign input has a 2 MiB body limit. Job identity replaces a transient idempotency header for these new resources; the legacy synchronous analysis route keeps its previous contract. Closing the browser does not cancel a job. Restart never resumes paid calls automatically. Completed checkpointed responses are schema-validated again on explicit resume; an interrupted uncheckpointed call may be charged twice. A storage failure never authorizes an automatic model retry.
+
+Optional dossier `tracking` contains status, notes, preparation and interview fields (8,000 characters each). It is included in local backups/snapshots but excluded from provider inputs. Workflow startup resolves the exact saved selection. Use a single server process per SQLite database.

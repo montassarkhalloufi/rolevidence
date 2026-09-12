@@ -94,7 +94,7 @@ export const fr = {
   retry: "Réessayer",
   homeLabel: "Rolevidence accueil",
   applicationMode: "Analyse locale",
-  versionLabel: "v0.3.0",
+  versionLabel: "v0.4.0",
   mottoFirst: "Des critères clairs.",
   mottoSecond: "Des preuves visibles.",
   eyebrow: "PROFILS ET OFFRES · ANALYSE EXPLICABLE",

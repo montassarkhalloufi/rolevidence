@@ -1,3 +1,4 @@
+import type { AnalysisProgress } from "../../application/execution.ts";
 import { z } from "zod";
 import type { StructuredModel } from "./structured.ts";
 import type { Selection } from "../../application/dossiers.ts";
@@ -21,6 +22,7 @@ export async function compareComplete(
   catalog: SourceCatalog,
   selection: Selection,
   signal?: AbortSignal,
+  onProgress?: (value: AnalysisProgress) => void,
 ) {
   if (catalog.job.length > COMPARISON_BATCH_SIZE * MAX_COMPARISON_BATCHES) {
     throw new AppError(
@@ -55,6 +57,12 @@ export async function compareComplete(
       )
       .strict();
 
+    signal?.throwIfAborted();
+    onProgress?.({
+      stage: "comparison",
+      completed: offset / COMPARISON_BATCH_SIZE,
+      total: Math.ceil(catalog.job.length / COMPARISON_BATCH_SIZE),
+    });
     const response = await invoke(
       {
         selection,

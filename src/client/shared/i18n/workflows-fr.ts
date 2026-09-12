@@ -1,0 +1,70 @@
+export const workflowsFr = {
+  importCv: "Importer un CV",
+  importing: "Extraction locale en cours…",
+  importHelp:
+    "PDF, DOCX ou TXT · 5 Mo. Relisez le texte extrait avant de créer la campagne.",
+  campaigns: "Comparaisons multiples",
+  create: "Créer la campagne",
+  title: "Nom de la campagne",
+  campaignHelp:
+    "Chaque élément devient un dossier indépendant. Les documents communs sont copiés ; les modifications ultérieures ne se propagent pas aux autres dossiers.",
+  jobSearch: "Comparer ce profil à plusieurs offres",
+  recruiting: "Comparer plusieurs profils à cette offre",
+  memberTitle: "Nom du dossier",
+  jobText: "Texte de l’offre",
+  profileText: "Texte du profil",
+  add: "Ajouter un élément",
+  remove: "Retirer",
+  back: "Retour aux dossiers",
+  open: "Ouvrir le dossier",
+  run: "Analyser ce dossier",
+  loading: "Chargement…",
+  empty: "Aucune campagne enregistrée.",
+  notAnalyzed: "Ce dossier n’a pas encore d’analyse enregistrée.",
+  missingMember:
+    "Certains dossiers ont été supprimés. Les autres restent disponibles.",
+  delete: "Supprimer la campagne",
+  confirmDelete: "Confirmer : supprimer le regroupement uniquement",
+  keepDossiers: "Les dossiers et leurs analyses sont conservés dans l’accueil.",
+  compareHelp:
+    "Comparez les preuves dans chaque colonne. Les critères d’offres différentes ne sont pas supposés équivalents. Aucun classement automatique n’est calculé.",
+  stale:
+    "Le dossier a été modifié depuis cette analyse. Les preuves ci-dessous concernent sa version précédente.",
+  tracking: "Suivi de la candidature",
+  trackingHelp:
+    "Notes humaines, séparées des conclusions. Ces champs ne sont jamais envoyés au modèle. Enregistrez le dossier pour les conserver.",
+  status: "Avancement",
+  statuses: {
+    preparing: "À préparer",
+    applied: "Candidature transmise",
+    interview: "Entretien",
+    offer: "Proposition reçue",
+    closed: "Clôturée",
+  },
+  notes: "Notes personnelles",
+  preparation: "Préparation de l’entretien",
+  interview: "Compte rendu d’entretien",
+  cancel: "Annuler l’analyse",
+  resume: "Reprendre les étapes restantes",
+  resumeHelp:
+    "La reprise utilise les documents exacts de la demande initiale. Les étapes sauvegardées ne sont pas rejouées. Un appel interrompu avant sauvegarde peut avoir été facturé et sera renouvelé uniquement à votre demande.",
+  cancelled: "Analyse annulée",
+  interrupted: "Analyse interrompue",
+  failed: "Analyse en échec",
+  completed: "Analyse enregistrée",
+  stages: {
+    preparation: "Lecture des critères de l’offre",
+    comparison: "Comparaison des preuves",
+    saving: "Enregistrement du résultat",
+  },
+  completedSteps: "Étapes terminées",
+  attempt: "Tentative",
+  progress: "Progression réelle",
+  cancelHelp:
+    "L’annulation arrête les prochaines étapes et demande l’arrêt de l’appel en cours. Elle ne garantit pas l’absence de facturation du fournisseur.",
+  startHelp:
+    "Les analyses sont lancées individuellement pour contrôler les appels au fournisseur. Vous pouvez quitter ce dossier et retrouver la progression en le rouvrant.",
+  previous: "Précédent",
+  next: "Suivant",
+  sourceRequired: "Enregistrez un dossier source avant de créer une campagne.",
+} as const;

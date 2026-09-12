@@ -84,7 +84,7 @@ function SourceQuotes({ finding }: { finding: Finding }) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 @md/quotes:grid-cols-2">
       {quotes.map((quote) => (
         <blockquote
           className="my-3 border-l-2 border-input bg-muted px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words"
@@ -113,7 +113,7 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
   return (
     <article className="flex gap-3 border-b border-border py-4 [&>div]:min-w-0 [&>div]:w-full [&_p]:my-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_summary]:text-sm [&_summary]:text-primary">
       <StatusIcon tone={group.tone}>{group.symbol}</StatusIcon>
-      <div>
+      <div className="@container/quotes">
         <div className="flex flex-wrap items-center gap-2 [&>h3]:text-xl [&>h3]:font-semibold">
           <h3>{finding.subject}</h3>
           <Badge tone={group.tone}>{group.singular}</Badge>

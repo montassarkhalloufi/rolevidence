@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 — Unreleased
+
+- Local campaigns with 2–10 independent offer/profile dossiers and side-by-side saved evidence.
+- Recruiter member CV import, source isolation, transactional creation and replay-safe campaign IDs.
+- Human status, notes and interview preparation/accounts stored separately from model inputs.
+- Durable dossier analysis jobs with actual batch progress, explicit cancellation/resume and checkpoint reuse.
+- Restart recovery without automatic paid calls; immutable snapshots and persistent result deduplication after storage failure.
+- SQLite migrations, generated workflow API contracts and browser/API recovery tests.
+- Individual analysis launches; no automatic campaign queue, ranking or billing-cancellation guarantee.
+
 ## 0.3.0 — 2026-09-12
 
 - Required per-passage structured comparison in bounded batches, with auditable offer context and manual reinclusion.

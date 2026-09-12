@@ -1,3 +1,4 @@
+import { Tracking } from "./tracking.ts";
 import { z } from "zod";
 import { AnalysisResponse, Preferences } from "./analysis.ts";
 import { ModelSelection } from "./providers.ts";
@@ -33,6 +34,7 @@ export const OfferSource = z
 
 export const DossierDraft = z
   .object({
+    tracking: Tracking.optional(),
     title: z.string().trim().min(1).max(120),
     purpose: z.enum(["job_search", "recruiting"]),
     documents: z

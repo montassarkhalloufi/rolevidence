@@ -1,3 +1,6 @@
+import type { Express } from "express";
+import { registerWorkflowRoutes } from "../../adapters/http/workflow-routes.ts";
+import type { WorkflowServices } from "../../adapters/http/workflow-routes.ts";
 import type { SavedExecution } from "../../adapters/http/analysis-controller.ts";
 import { registerOfferRoutes } from "../offers/routes.ts";
 import type { createJobExtractor } from "../../adapters/models/job-extraction.ts";
@@ -22,6 +25,7 @@ import type { AnalysisService } from "../../application/analyze.ts";
 import { AppError } from "../../application/errors.ts";
 
 type Dependencies = {
+  workflows?: WorkflowServices;
   service: AnalysisService;
   readDocuments: () => Promise<DocumentsInput>;
   model: string;
@@ -34,6 +38,7 @@ type Dependencies = {
 
 export function createApp({
   service,
+  workflows,
   readDocuments,
   model,
   configured,
@@ -46,6 +51,7 @@ export function createApp({
 
   app.disable("x-powered-by");
   app.use(API_ROOT, requestMetadata(observe), localRequestGuard);
+  app.use("/api/v1/campaigns", express.json({ limit: "2mb" }));
   app.use("/api/v1/dossiers/restore", express.json({ limit: "8mb" }));
   app.use("/api/v1/dossiers", express.json({ limit: "2mb" }));
   app.use(express.json({ limit: "160kb" }));
@@ -56,15 +62,14 @@ export function createApp({
       configured,
       providers: providers?.options,
       dossiersEnabled: Boolean(dossiers),
+      workflowsEnabled: Boolean(workflows),
     });
   });
   if (providers && extractOffer) {
     registerOfferRoutes(app, providers, extractOffer);
   }
 
-  if (dossiers) {
-    registerDossierRoutes(app, dossiers);
-  }
+  registerWorkspace(app, dossiers, workflows);
 
   const upload = multer({
     storage: multer.memoryStorage(),
@@ -135,4 +140,24 @@ export function createApp({
   app.use(errorHandler);
 
   return app;
+}
+
+function registerWorkspace(
+  app: Express,
+  dossiers: DossierRepository | undefined,
+  workflows: WorkflowServices | undefined,
+) {
+  if (dossiers) {
+    registerDossierRoutes(app, dossiers, (id) => {
+      const job = workflows?.jobs.latest(id);
+
+      if (job?.status === "running") {
+        workflows?.jobs.cancel(job.id, job.attempt);
+      }
+    });
+  }
+
+  if (workflows) {
+    registerWorkflowRoutes(app, workflows);
+  }
 }

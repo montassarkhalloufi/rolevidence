@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Rolevidence local API",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "Single-user localhost API. Not authenticated or suitable for public exposure."
   },
   "servers": [
@@ -11,6 +11,411 @@
     }
   ],
   "paths": {
+    "/api/v1/campaigns": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "offset",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100000,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CampaignPage"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/campaigns/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CampaignInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deleted"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis-jobs/{id}": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobStart"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisJob"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted; poll the job resource. Never automatically resumed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis-jobs/{id}/cancel": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobResume"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/analysis-jobs/{id}/resume": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "post": {
+        "parameters": [
+          {
+            "name": "X-Rolevidence",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "const": "1"
+            },
+            "description": "Local cross-origin request guard; not authentication."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JobResume"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnalysisJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/dossiers/{id}/latest-job": {
+      "parameters": [
+        {
+          "in": "path",
+          "name": "id",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Completed synchronous operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NullableAnalysisJob"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Safe problem response",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/dossiers/{id}/backup": {
       "get": {
         "parameters": [
@@ -836,6 +1241,3491 @@
   },
   "components": {
     "schemas": {
+      "Campaign": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "title": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "job_search",
+              "recruiting"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dossier": {
+                  "type": "object",
+                  "properties": {
+                    "tracking": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "preparing",
+                            "applied",
+                            "interview",
+                            "offer",
+                            "closed"
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "preparation": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "interview": {
+                          "type": "string",
+                          "maxLength": 8000
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "notes",
+                        "preparation",
+                        "interview"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "title": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "purpose": {
+                      "type": "string",
+                      "enum": [
+                        "job_search",
+                        "recruiting"
+                      ]
+                    },
+                    "documents": {
+                      "type": "object",
+                      "properties": {
+                        "reviewedJobQuotes": {
+                          "maxItems": 128,
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "maxLength": 16000
+                          }
+                        },
+                        "clarifications": {
+                          "type": "string",
+                          "maxLength": 16000
+                        },
+                        "profile": {
+                          "type": "string",
+                          "maxLength": 16000
+                        },
+                        "job": {
+                          "type": "string",
+                          "maxLength": 16000
+                        },
+                        "preferences": {
+                          "type": "object",
+                          "properties": {
+                            "minimumAnnualSalary": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "exclusiveMinimum": 0,
+                                  "maximum": 1000000
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "workMode": {
+                              "anyOf": [
+                                {
+                                  "type": "string",
+                                  "enum": [
+                                    "onsite",
+                                    "hybrid",
+                                    "remote"
+                                  ]
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "remoteDaysPerWeek": {
+                              "anyOf": [
+                                {
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 4
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "minimumAnnualSalary",
+                            "workMode",
+                            "remoteDaysPerWeek"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "profile",
+                        "job",
+                        "preferences"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "selection": {
+                      "type": "object",
+                      "properties": {
+                        "provider": {
+                          "type": "string",
+                          "enum": [
+                            "openai",
+                            "anthropic"
+                          ]
+                        },
+                        "model": {
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 120
+                        }
+                      },
+                      "required": [
+                        "provider",
+                        "model"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "offerSource": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "maxLength": 2048,
+                              "format": "uri"
+                            },
+                            "retrievedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "text": {
+                              "type": "string",
+                              "maxLength": 16000
+                            },
+                            "fields": {
+                              "maxItems": 40,
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "enum": [
+                                      "title",
+                                      "company",
+                                      "location",
+                                      "responsibilities",
+                                      "skills",
+                                      "experience",
+                                      "requirements",
+                                      "contract",
+                                      "salary",
+                                      "workMode"
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "maxLength": 4000
+                                  },
+                                  "quote": {
+                                    "type": "string",
+                                    "maxLength": 4000
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "value",
+                                  "quote"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "url",
+                            "retrievedAt",
+                            "text",
+                            "fields"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "revision": {
+                      "type": "integer",
+                      "exclusiveMinimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "updatedAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "title",
+                    "purpose",
+                    "documents",
+                    "selection",
+                    "offerSource",
+                    "id",
+                    "revision",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                },
+                "latest": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "dossierId": {
+                          "type": "string",
+                          "format": "uuid",
+                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "snapshot": {
+                          "type": "object",
+                          "properties": {
+                            "tracking": {
+                              "type": "object",
+                              "properties": {
+                                "status": {
+                                  "type": "string",
+                                  "enum": [
+                                    "preparing",
+                                    "applied",
+                                    "interview",
+                                    "offer",
+                                    "closed"
+                                  ]
+                                },
+                                "notes": {
+                                  "type": "string",
+                                  "maxLength": 8000
+                                },
+                                "preparation": {
+                                  "type": "string",
+                                  "maxLength": 8000
+                                },
+                                "interview": {
+                                  "type": "string",
+                                  "maxLength": 8000
+                                }
+                              },
+                              "required": [
+                                "status",
+                                "notes",
+                                "preparation",
+                                "interview"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "title": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 120
+                            },
+                            "purpose": {
+                              "type": "string",
+                              "enum": [
+                                "job_search",
+                                "recruiting"
+                              ]
+                            },
+                            "documents": {
+                              "type": "object",
+                              "properties": {
+                                "reviewedJobQuotes": {
+                                  "maxItems": 128,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "maxLength": 16000
+                                  }
+                                },
+                                "clarifications": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                },
+                                "profile": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                },
+                                "job": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                },
+                                "preferences": {
+                                  "type": "object",
+                                  "properties": {
+                                    "minimumAnnualSalary": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer",
+                                          "exclusiveMinimum": 0,
+                                          "maximum": 1000000
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "workMode": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "onsite",
+                                            "hybrid",
+                                            "remote"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "remoteDaysPerWeek": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 4
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "minimumAnnualSalary",
+                                    "workMode",
+                                    "remoteDaysPerWeek"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "profile",
+                                "job",
+                                "preferences"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "selection": {
+                              "type": "object",
+                              "properties": {
+                                "provider": {
+                                  "type": "string",
+                                  "enum": [
+                                    "openai",
+                                    "anthropic"
+                                  ]
+                                },
+                                "model": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 120
+                                }
+                              },
+                              "required": [
+                                "provider",
+                                "model"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "offerSource": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "url": {
+                                      "type": "string",
+                                      "maxLength": 2048,
+                                      "format": "uri"
+                                    },
+                                    "retrievedAt": {
+                                      "type": "string",
+                                      "format": "date-time",
+                                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                    },
+                                    "text": {
+                                      "type": "string",
+                                      "maxLength": 16000
+                                    },
+                                    "fields": {
+                                      "maxItems": 40,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "name": {
+                                            "type": "string",
+                                            "enum": [
+                                              "title",
+                                              "company",
+                                              "location",
+                                              "responsibilities",
+                                              "skills",
+                                              "experience",
+                                              "requirements",
+                                              "contract",
+                                              "salary",
+                                              "workMode"
+                                            ]
+                                          },
+                                          "value": {
+                                            "type": "string",
+                                            "maxLength": 4000
+                                          },
+                                          "quote": {
+                                            "type": "string",
+                                            "maxLength": 4000
+                                          }
+                                        },
+                                        "required": [
+                                          "name",
+                                          "value",
+                                          "quote"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "url",
+                                    "retrievedAt",
+                                    "text",
+                                    "fields"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "id": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "revision": {
+                              "type": "integer",
+                              "exclusiveMinimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            "updatedAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "purpose",
+                            "documents",
+                            "selection",
+                            "offerSource",
+                            "id",
+                            "revision",
+                            "createdAt",
+                            "updatedAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "result": {
+                          "type": "object",
+                          "properties": {
+                            "analysis": {
+                              "type": "object",
+                              "properties": {
+                                "matches": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "clarificationQuote": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "subject": {
+                                        "type": "string"
+                                      },
+                                      "interpretation": {
+                                        "type": "object",
+                                        "properties": {
+                                          "describedPractice": {
+                                            "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "relation": {
+                                            "type": "string",
+                                            "enum": [
+                                              "equivalence",
+                                              "indirect_evidence",
+                                              "contradiction",
+                                              "insufficient_information"
+                                            ]
+                                          },
+                                          "justification": {
+                                            "type": "string",
+                                            "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                          }
+                                        },
+                                        "required": [
+                                          "describedPractice",
+                                          "relation",
+                                          "justification"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      "evidenceState": {
+                                        "type": "string",
+                                        "enum": [
+                                          "supported",
+                                          "contradicted",
+                                          "insufficient_information"
+                                        ]
+                                      },
+                                      "verification": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "code": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "UNVERIFIED_QUOTES",
+                                                  "MISSING_CANDIDATE_INFORMATION",
+                                                  "INCOMPARABLE_EXPERIENCE",
+                                                  "MISSING_REQUIREMENT_ANALYSIS"
+                                                ]
+                                              },
+                                              "missingQuotes": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "candidate",
+                                                    "job"
+                                                  ]
+                                                }
+                                              },
+                                              "proposedCandidateQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "proposedJobQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "code",
+                                              "missingQuotes",
+                                              "proposedCandidateQuote",
+                                              "proposedJobQuote"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "explanation": {
+                                        "type": "string"
+                                      },
+                                      "profileQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "preferencesQuote": {
+                                        "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "jobQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "subject",
+                                      "interpretation",
+                                      "evidenceState",
+                                      "verification",
+                                      "explanation",
+                                      "profileQuote",
+                                      "preferencesQuote",
+                                      "jobQuote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "gaps": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "clarificationQuote": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "subject": {
+                                        "type": "string"
+                                      },
+                                      "interpretation": {
+                                        "type": "object",
+                                        "properties": {
+                                          "describedPractice": {
+                                            "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "relation": {
+                                            "type": "string",
+                                            "enum": [
+                                              "equivalence",
+                                              "indirect_evidence",
+                                              "contradiction",
+                                              "insufficient_information"
+                                            ]
+                                          },
+                                          "justification": {
+                                            "type": "string",
+                                            "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                          }
+                                        },
+                                        "required": [
+                                          "describedPractice",
+                                          "relation",
+                                          "justification"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      "evidenceState": {
+                                        "type": "string",
+                                        "enum": [
+                                          "supported",
+                                          "contradicted",
+                                          "insufficient_information"
+                                        ]
+                                      },
+                                      "verification": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "code": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "UNVERIFIED_QUOTES",
+                                                  "MISSING_CANDIDATE_INFORMATION",
+                                                  "INCOMPARABLE_EXPERIENCE",
+                                                  "MISSING_REQUIREMENT_ANALYSIS"
+                                                ]
+                                              },
+                                              "missingQuotes": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "candidate",
+                                                    "job"
+                                                  ]
+                                                }
+                                              },
+                                              "proposedCandidateQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "proposedJobQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "code",
+                                              "missingQuotes",
+                                              "proposedCandidateQuote",
+                                              "proposedJobQuote"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "explanation": {
+                                        "type": "string"
+                                      },
+                                      "profileQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "preferencesQuote": {
+                                        "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "jobQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "subject",
+                                      "interpretation",
+                                      "evidenceState",
+                                      "verification",
+                                      "explanation",
+                                      "profileQuote",
+                                      "preferencesQuote",
+                                      "jobQuote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "unknowns": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "clarificationQuote": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "subject": {
+                                        "type": "string"
+                                      },
+                                      "interpretation": {
+                                        "type": "object",
+                                        "properties": {
+                                          "describedPractice": {
+                                            "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "relation": {
+                                            "type": "string",
+                                            "enum": [
+                                              "equivalence",
+                                              "indirect_evidence",
+                                              "contradiction",
+                                              "insufficient_information"
+                                            ]
+                                          },
+                                          "justification": {
+                                            "type": "string",
+                                            "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                          }
+                                        },
+                                        "required": [
+                                          "describedPractice",
+                                          "relation",
+                                          "justification"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      "evidenceState": {
+                                        "type": "string",
+                                        "enum": [
+                                          "supported",
+                                          "contradicted",
+                                          "insufficient_information"
+                                        ]
+                                      },
+                                      "verification": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "code": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "UNVERIFIED_QUOTES",
+                                                  "MISSING_CANDIDATE_INFORMATION",
+                                                  "INCOMPARABLE_EXPERIENCE",
+                                                  "MISSING_REQUIREMENT_ANALYSIS"
+                                                ]
+                                              },
+                                              "missingQuotes": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "candidate",
+                                                    "job"
+                                                  ]
+                                                }
+                                              },
+                                              "proposedCandidateQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "proposedJobQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "code",
+                                              "missingQuotes",
+                                              "proposedCandidateQuote",
+                                              "proposedJobQuote"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "explanation": {
+                                        "type": "string"
+                                      },
+                                      "profileQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "preferencesQuote": {
+                                        "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "jobQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "subject",
+                                      "interpretation",
+                                      "evidenceState",
+                                      "verification",
+                                      "explanation",
+                                      "profileQuote",
+                                      "preferencesQuote",
+                                      "jobQuote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "needsReview": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "clarificationQuote": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "subject": {
+                                        "type": "string"
+                                      },
+                                      "interpretation": {
+                                        "type": "object",
+                                        "properties": {
+                                          "describedPractice": {
+                                            "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                            "type": [
+                                              "string",
+                                              "null"
+                                            ]
+                                          },
+                                          "relation": {
+                                            "type": "string",
+                                            "enum": [
+                                              "equivalence",
+                                              "indirect_evidence",
+                                              "contradiction",
+                                              "insufficient_information"
+                                            ]
+                                          },
+                                          "justification": {
+                                            "type": "string",
+                                            "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                          }
+                                        },
+                                        "required": [
+                                          "describedPractice",
+                                          "relation",
+                                          "justification"
+                                        ],
+                                        "additionalProperties": false
+                                      },
+                                      "evidenceState": {
+                                        "type": "string",
+                                        "enum": [
+                                          "supported",
+                                          "contradicted",
+                                          "insufficient_information"
+                                        ]
+                                      },
+                                      "verification": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "code": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "UNVERIFIED_QUOTES",
+                                                  "MISSING_CANDIDATE_INFORMATION",
+                                                  "INCOMPARABLE_EXPERIENCE",
+                                                  "MISSING_REQUIREMENT_ANALYSIS"
+                                                ]
+                                              },
+                                              "missingQuotes": {
+                                                "type": "array",
+                                                "items": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "candidate",
+                                                    "job"
+                                                  ]
+                                                }
+                                              },
+                                              "proposedCandidateQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              },
+                                              "proposedJobQuote": {
+                                                "type": [
+                                                  "string",
+                                                  "null"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "code",
+                                              "missingQuotes",
+                                              "proposedCandidateQuote",
+                                              "proposedJobQuote"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "explanation": {
+                                        "type": "string"
+                                      },
+                                      "profileQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "preferencesQuote": {
+                                        "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "jobQuote": {
+                                        "description": "Citation exacte ou null si absente.",
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "subject",
+                                      "interpretation",
+                                      "evidenceState",
+                                      "verification",
+                                      "explanation",
+                                      "profileQuote",
+                                      "preferencesQuote",
+                                      "jobQuote"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                }
+                              },
+                              "required": [
+                                "matches",
+                                "gaps",
+                                "unknowns",
+                                "needsReview"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "metadata": {
+                              "type": "object",
+                              "properties": {
+                                "preparationVersion": {
+                                  "type": "string"
+                                },
+                                "contextPassages": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "quote": {
+                                        "type": "string"
+                                      },
+                                      "reason": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "required": [
+                                      "quote",
+                                      "reason"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                },
+                                "provider": {
+                                  "type": "string",
+                                  "enum": [
+                                    "openai",
+                                    "anthropic"
+                                  ]
+                                },
+                                "responseId": {
+                                  "type": "string"
+                                },
+                                "model": {
+                                  "type": "string"
+                                },
+                                "durationMs": {
+                                  "type": "number"
+                                },
+                                "inputTokens": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "outputTokens": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "promptVersion": {
+                                  "type": "string"
+                                },
+                                "schemaVersion": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "responseId",
+                                "model",
+                                "durationMs",
+                                "inputTokens",
+                                "outputTokens"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "analysis",
+                            "metadata"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "dossierId",
+                        "createdAt",
+                        "snapshot",
+                        "result"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "dossier",
+                "latest"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "purpose",
+          "createdAt",
+          "members"
+        ],
+        "additionalProperties": false
+      },
+      "CampaignInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "baseId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "baseRevision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "members": {
+            "minItems": 2,
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 120
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 16000
+                }
+              },
+              "required": [
+                "title",
+                "text"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "title",
+          "baseId",
+          "baseRevision",
+          "members"
+        ],
+        "additionalProperties": false
+      },
+      "CampaignPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "purpose": {
+                  "type": "string",
+                  "enum": [
+                    "job_search",
+                    "recruiting"
+                  ]
+                },
+                "createdAt": {
+                  "type": "string",
+                  "format": "date-time",
+                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "purpose",
+                "createdAt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "additionalProperties": false
+      },
+      "AnalysisJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "dossierId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running",
+              "cancelled",
+              "interrupted",
+              "failed",
+              "completed"
+            ]
+          },
+          "progress": {
+            "type": "object",
+            "properties": {
+              "stage": {
+                "type": "string",
+                "enum": [
+                  "preparation",
+                  "comparison",
+                  "saving"
+                ]
+              },
+              "completed": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "stage",
+              "completed",
+              "total"
+            ],
+            "additionalProperties": false
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+          },
+          "attempt": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "dossierId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                  },
+                  "snapshot": {
+                    "type": "object",
+                    "properties": {
+                      "tracking": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "preparing",
+                              "applied",
+                              "interview",
+                              "offer",
+                              "closed"
+                            ]
+                          },
+                          "notes": {
+                            "type": "string",
+                            "maxLength": 8000
+                          },
+                          "preparation": {
+                            "type": "string",
+                            "maxLength": 8000
+                          },
+                          "interview": {
+                            "type": "string",
+                            "maxLength": 8000
+                          }
+                        },
+                        "required": [
+                          "status",
+                          "notes",
+                          "preparation",
+                          "interview"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "title": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 120
+                      },
+                      "purpose": {
+                        "type": "string",
+                        "enum": [
+                          "job_search",
+                          "recruiting"
+                        ]
+                      },
+                      "documents": {
+                        "type": "object",
+                        "properties": {
+                          "reviewedJobQuotes": {
+                            "maxItems": 128,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "maxLength": 16000
+                            }
+                          },
+                          "clarifications": {
+                            "type": "string",
+                            "maxLength": 16000
+                          },
+                          "profile": {
+                            "type": "string",
+                            "maxLength": 16000
+                          },
+                          "job": {
+                            "type": "string",
+                            "maxLength": 16000
+                          },
+                          "preferences": {
+                            "type": "object",
+                            "properties": {
+                              "minimumAnnualSalary": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "exclusiveMinimum": 0,
+                                    "maximum": 1000000
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "workMode": {
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "onsite",
+                                      "hybrid",
+                                      "remote"
+                                    ]
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "remoteDaysPerWeek": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer",
+                                    "minimum": 1,
+                                    "maximum": 4
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "minimumAnnualSalary",
+                              "workMode",
+                              "remoteDaysPerWeek"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "profile",
+                          "job",
+                          "preferences"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "selection": {
+                        "type": "object",
+                        "properties": {
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "openai",
+                              "anthropic"
+                            ]
+                          },
+                          "model": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          }
+                        },
+                        "required": [
+                          "provider",
+                          "model"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "offerSource": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "url": {
+                                "type": "string",
+                                "maxLength": 2048,
+                                "format": "uri"
+                              },
+                              "retrievedAt": {
+                                "type": "string",
+                                "format": "date-time",
+                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                              },
+                              "text": {
+                                "type": "string",
+                                "maxLength": 16000
+                              },
+                              "fields": {
+                                "maxItems": 40,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "enum": [
+                                        "title",
+                                        "company",
+                                        "location",
+                                        "responsibilities",
+                                        "skills",
+                                        "experience",
+                                        "requirements",
+                                        "contract",
+                                        "salary",
+                                        "workMode"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "maxLength": 4000
+                                    },
+                                    "quote": {
+                                      "type": "string",
+                                      "maxLength": 4000
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "value",
+                                    "quote"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "url",
+                              "retrievedAt",
+                              "text",
+                              "fields"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "revision": {
+                        "type": "integer",
+                        "exclusiveMinimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "updatedAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "purpose",
+                      "documents",
+                      "selection",
+                      "offerSource",
+                      "id",
+                      "revision",
+                      "createdAt",
+                      "updatedAt"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "result": {
+                    "type": "object",
+                    "properties": {
+                      "analysis": {
+                        "type": "object",
+                        "properties": {
+                          "matches": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "clarificationQuote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "subject": {
+                                  "type": "string"
+                                },
+                                "interpretation": {
+                                  "type": "object",
+                                  "properties": {
+                                    "describedPractice": {
+                                      "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "relation": {
+                                      "type": "string",
+                                      "enum": [
+                                        "equivalence",
+                                        "indirect_evidence",
+                                        "contradiction",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "justification": {
+                                      "type": "string",
+                                      "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                    }
+                                  },
+                                  "required": [
+                                    "describedPractice",
+                                    "relation",
+                                    "justification"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "evidenceState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "supported",
+                                    "contradicted",
+                                    "insufficient_information"
+                                  ]
+                                },
+                                "verification": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "code": {
+                                          "type": "string",
+                                          "enum": [
+                                            "UNVERIFIED_QUOTES",
+                                            "MISSING_CANDIDATE_INFORMATION",
+                                            "INCOMPARABLE_EXPERIENCE",
+                                            "MISSING_REQUIREMENT_ANALYSIS"
+                                          ]
+                                        },
+                                        "missingQuotes": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string",
+                                            "enum": [
+                                              "candidate",
+                                              "job"
+                                            ]
+                                          }
+                                        },
+                                        "proposedCandidateQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "proposedJobQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "code",
+                                        "missingQuotes",
+                                        "proposedCandidateQuote",
+                                        "proposedJobQuote"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "profileQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "preferencesQuote": {
+                                  "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "jobQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "subject",
+                                "interpretation",
+                                "evidenceState",
+                                "verification",
+                                "explanation",
+                                "profileQuote",
+                                "preferencesQuote",
+                                "jobQuote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "gaps": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "clarificationQuote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "subject": {
+                                  "type": "string"
+                                },
+                                "interpretation": {
+                                  "type": "object",
+                                  "properties": {
+                                    "describedPractice": {
+                                      "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "relation": {
+                                      "type": "string",
+                                      "enum": [
+                                        "equivalence",
+                                        "indirect_evidence",
+                                        "contradiction",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "justification": {
+                                      "type": "string",
+                                      "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                    }
+                                  },
+                                  "required": [
+                                    "describedPractice",
+                                    "relation",
+                                    "justification"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "evidenceState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "supported",
+                                    "contradicted",
+                                    "insufficient_information"
+                                  ]
+                                },
+                                "verification": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "code": {
+                                          "type": "string",
+                                          "enum": [
+                                            "UNVERIFIED_QUOTES",
+                                            "MISSING_CANDIDATE_INFORMATION",
+                                            "INCOMPARABLE_EXPERIENCE",
+                                            "MISSING_REQUIREMENT_ANALYSIS"
+                                          ]
+                                        },
+                                        "missingQuotes": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string",
+                                            "enum": [
+                                              "candidate",
+                                              "job"
+                                            ]
+                                          }
+                                        },
+                                        "proposedCandidateQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "proposedJobQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "code",
+                                        "missingQuotes",
+                                        "proposedCandidateQuote",
+                                        "proposedJobQuote"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "profileQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "preferencesQuote": {
+                                  "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "jobQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "subject",
+                                "interpretation",
+                                "evidenceState",
+                                "verification",
+                                "explanation",
+                                "profileQuote",
+                                "preferencesQuote",
+                                "jobQuote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "unknowns": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "clarificationQuote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "subject": {
+                                  "type": "string"
+                                },
+                                "interpretation": {
+                                  "type": "object",
+                                  "properties": {
+                                    "describedPractice": {
+                                      "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "relation": {
+                                      "type": "string",
+                                      "enum": [
+                                        "equivalence",
+                                        "indirect_evidence",
+                                        "contradiction",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "justification": {
+                                      "type": "string",
+                                      "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                    }
+                                  },
+                                  "required": [
+                                    "describedPractice",
+                                    "relation",
+                                    "justification"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "evidenceState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "supported",
+                                    "contradicted",
+                                    "insufficient_information"
+                                  ]
+                                },
+                                "verification": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "code": {
+                                          "type": "string",
+                                          "enum": [
+                                            "UNVERIFIED_QUOTES",
+                                            "MISSING_CANDIDATE_INFORMATION",
+                                            "INCOMPARABLE_EXPERIENCE",
+                                            "MISSING_REQUIREMENT_ANALYSIS"
+                                          ]
+                                        },
+                                        "missingQuotes": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string",
+                                            "enum": [
+                                              "candidate",
+                                              "job"
+                                            ]
+                                          }
+                                        },
+                                        "proposedCandidateQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "proposedJobQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "code",
+                                        "missingQuotes",
+                                        "proposedCandidateQuote",
+                                        "proposedJobQuote"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "profileQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "preferencesQuote": {
+                                  "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "jobQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "subject",
+                                "interpretation",
+                                "evidenceState",
+                                "verification",
+                                "explanation",
+                                "profileQuote",
+                                "preferencesQuote",
+                                "jobQuote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "needsReview": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "clarificationQuote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "subject": {
+                                  "type": "string"
+                                },
+                                "interpretation": {
+                                  "type": "object",
+                                  "properties": {
+                                    "describedPractice": {
+                                      "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "relation": {
+                                      "type": "string",
+                                      "enum": [
+                                        "equivalence",
+                                        "indirect_evidence",
+                                        "contradiction",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "justification": {
+                                      "type": "string",
+                                      "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                    }
+                                  },
+                                  "required": [
+                                    "describedPractice",
+                                    "relation",
+                                    "justification"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "evidenceState": {
+                                  "type": "string",
+                                  "enum": [
+                                    "supported",
+                                    "contradicted",
+                                    "insufficient_information"
+                                  ]
+                                },
+                                "verification": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "code": {
+                                          "type": "string",
+                                          "enum": [
+                                            "UNVERIFIED_QUOTES",
+                                            "MISSING_CANDIDATE_INFORMATION",
+                                            "INCOMPARABLE_EXPERIENCE",
+                                            "MISSING_REQUIREMENT_ANALYSIS"
+                                          ]
+                                        },
+                                        "missingQuotes": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string",
+                                            "enum": [
+                                              "candidate",
+                                              "job"
+                                            ]
+                                          }
+                                        },
+                                        "proposedCandidateQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "proposedJobQuote": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "code",
+                                        "missingQuotes",
+                                        "proposedCandidateQuote",
+                                        "proposedJobQuote"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "profileQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "preferencesQuote": {
+                                  "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "jobQuote": {
+                                  "description": "Citation exacte ou null si absente.",
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "subject",
+                                "interpretation",
+                                "evidenceState",
+                                "verification",
+                                "explanation",
+                                "profileQuote",
+                                "preferencesQuote",
+                                "jobQuote"
+                              ],
+                              "additionalProperties": false
+                            }
+                          }
+                        },
+                        "required": [
+                          "matches",
+                          "gaps",
+                          "unknowns",
+                          "needsReview"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "metadata": {
+                        "type": "object",
+                        "properties": {
+                          "preparationVersion": {
+                            "type": "string"
+                          },
+                          "contextPassages": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "quote": {
+                                  "type": "string"
+                                },
+                                "reason": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "quote",
+                                "reason"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "provider": {
+                            "type": "string",
+                            "enum": [
+                              "openai",
+                              "anthropic"
+                            ]
+                          },
+                          "responseId": {
+                            "type": "string"
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "durationMs": {
+                            "type": "number"
+                          },
+                          "inputTokens": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "outputTokens": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
+                          },
+                          "promptVersion": {
+                            "type": "string"
+                          },
+                          "schemaVersion": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "responseId",
+                          "model",
+                          "durationMs",
+                          "inputTokens",
+                          "outputTokens"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "analysis",
+                      "metadata"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "dossierId",
+                  "createdAt",
+                  "snapshot",
+                  "result"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "dossierId",
+          "revision",
+          "status",
+          "progress",
+          "createdAt",
+          "updatedAt",
+          "attempt",
+          "error",
+          "result"
+        ],
+        "additionalProperties": false
+      },
+      "NullableAnalysisJob": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "dossierId": {
+                "type": "string",
+                "format": "uuid",
+                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+              },
+              "revision": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "running",
+                  "cancelled",
+                  "interrupted",
+                  "failed",
+                  "completed"
+                ]
+              },
+              "progress": {
+                "type": "object",
+                "properties": {
+                  "stage": {
+                    "type": "string",
+                    "enum": [
+                      "preparation",
+                      "comparison",
+                      "saving"
+                    ]
+                  },
+                  "completed": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "total": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 9007199254740991
+                  }
+                },
+                "required": [
+                  "stage",
+                  "completed",
+                  "total"
+                ],
+                "additionalProperties": false
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+              },
+              "attempt": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              "error": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "result": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "dossierId": {
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                      },
+                      "createdAt": {
+                        "type": "string",
+                        "format": "date-time",
+                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                      },
+                      "snapshot": {
+                        "type": "object",
+                        "properties": {
+                          "tracking": {
+                            "type": "object",
+                            "properties": {
+                              "status": {
+                                "type": "string",
+                                "enum": [
+                                  "preparing",
+                                  "applied",
+                                  "interview",
+                                  "offer",
+                                  "closed"
+                                ]
+                              },
+                              "notes": {
+                                "type": "string",
+                                "maxLength": 8000
+                              },
+                              "preparation": {
+                                "type": "string",
+                                "maxLength": 8000
+                              },
+                              "interview": {
+                                "type": "string",
+                                "maxLength": 8000
+                              }
+                            },
+                            "required": [
+                              "status",
+                              "notes",
+                              "preparation",
+                              "interview"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "title": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "purpose": {
+                            "type": "string",
+                            "enum": [
+                              "job_search",
+                              "recruiting"
+                            ]
+                          },
+                          "documents": {
+                            "type": "object",
+                            "properties": {
+                              "reviewedJobQuotes": {
+                                "maxItems": 128,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "maxLength": 16000
+                                }
+                              },
+                              "clarifications": {
+                                "type": "string",
+                                "maxLength": 16000
+                              },
+                              "profile": {
+                                "type": "string",
+                                "maxLength": 16000
+                              },
+                              "job": {
+                                "type": "string",
+                                "maxLength": 16000
+                              },
+                              "preferences": {
+                                "type": "object",
+                                "properties": {
+                                  "minimumAnnualSalary": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "exclusiveMinimum": 0,
+                                        "maximum": 1000000
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "workMode": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "enum": [
+                                          "onsite",
+                                          "hybrid",
+                                          "remote"
+                                        ]
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "remoteDaysPerWeek": {
+                                    "anyOf": [
+                                      {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 4
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "minimumAnnualSalary",
+                                  "workMode",
+                                  "remoteDaysPerWeek"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "profile",
+                              "job",
+                              "preferences"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "selection": {
+                            "type": "object",
+                            "properties": {
+                              "provider": {
+                                "type": "string",
+                                "enum": [
+                                  "openai",
+                                  "anthropic"
+                                ]
+                              },
+                              "model": {
+                                "type": "string",
+                                "minLength": 1,
+                                "maxLength": 120
+                              }
+                            },
+                            "required": [
+                              "provider",
+                              "model"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "offerSource": {
+                            "anyOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "url": {
+                                    "type": "string",
+                                    "maxLength": 2048,
+                                    "format": "uri"
+                                  },
+                                  "retrievedAt": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  },
+                                  "text": {
+                                    "type": "string",
+                                    "maxLength": 16000
+                                  },
+                                  "fields": {
+                                    "maxItems": 40,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "enum": [
+                                            "title",
+                                            "company",
+                                            "location",
+                                            "responsibilities",
+                                            "skills",
+                                            "experience",
+                                            "requirements",
+                                            "contract",
+                                            "salary",
+                                            "workMode"
+                                          ]
+                                        },
+                                        "value": {
+                                          "type": "string",
+                                          "maxLength": 4000
+                                        },
+                                        "quote": {
+                                          "type": "string",
+                                          "maxLength": 4000
+                                        }
+                                      },
+                                      "required": [
+                                        "name",
+                                        "value",
+                                        "quote"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "url",
+                                  "retrievedAt",
+                                  "text",
+                                  "fields"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "revision": {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "purpose",
+                          "documents",
+                          "selection",
+                          "offerSource",
+                          "id",
+                          "revision",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      },
+                      "result": {
+                        "type": "object",
+                        "properties": {
+                          "analysis": {
+                            "type": "object",
+                            "properties": {
+                              "matches": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "clarificationQuote": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "subject": {
+                                      "type": "string"
+                                    },
+                                    "interpretation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "describedPractice": {
+                                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "relation": {
+                                          "type": "string",
+                                          "enum": [
+                                            "equivalence",
+                                            "indirect_evidence",
+                                            "contradiction",
+                                            "insufficient_information"
+                                          ]
+                                        },
+                                        "justification": {
+                                          "type": "string",
+                                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                        }
+                                      },
+                                      "required": [
+                                        "describedPractice",
+                                        "relation",
+                                        "justification"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "evidenceState": {
+                                      "type": "string",
+                                      "enum": [
+                                        "supported",
+                                        "contradicted",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "verification": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "code": {
+                                              "type": "string",
+                                              "enum": [
+                                                "UNVERIFIED_QUOTES",
+                                                "MISSING_CANDIDATE_INFORMATION",
+                                                "INCOMPARABLE_EXPERIENCE",
+                                                "MISSING_REQUIREMENT_ANALYSIS"
+                                              ]
+                                            },
+                                            "missingQuotes": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "candidate",
+                                                  "job"
+                                                ]
+                                              }
+                                            },
+                                            "proposedCandidateQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            },
+                                            "proposedJobQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "code",
+                                            "missingQuotes",
+                                            "proposedCandidateQuote",
+                                            "proposedJobQuote"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "explanation": {
+                                      "type": "string"
+                                    },
+                                    "profileQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "preferencesQuote": {
+                                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "jobQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "subject",
+                                    "interpretation",
+                                    "evidenceState",
+                                    "verification",
+                                    "explanation",
+                                    "profileQuote",
+                                    "preferencesQuote",
+                                    "jobQuote"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "gaps": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "clarificationQuote": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "subject": {
+                                      "type": "string"
+                                    },
+                                    "interpretation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "describedPractice": {
+                                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "relation": {
+                                          "type": "string",
+                                          "enum": [
+                                            "equivalence",
+                                            "indirect_evidence",
+                                            "contradiction",
+                                            "insufficient_information"
+                                          ]
+                                        },
+                                        "justification": {
+                                          "type": "string",
+                                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                        }
+                                      },
+                                      "required": [
+                                        "describedPractice",
+                                        "relation",
+                                        "justification"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "evidenceState": {
+                                      "type": "string",
+                                      "enum": [
+                                        "supported",
+                                        "contradicted",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "verification": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "code": {
+                                              "type": "string",
+                                              "enum": [
+                                                "UNVERIFIED_QUOTES",
+                                                "MISSING_CANDIDATE_INFORMATION",
+                                                "INCOMPARABLE_EXPERIENCE",
+                                                "MISSING_REQUIREMENT_ANALYSIS"
+                                              ]
+                                            },
+                                            "missingQuotes": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "candidate",
+                                                  "job"
+                                                ]
+                                              }
+                                            },
+                                            "proposedCandidateQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            },
+                                            "proposedJobQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "code",
+                                            "missingQuotes",
+                                            "proposedCandidateQuote",
+                                            "proposedJobQuote"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "explanation": {
+                                      "type": "string"
+                                    },
+                                    "profileQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "preferencesQuote": {
+                                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "jobQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "subject",
+                                    "interpretation",
+                                    "evidenceState",
+                                    "verification",
+                                    "explanation",
+                                    "profileQuote",
+                                    "preferencesQuote",
+                                    "jobQuote"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "unknowns": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "clarificationQuote": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "subject": {
+                                      "type": "string"
+                                    },
+                                    "interpretation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "describedPractice": {
+                                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "relation": {
+                                          "type": "string",
+                                          "enum": [
+                                            "equivalence",
+                                            "indirect_evidence",
+                                            "contradiction",
+                                            "insufficient_information"
+                                          ]
+                                        },
+                                        "justification": {
+                                          "type": "string",
+                                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                        }
+                                      },
+                                      "required": [
+                                        "describedPractice",
+                                        "relation",
+                                        "justification"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "evidenceState": {
+                                      "type": "string",
+                                      "enum": [
+                                        "supported",
+                                        "contradicted",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "verification": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "code": {
+                                              "type": "string",
+                                              "enum": [
+                                                "UNVERIFIED_QUOTES",
+                                                "MISSING_CANDIDATE_INFORMATION",
+                                                "INCOMPARABLE_EXPERIENCE",
+                                                "MISSING_REQUIREMENT_ANALYSIS"
+                                              ]
+                                            },
+                                            "missingQuotes": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "candidate",
+                                                  "job"
+                                                ]
+                                              }
+                                            },
+                                            "proposedCandidateQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            },
+                                            "proposedJobQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "code",
+                                            "missingQuotes",
+                                            "proposedCandidateQuote",
+                                            "proposedJobQuote"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "explanation": {
+                                      "type": "string"
+                                    },
+                                    "profileQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "preferencesQuote": {
+                                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "jobQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "subject",
+                                    "interpretation",
+                                    "evidenceState",
+                                    "verification",
+                                    "explanation",
+                                    "profileQuote",
+                                    "preferencesQuote",
+                                    "jobQuote"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "needsReview": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "clarificationQuote": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "subject": {
+                                      "type": "string"
+                                    },
+                                    "interpretation": {
+                                      "type": "object",
+                                      "properties": {
+                                        "describedPractice": {
+                                          "description": "Pratique réellement décrite dans la source, sans inventer d'expérience.",
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "relation": {
+                                          "type": "string",
+                                          "enum": [
+                                            "equivalence",
+                                            "indirect_evidence",
+                                            "contradiction",
+                                            "insufficient_information"
+                                          ]
+                                        },
+                                        "justification": {
+                                          "type": "string",
+                                          "description": "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte."
+                                        }
+                                      },
+                                      "required": [
+                                        "describedPractice",
+                                        "relation",
+                                        "justification"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "evidenceState": {
+                                      "type": "string",
+                                      "enum": [
+                                        "supported",
+                                        "contradicted",
+                                        "insufficient_information"
+                                      ]
+                                    },
+                                    "verification": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "code": {
+                                              "type": "string",
+                                              "enum": [
+                                                "UNVERIFIED_QUOTES",
+                                                "MISSING_CANDIDATE_INFORMATION",
+                                                "INCOMPARABLE_EXPERIENCE",
+                                                "MISSING_REQUIREMENT_ANALYSIS"
+                                              ]
+                                            },
+                                            "missingQuotes": {
+                                              "type": "array",
+                                              "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "candidate",
+                                                  "job"
+                                                ]
+                                              }
+                                            },
+                                            "proposedCandidateQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            },
+                                            "proposedJobQuote": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "code",
+                                            "missingQuotes",
+                                            "proposedCandidateQuote",
+                                            "proposedJobQuote"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "explanation": {
+                                      "type": "string"
+                                    },
+                                    "profileQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "preferencesQuote": {
+                                      "description": "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "jobQuote": {
+                                      "description": "Citation exacte ou null si absente.",
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "subject",
+                                    "interpretation",
+                                    "evidenceState",
+                                    "verification",
+                                    "explanation",
+                                    "profileQuote",
+                                    "preferencesQuote",
+                                    "jobQuote"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "matches",
+                              "gaps",
+                              "unknowns",
+                              "needsReview"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "properties": {
+                              "preparationVersion": {
+                                "type": "string"
+                              },
+                              "contextPassages": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "quote": {
+                                      "type": "string"
+                                    },
+                                    "reason": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "quote",
+                                    "reason"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "provider": {
+                                "type": "string",
+                                "enum": [
+                                  "openai",
+                                  "anthropic"
+                                ]
+                              },
+                              "responseId": {
+                                "type": "string"
+                              },
+                              "model": {
+                                "type": "string"
+                              },
+                              "durationMs": {
+                                "type": "number"
+                              },
+                              "inputTokens": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "outputTokens": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "promptVersion": {
+                                "type": "string"
+                              },
+                              "schemaVersion": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "responseId",
+                              "model",
+                              "durationMs",
+                              "inputTokens",
+                              "outputTokens"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "required": [
+                          "analysis",
+                          "metadata"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "dossierId",
+                      "createdAt",
+                      "snapshot",
+                      "result"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "dossierId",
+              "revision",
+              "status",
+              "progress",
+              "createdAt",
+              "updatedAt",
+              "attempt",
+              "error",
+              "result"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "JobStart": {
+        "type": "object",
+        "properties": {
+          "dossierId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "revision": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "dossierId",
+          "revision"
+        ],
+        "additionalProperties": false
+      },
+      "JobResume": {
+        "type": "object",
+        "properties": {
+          "attempt": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "attempt"
+        ],
+        "additionalProperties": false
+      },
       "Backup": {
         "type": "object",
         "properties": {
@@ -846,6 +4736,40 @@
           "dossier": {
             "type": "object",
             "properties": {
+              "tracking": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "preparing",
+                      "applied",
+                      "interview",
+                      "offer",
+                      "closed"
+                    ]
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 8000
+                  },
+                  "preparation": {
+                    "type": "string",
+                    "maxLength": 8000
+                  },
+                  "interview": {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                },
+                "required": [
+                  "status",
+                  "notes",
+                  "preparation",
+                  "interview"
+                ],
+                "additionalProperties": false
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -1090,6 +5014,40 @@
                 "snapshot": {
                   "type": "object",
                   "properties": {
+                    "tracking": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "preparing",
+                            "applied",
+                            "interview",
+                            "offer",
+                            "closed"
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "preparation": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "interview": {
+                          "type": "string",
+                          "maxLength": 8000
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "notes",
+                        "preparation",
+                        "interview"
+                      ],
+                      "additionalProperties": false
+                    },
                     "title": {
                       "type": "string",
                       "minLength": 1,
@@ -2101,6 +6059,40 @@
       "Dossier": {
         "type": "object",
         "properties": {
+          "tracking": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "preparing",
+                  "applied",
+                  "interview",
+                  "offer",
+                  "closed"
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 8000
+              },
+              "preparation": {
+                "type": "string",
+                "maxLength": 8000
+              },
+              "interview": {
+                "type": "string",
+                "maxLength": 8000
+              }
+            },
+            "required": [
+              "status",
+              "notes",
+              "preparation",
+              "interview"
+            ],
+            "additionalProperties": false
+          },
           "title": {
             "type": "string",
             "minLength": 1,
@@ -2324,6 +6316,40 @@
       "DossierDraft": {
         "type": "object",
         "properties": {
+          "tracking": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "preparing",
+                  "applied",
+                  "interview",
+                  "offer",
+                  "closed"
+                ]
+              },
+              "notes": {
+                "type": "string",
+                "maxLength": 8000
+              },
+              "preparation": {
+                "type": "string",
+                "maxLength": 8000
+              },
+              "interview": {
+                "type": "string",
+                "maxLength": 8000
+              }
+            },
+            "required": [
+              "status",
+              "notes",
+              "preparation",
+              "interview"
+            ],
+            "additionalProperties": false
+          },
           "title": {
             "type": "string",
             "minLength": 1,
@@ -2526,6 +6552,40 @@
           "draft": {
             "type": "object",
             "properties": {
+              "tracking": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "preparing",
+                      "applied",
+                      "interview",
+                      "offer",
+                      "closed"
+                    ]
+                  },
+                  "notes": {
+                    "type": "string",
+                    "maxLength": 8000
+                  },
+                  "preparation": {
+                    "type": "string",
+                    "maxLength": 8000
+                  },
+                  "interview": {
+                    "type": "string",
+                    "maxLength": 8000
+                  }
+                },
+                "required": [
+                  "status",
+                  "notes",
+                  "preparation",
+                  "interview"
+                ],
+                "additionalProperties": false
+              },
               "title": {
                 "type": "string",
                 "minLength": 1,
@@ -2836,6 +6896,40 @@
                 "snapshot": {
                   "type": "object",
                   "properties": {
+                    "tracking": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "preparing",
+                            "applied",
+                            "interview",
+                            "offer",
+                            "closed"
+                          ]
+                        },
+                        "notes": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "preparation": {
+                          "type": "string",
+                          "maxLength": 8000
+                        },
+                        "interview": {
+                          "type": "string",
+                          "maxLength": 8000
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "notes",
+                        "preparation",
+                        "interview"
+                      ],
+                      "additionalProperties": false
+                    },
                     "title": {
                       "type": "string",
                       "minLength": 1,
@@ -4818,6 +8912,9 @@
             }
           },
           "dossiersEnabled": {
+            "type": "boolean"
+          },
+          "workflowsEnabled": {
             "type": "boolean"
           }
         },

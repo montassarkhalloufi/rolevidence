@@ -165,6 +165,7 @@ export const Bootstrap = z.object({
   configured: z.boolean(),
   providers: z.array(ProviderOption).optional(),
   dossiersEnabled: z.boolean().optional(),
+  workflowsEnabled: z.boolean().optional(),
 });
 
 export type BootstrapData = z.infer<typeof Bootstrap>;

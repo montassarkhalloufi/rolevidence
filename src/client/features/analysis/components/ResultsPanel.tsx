@@ -82,7 +82,7 @@ export function ResultsPanel({
   }
 
   return (
-    <Card asChild>
+    <Card asChild className="@container/results">
       <section
         className="min-w-0"
         aria-labelledby={titleId}
@@ -211,7 +211,7 @@ function EvidenceReader({
   }
 
   return (
-    <div className="grid items-start gap-5 lg:grid-cols-[minmax(240px,1fr)_minmax(0,2fr)]">
+    <div className="grid items-start gap-5 @3xl/results:grid-cols-[minmax(240px,1fr)_minmax(0,2fr)]">
       <div
         aria-label={fr.filterResults}
         className="min-w-0 divide-y divide-border overflow-hidden rounded-md border border-border"

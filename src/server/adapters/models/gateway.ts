@@ -1,3 +1,4 @@
+import { checkpointInvoker } from "./checkpoint-invoker.ts";
 import { createJobRelevance, RELEVANCE_VERSION } from "./job-relevance.ts";
 import type { ModelGateway } from "../../application/analyze.ts";
 import type { Selection } from "../../application/dossiers.ts";
@@ -10,10 +11,13 @@ export function createLangChainGateway(
   provider: Selection["provider"],
   invoke: StructuredModel,
 ): ModelGateway {
-  return async ({ documents, model }, signal) => {
+  return async ({ documents, model }, signal, execution) => {
+    const resumeInvoke = checkpointInvoker(invoke, execution, signal);
+
+    execution?.onProgress({ stage: "preparation", completed: 0, total: 1 });
     const catalog = createSourceCatalog(documents);
 
-    const relevance = await createJobRelevance(invoke)(
+    const relevance = await createJobRelevance(resumeInvoke)(
       catalog.job,
       { provider, model },
       signal,
@@ -31,11 +35,12 @@ export function createLangChainGateway(
     };
 
     const comparison = await compareComplete(
-      invoke,
+      resumeInvoke,
       documents,
       selectedCatalog,
       { provider, model },
       signal,
+      execution?.onProgress,
     );
 
     const stages = [relevance.metadata, ...comparison.metadata];

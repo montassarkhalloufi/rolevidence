@@ -1,3 +1,4 @@
+import type { AnalysisExecution } from "./execution.ts";
 import type {
   DocumentsInput,
   ExtractionResult,
@@ -28,6 +29,7 @@ export type AnalysisRequest = { documents: DocumentsInput; model: string };
 export type ModelGateway = (
   request: AnalysisRequest,
   signal?: AbortSignal,
+  execution?: AnalysisExecution,
 ) => Promise<{ extraction: ExtractionResult; metadata: ModelMetadata }>;
 
 export type RequestPreview = (
@@ -47,10 +49,12 @@ export function createAnalysisService(
     analyze: async (
       documents: DocumentsInput,
       signal?: AbortSignal,
+      execution?: AnalysisExecution,
     ): Promise<AnalysisOutput> => {
       const { extraction, metadata } = await gateway(
         { documents, model },
         signal,
+        execution,
       );
 
       return {

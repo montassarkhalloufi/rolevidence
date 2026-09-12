@@ -17,7 +17,7 @@ export function DossierHistory({
   generation,
 }: {
   id: string;
-  generation: number;
+  generation: number | string;
 }) {
   const [offset, setOffset] = useState(0);
 

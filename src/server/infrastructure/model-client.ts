@@ -85,7 +85,14 @@ export function createStructuredModel(
   keys: ModelKeys,
   transport: typeof fetch = fetch,
 ): StructuredModel {
+  let pending = false;
+
   return async (request, signal) => {
+    if (pending) {
+      throw new AppError("BUSY", "Un appel au fournisseur est déjà en cours.");
+    }
+
+    pending = true;
     const started = performance.now();
 
     const timeout = AbortSignal.timeout(MODEL_TIMEOUT_MS);
@@ -105,6 +112,8 @@ export function createStructuredModel(
       return modelResult(request, response, started);
     } catch (error) {
       throw safeModelError(error, bounded);
+    } finally {
+      pending = false;
     }
   };
 }

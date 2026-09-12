@@ -1,4 +1,12 @@
 import {
+  Campaign,
+  CampaignInput,
+  CampaignPage,
+  AnalysisJob,
+  JobStart,
+  JobResume,
+} from "../src/shared/workflows.ts";
+import {
   Backup,
   Dossier,
   DossierDraft,
@@ -61,12 +69,116 @@ const contract = {
   openapi: "3.1.0",
   info: {
     title: "Rolevidence local API",
-    version: "1.2.0",
+    version: "1.3.0",
     description:
       "Single-user localhost API. Not authenticated or suitable for public exposure.",
   },
   servers: [{ url: "http://127.0.0.1:3001" }],
   paths: {
+    "/api/v1/campaigns": {
+      get: {
+        parameters: [
+          {
+            in: "query",
+            name: "offset",
+            schema: {
+              type: "integer",
+              minimum: 0,
+              maximum: 100000,
+              default: 0,
+            },
+          },
+        ],
+        responses: { 200: response("CampaignPage"), default: problem },
+      },
+    },
+    "/api/v1/campaigns/{id}": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      get: { responses: { 200: response("Campaign"), default: problem } },
+      put: {
+        parameters: headers,
+        requestBody: { required: true, content: json("CampaignInput") },
+        responses: { 201: response("Campaign"), default: problem },
+      },
+      delete: {
+        parameters: headers,
+        responses: { 200: response("Deleted"), default: problem },
+      },
+    },
+    "/api/v1/analysis-jobs/{id}": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      get: { responses: { 200: response("AnalysisJob"), default: problem } },
+      put: {
+        parameters: headers,
+        requestBody: { required: true, content: json("JobStart") },
+        responses: {
+          200: response("AnalysisJob"),
+          202: {
+            ...response("AnalysisJob"),
+            description:
+              "Accepted; poll the job resource. Never automatically resumed.",
+          },
+          default: problem,
+        },
+      },
+    },
+    "/api/v1/analysis-jobs/{id}/cancel": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      post: {
+        parameters: headers,
+        requestBody: { required: true, content: json("JobResume") },
+        responses: { 200: response("AnalysisJob"), default: problem },
+      },
+    },
+    "/api/v1/analysis-jobs/{id}/resume": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      post: {
+        parameters: headers,
+        requestBody: { required: true, content: json("JobResume") },
+        responses: { 202: response("AnalysisJob"), default: problem },
+      },
+    },
+    "/api/v1/dossiers/{id}/latest-job": {
+      parameters: [
+        {
+          in: "path",
+          name: "id",
+          required: true,
+          schema: { type: "string", format: "uuid" },
+        },
+      ],
+      get: {
+        responses: { 200: response("NullableAnalysisJob"), default: problem },
+      },
+    },
     "/api/v1/dossiers/{id}/backup": {
       get: {
         parameters: [
@@ -292,6 +404,13 @@ const contract = {
   },
   components: {
     schemas: {
+      Campaign: schema(Campaign),
+      CampaignInput: schema(CampaignInput),
+      CampaignPage: schema(CampaignPage),
+      AnalysisJob: schema(AnalysisJob),
+      NullableAnalysisJob: schema(AnalysisJob.nullable()),
+      JobStart: schema(JobStart),
+      JobResume: schema(JobResume),
       Backup: schema(Backup),
       AnalysisInput: schema(AnalysisInput),
       Dossier: schema(Dossier),

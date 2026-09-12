@@ -1,3 +1,6 @@
+import { CampaignCreate } from "../workflows/CampaignCreate.tsx";
+import { TrackingForm } from "../workflows/TrackingForm.tsx";
+import { JobProgress } from "../workflows/JobProgress.tsx";
 import { useSavedAnalysis } from "./useSavedAnalysis.ts";
 import { fr } from "../../shared/i18n/fr.ts";
 import { WorkflowStatus } from "./WorkflowStatus.tsx";
@@ -30,10 +33,12 @@ export function DossierWorkspace({
   id,
   bootstrap,
   onBack,
+  onCampaign,
 }: {
   id: string;
   bootstrap: BootstrapData;
   onBack: () => void;
+  onCampaign: (id: string) => void;
 }) {
   const dossier = useQuery({
     queryKey: ["dossier", id],
@@ -58,6 +63,7 @@ export function DossierWorkspace({
       initial={dossier.data}
       bootstrap={bootstrap}
       onBack={onBack}
+      onCampaign={onCampaign}
     />
   );
 }
@@ -66,14 +72,19 @@ function DossierEditor({
   initial,
   bootstrap,
   onBack,
+  onCampaign,
 }: {
   initial: DossierData;
   bootstrap: BootstrapData;
   onBack: () => void;
+  onCampaign: (id: string) => void;
 }) {
   const editor = useDossierEditor(initial);
 
-  const analysis = useAnalysis();
+  const analysis = useAnalysis(
+    bootstrap.workflowsEnabled ? initial.id : undefined,
+    editor.saved.revision,
+  );
 
   const { submitting, generation, analyze } = useSavedAnalysis(
     editor,
@@ -82,9 +93,10 @@ function DossierEditor({
 
   const [importing, setImporting] = useState(false);
 
-  const { draft, saved, dirty, save } = editor;
+  const { draft, dirty, save } = editor;
 
   const busy =
+    analysis.actionPending ||
     submitting ||
     analysis.state.status === "loading" ||
     save.isPending ||
@@ -99,7 +111,11 @@ function DossierEditor({
 
   return (
     <PageLayout model={draft.selection.model} title={draft.title}>
-      <DossierNavigation busy={busy} dirty={dirty} onBack={onBack} />
+      <DossierNavigation
+        busy={busy && !analysis.job}
+        dirty={dirty}
+        onBack={onBack}
+      />
       <div className="space-y-6">
         <WorkflowStatus
           saving={save.isPending}
@@ -107,41 +123,28 @@ function DossierEditor({
           importing={importing}
           complete={analysis.state.status === "success"}
         />
-        <DocumentPreparation
-          collapsed={submitting || analysis.state.status === "success"}
-        >
-          <DossierSettings
-            editor={editor}
-            change={change}
-            busy={busy}
-            bootstrap={bootstrap}
-          />
-          <OfferImport
-            onBusy={setImporting}
-            selection={draft.selection}
-            disabled={busy || !configured}
-            onAdopt={(offerSource, text) =>
-              change({
-                ...draft,
-                offerSource,
-                documents: { ...draft.documents, job: text },
-              })
-            }
-          />
-          <div>
-            <DossierForm
-              editor={editor}
-              analysis={analysis}
-              busy={busy}
-              configured={configured}
-              importing={importing}
-              setImporting={setImporting}
-              change={change}
-              analyze={analyze}
-              bootstrap={bootstrap}
-            />
-          </div>
-        </DocumentPreparation>
+        <DossierPreparation
+          editor={editor}
+          analysis={analysis}
+          busy={busy}
+          configured={configured}
+          importing={importing}
+          setImporting={setImporting}
+          change={change}
+          analyze={analyze}
+          bootstrap={bootstrap}
+          collapsed={
+            submitting ||
+            analysis.state.status === "loading" ||
+            analysis.state.status === "success"
+          }
+        />
+        <DossierTracking
+          enabled={Boolean(bootstrap.workflowsEnabled)}
+          editor={editor}
+          busy={busy}
+        />
+        <JobProgress analysis={analysis} />
         <WorkspaceResults
           analysis={analysis}
           submitting={submitting}
@@ -149,8 +152,13 @@ function DossierEditor({
           onInclude={(quote) => change(includeQuote(draft, quote))}
           onClarify={(text) => change(appendClarification(draft, text))}
         />
-        <DossierContext draft={draft} />
-        <DossierHistory id={saved.id} generation={generation} />
+        <DossierFooter
+          editor={editor}
+          generation={`${generation}-${analysis.state.status}`}
+          enabled={Boolean(bootstrap.workflowsEnabled)}
+          busy={busy}
+          onCampaign={onCampaign}
+        />
       </div>
     </PageLayout>
   );
@@ -399,6 +407,10 @@ function WorkspaceResults({
   onClarify: (text: string) => void;
   onInclude: (quote: string) => void;
 }) {
+  if (analysis.job?.status === "running") {
+    return null;
+  }
+
   return (
     <ResultsPanel
       loading={submitting || analysis.state.status === "loading"}
@@ -495,4 +507,88 @@ function appendClarification(
         .join("\n"),
     },
   };
+}
+
+function DossierTracking({
+  enabled,
+  editor,
+  busy,
+}: {
+  enabled: boolean;
+  editor: ReturnType<typeof useDossierEditor>;
+  busy: boolean;
+}) {
+  return enabled ? (
+    <TrackingForm
+      value={editor.draft.tracking}
+      disabled={busy}
+      onChange={(tracking) => editor.setDraft({ ...editor.draft, tracking })}
+    />
+  ) : null;
+}
+
+function DossierFooter({
+  editor,
+  generation,
+  enabled,
+  busy,
+  onCampaign,
+}: {
+  editor: ReturnType<typeof useDossierEditor>;
+  generation: string;
+  enabled: boolean;
+  busy: boolean;
+  onCampaign: (id: string) => void;
+}) {
+  return (
+    <>
+      <DossierContext draft={editor.draft} />
+      <DossierHistory id={editor.saved.id} generation={generation} />
+      {enabled && (
+        <CampaignCreate
+          base={editor.saved}
+          disabled={busy || editor.dirty}
+          onOpen={onCampaign}
+        />
+      )}
+    </>
+  );
+}
+
+function DossierPreparation(props: DossierFormProps & { collapsed: boolean }) {
+  const {
+    editor,
+    change,
+    busy,
+    bootstrap,
+    setImporting,
+    configured,
+    collapsed,
+  } = props;
+
+  const { draft } = editor;
+
+  return (
+    <DocumentPreparation collapsed={collapsed}>
+      <DossierSettings
+        editor={editor}
+        change={change}
+        busy={busy}
+        bootstrap={bootstrap}
+      />
+      <OfferImport
+        onBusy={setImporting}
+        selection={draft.selection}
+        disabled={busy || !configured}
+        onAdopt={(offerSource, text) =>
+          change({
+            ...draft,
+            offerSource,
+            documents: { ...draft.documents, job: text },
+          })
+        }
+      />
+      <DossierForm {...props} />
+    </DocumentPreparation>
+  );
 }

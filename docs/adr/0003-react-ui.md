@@ -40,3 +40,7 @@ A dirty dossier offers an explicit “Enregistrer et analyser” action. Save co
 ## Amendment — Evidence reading workspace
 
 The approved redesign replaces ivory/forest styling with cool light surfaces, midnight navigation and violet actions, retaining distinct semantic status colors and labels. Successful dossier analyses collapse preparation controls; users can reopen them explicitly. Results use a selectable criterion list and adjacent evidence reader, stacked on mobile. Unknown information and unverified evidence remain separate filters. Evidence quotations preserve original text without generated highlights or unsupported document-location links. Diagnostic model reasoning remains available in a disclosure. No provider or persistence behavior changes.
+
+## Amendment — Campaign panels and durable progress (2026-09-12)
+
+Evidence layout responds to its containing panel, not only viewport width, so quotations remain readable in side-by-side campaigns. Durable jobs use TanStack Query polling of actual stage/batch state; mutations explicitly start, cancel or resume. Polling stops on terminal states. A focus hook synchronizes the progress panel with the DOM; no fabricated percentage or provider retry is introduced. Job identity persists server-side so leaving the page does not lose the operation. Member CV import remains local and explicitly reviewed before campaign creation.
