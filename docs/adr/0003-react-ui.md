@@ -32,3 +32,11 @@ Toolchain constraint: the installed jsx-a11y plugin declares ESLint support thro
 Shared primitives own visual variants, control geometry, focus and disabled/invalid states. Feature components compose them and use Tailwind utilities for layout. Global CSS is restricted to base document styles; it must not restyle controls or feature components. Semantic tokens in shared/styles/tokens.css are the single color/radius authority. Do not reintroduce legacy primary/secondary/error CSS classes or color literals in feature markup.
 
 Native select and disclosure elements retain browser keyboard semantics. Status indicators combine readable labels and symbols with semantic colors. Interactive controls target a minimum 44px height; motion is opt-in under motion-safe or disabled with motion-reduce. Browser checks cover narrow and wide layouts, keyboard focus, native selection and horizontal overflow with fictional API responses.
+
+## Amendment — Save-and-analyze and result navigation (2026-09-11)
+
+A dirty dossier offers an explicit “Enregistrer et analyser” action. Save completes first; failure retains edits and prevents analysis. The saved revision and documents are used for the analysis snapshot. The three-step indicator is informational, with textual loading states rather than invented percentage progress. Errors, progress, matches and review use distinct semantic colors plus labels. Filters affect displayed conclusions only; omitted passages remain in a separate coverage notice. Historical results are not rewritten.
+
+## Amendment — Evidence reading workspace
+
+The approved redesign replaces ivory/forest styling with cool light surfaces, midnight navigation and violet actions, retaining distinct semantic status colors and labels. Successful dossier analyses collapse preparation controls; users can reopen them explicitly. Results use a selectable criterion list and adjacent evidence reader, stacked on mobile. Unknown information and unverified evidence remain separate filters. Evidence quotations preserve original text without generated highlights or unsupported document-location links. Diagnostic model reasoning remains available in a disclosure. No provider or persistence behavior changes.

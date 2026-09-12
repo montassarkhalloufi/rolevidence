@@ -13,12 +13,12 @@ the chosen AI provider.
 - Optional private-content-free LangSmith technical telemetry.
 - Reopening, conflict, storage failure, provider and browser verification.
 
-## Next — Clarification and reviewable exports
+## 0.3.0 — Clarification and reviewable exports
 
 - Questions for unknown criteria; attributed answers stored separately from CVs.
 - Reassessment preserves earlier snapshots and identifies newly supplied facts.
 - Export source references, conclusions, limitations and model/prompt versions.
-- Local backup/export UX and installation verification across supported systems.
+- Local backup/export UX and installation verification with disclosed platform coverage.
 
 Acceptance: a user can clarify a missing fact and share a sourced report without
 silently changing the original CV or erasing prior conclusions.

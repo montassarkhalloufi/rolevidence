@@ -1,3 +1,4 @@
+import { BackupRestore } from "../exports/BackupControls.tsx";
 import { useDossierHome } from "./useDossierHome.ts";
 import type { BootstrapData } from "../../../shared/analysis.ts";
 import { workspaceFr as t } from "../../shared/i18n/workspace-fr.ts";
@@ -59,6 +60,7 @@ export function DossierHome({
         {error && <p role="alert">{error.message}</p>}
         {list.isPending && <p role="status">{t.loading}</p>}
         {list.data?.items.length === 0 && <p>{t.empty}</p>}
+        <BackupRestore onOpen={onOpen} />
         <DossierList state={state} onOpen={onOpen} />
       </Card>
     </PageLayout>

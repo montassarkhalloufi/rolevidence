@@ -125,3 +125,14 @@ await test("job extraction discards invented quotes independently of model schem
   assert.equal(result.fields.length, 1);
   assert.equal(result.rejectedFields, 1);
 });
+
+await test("JobPosting technical metadata never becomes candidate criteria", () => {
+  const text = extractJobText(
+    `<script type="application/ld+json">${JSON.stringify({ "@type": "JobPosting", title: "Développeur TypeScript", description: "Notre entreprise conçoit des solutions. Vous devez écrire des tests unitaires.", datePosted: "2026-09-01", validThrough: "2026-12-01", identifier: { value: "tracking-id" }, hiringOrganization: { logo: "https://example.com/logo.png" }, baseSalary: "65000", experienceRequirements: "4 ans" })}</script>`,
+  );
+
+  assert.match(text, /tests unitaires/);
+  assert.match(text, /4 ans/);
+  assert.match(text, /65000/);
+  assert.doesNotMatch(text, /datePosted|validThrough|tracking-id|logo.png/);
+});

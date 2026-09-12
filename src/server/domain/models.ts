@@ -20,12 +20,15 @@ export type PreferencesInput = {
 };
 
 export type DocumentsInput = {
+  reviewedJobQuotes?: string[] | undefined;
+  clarifications?: string | undefined;
   profile: string;
   job: string;
   preferences?: PreferencesInput | undefined;
 };
 
 export type Evidence = {
+  clarificationQuote?: string | null | undefined;
   subject: string;
   explanation: string;
   interpretation: Interpretation;
@@ -42,7 +45,7 @@ export type ExperienceComparison = {
 export type Requirement = Evidence & {
   experienceComparison?: ExperienceComparison | null;
   candidateInformation: "provided" | "not_provided";
-  candidateSource: "profile" | "preferences";
+  candidateSource: "profile" | "preferences" | "clarification";
 };
 
 export type ExtractionResult = {

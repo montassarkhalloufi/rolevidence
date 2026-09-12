@@ -65,3 +65,19 @@ The prompt now limits criteria to the actual offer and relevant preferences. A c
 Known response-manipulation signatures are excluded from the profile passage catalog and independently rejected as candidate evidence in classification. Original user documents are not edited. The request preview exposes the actual remaining catalog. This is a limited denylist, not a general prompt-injection defence; educational quotations containing these signatures may also be excluded and require clarification. Arbitrary paraphrases, encodings, instructions in other sources and semantic relevance still require broader adversarial evaluation. Matching a quotation alone is never claimed to prove competence.
 
 See RELIABILITY.md for immutable run locations, final counts, reproduction commands and remaining limits. The third run uses prompt v3.7 and unchanged expectations; fresh adversarial formulations are evaluated separately.
+
+## Amendment — Job relevance before comparison (2026-09-11)
+
+Product analysis uses a fixed two-call workflow. A job-only structured model classifies original passage IDs as candidate criteria, job conditions, headings, company background or publication metadata. It never sees the candidate CV. Only uniquely classified context passages are excluded from comparison; missing or duplicate classifications retain the passage. Invalid IDs reject the response. Context quotations remain available in result metadata and in a separate UI disclosure. Original source text and saved snapshots are unchanged.
+
+This is semantic classification, not keyword filtering. The HTML adapter selects recognized JobPosting content fields to avoid copying publisher identifiers, dates and logos; free-text relevance remains model-driven. Ambiguous passages must be retained. A wrong but schema-valid context classification remains a risk: source validation cannot prove relevance.
+
+Comparison covers the retained catalog. Unreferenced retained passages still produce MISSING_REQUIREMENT_ANALYSIS internally, displayed together as a partial-coverage notice, separately from evidence-verification findings and their counts. This is passage coverage, not proof of exhaustive atomic decomposition. No automatic repair, paid retry or agent loop is added. Each call is bounded to 120 seconds and 9,000 output tokens; totals include both calls.
+
+The first combined classification/comparison experiment wrongly excluded real duties and was rejected. The separate job-only experiment on a long public offer preserved duties but comparison still omitted 37 passages. This limitation is exposed, not counted as successful complete analysis. See RELIABILITY.md.
+
+## Amendment — Required passage coverage and clarification sources (2026-09-12)
+
+Replace one unbounded comparison response with sequential groups of eight passages (maximum 16 groups). Each request-specific JSON schema requires every passage ID and a nonempty finding array. Map job quotations from the owning key. Failure rejects the analysis, never triggers an automatic paid repair. This fixed bounded workflow is not an agent loop. More calls trade cost/latency for verifiable passage coverage; atomic semantic completeness and correct conclusions remain unproven by structure.
+
+Clarifications have separate C references and source quotes. Human-requested job passage reinclusion is honored only for exact source passages. Sources, overrides and statements belong to the immutable snapshot and input fingerprint. An observed model error attached duration metadata to a TypeScript criterion; duration rules now require duration information in the job before changing that conclusion.

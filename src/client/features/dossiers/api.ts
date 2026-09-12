@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { request, jsonRequest } from "../../shared/api/client.ts";
 import {
+  Backup,
   Dossier,
   DossierPage,
   AnalysisPage,
@@ -12,6 +13,12 @@ import type { ModelSelectionData } from "../../../shared/providers.ts";
 const root = "/api/v1/dossiers";
 
 export const dossierApi = {
+  backup: async (id: string) =>
+    Backup.parse(await request(`${root}/${id}/backup`)),
+  restore: async (backup: unknown) =>
+    Dossier.parse(
+      await request(`${root}/restore`, jsonRequest(Backup.parse(backup))),
+    ),
   list: async (q: string, offset: number, signal: AbortSignal) =>
     DossierPage.parse(
       await request(

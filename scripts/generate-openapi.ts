@@ -1,4 +1,5 @@
 import {
+  Backup,
   Dossier,
   DossierDraft,
   DossierSave,
@@ -66,6 +67,26 @@ const contract = {
   },
   servers: [{ url: "http://127.0.0.1:3001" }],
   paths: {
+    "/api/v1/dossiers/{id}/backup": {
+      get: {
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            required: true,
+            schema: { type: "string", format: "uuid" },
+          },
+        ],
+        responses: { 200: response("Backup"), default: problem },
+      },
+    },
+    "/api/v1/dossiers/restore": {
+      post: {
+        parameters: headers,
+        requestBody: { required: true, content: json("Backup") },
+        responses: { 201: response("Dossier"), default: problem },
+      },
+    },
     "/api/v1/dossiers": {
       get: {
         operationId: "listDossiers",
@@ -271,6 +292,7 @@ const contract = {
   },
   components: {
     schemas: {
+      Backup: schema(Backup),
       AnalysisInput: schema(AnalysisInput),
       Dossier: schema(Dossier),
       DossierDraft: schema(DossierDraft),

@@ -10,6 +10,7 @@ const iconVariants = cva(
         neutral: "bg-neutral-background text-neutral",
         success: "bg-success-background text-success",
         warning: "bg-warning-background text-warning",
+        destructive: "bg-destructive-background text-destructive",
       },
     },
     defaultVariants: { tone: "neutral" },

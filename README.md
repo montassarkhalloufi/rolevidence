@@ -2,7 +2,7 @@
 
 Evidence-based profile–job comparison for job seekers and recruiters. Run the application locally with your own OpenAI or Anthropic API key, inspect supporting quotations and identify what still needs clarification.
 
-**Version 0.2:** saved local dossiers, immutable analysis history, public offer import and provider selection. Multiple comparisons and interactive clarification remain planned. This tool supports human review; it does not verify competence or make hiring decisions.
+**Version 0.3:** saved dossiers, public offer import, criterion-by-criterion evidence, attributed clarifications, printable reports and portable backups. Multiple comparisons remain outside this release. This tool supports human review; it does not verify competence or make hiring decisions.
 
 ## Quick start
 
@@ -27,9 +27,12 @@ For development, run `npm run dev` and open http://127.0.0.1:5173. Vite proxies 
 1. Create a named dossier for a job search or recruitment review.
 2. Import a CV and paste an offer, or import its public URL with a configured provider.
 3. Review the source and editable extracted fields. Adopt the offer text explicitly.
-4. Enter candidate preferences, select the provider/model and save the dossier.
+4. Enter candidate preferences, select the provider/model, then use Save and analyze.
 5. Preview the provider context, analyze, then inspect findings and source quotations.
-6. Reopen the dossier after restart. Older analyses retain their original sources.
+6. Add a dated candidate statement or recruiter account from a criterion, save and reanalyze. The original CV and older analyses stay unchanged.
+7. Open an analysis in history to download an HTML report; open the file in a browser and print/save as PDF.
+8. Export the saved dossier as JSON, then restore it from the home page to create an isolated copy with its history. Exports include private source texts.
+9. Reopen the dossier after restart. Older analyses retain their original sources.
 
 Save edits explicitly before leaving. Deleting a dossier also deletes its analyses;
 other dossiers remain intact. The evidence standard is identical for both audiences.
@@ -42,6 +45,7 @@ PDF, DOCX and UTF-8 TXT are supported within configured limits: 5 MiB upload, 20
 - The API key stays server-side. Remove unnecessary contact details before submission.
 - Explicitly saved dossiers live in `storage/rolevidence.sqlite` (configurable via DATABASE_PATH). Browser drafts are not persisted. Stop the server before copying this unencrypted database for backup. Runtime data is ignored by Git.
 - Optional LangSmith technical telemetry is disabled by default (`ROLEVIDENCE_TELEMETRY=false`). No document content is included; automatic LangChain tracing is disabled.
+- Analysis first classifies the offer, then compares up to eight passages per call (maximum 16 comparison calls). Long offers cost more and take longer; mandatory passage coverage does not prove semantic correctness.
 - Failed requests never become fabricated results. Automatic paid retries are disabled. A deliberate new attempt can incur another charge.
 - Runtime files, traces and secrets are ignored by Git. Use fictional fixtures when reporting issues.
 
@@ -66,3 +70,5 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md),
 ## License
 
 [MIT](LICENSE). Copyright (c) 2026 montassarkhalloufi. See THIRD_PARTY_NOTICES.md for bundled component attribution.
+
+See [local operations](docs/OPERATIONS.md) for installation, recovery, exports and release validation limits.

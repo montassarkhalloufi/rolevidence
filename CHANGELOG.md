@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 — 2026-09-12
+
+- Required per-passage structured comparison in bounded batches, with auditable offer context and manual reinclusion.
+- Attributed clarifications stored separately from the CV and included in immutable reassessment snapshots.
+- Printable, escaped HTML reports and portable dossier backups/restoration as isolated copies.
+- Midnight/violet evidence workspace, filters, save-and-analyze, visible progress and preserved drafts on failure.
+- Fix irrelevant duration metadata downgrading technology evidence and JSON property order marking saved drafts as dirty.
+- No general semantic accuracy or multi-user deployment claim. Real provider verification limits are documented.
+
 ## 0.2.0 — 2026-09-11
 
 - Save and reopen local job-search or recruitment dossiers with SQLite migrations,

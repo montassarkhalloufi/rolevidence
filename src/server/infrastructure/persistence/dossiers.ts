@@ -1,3 +1,4 @@
+import { restoreBackup, exportBackup } from "./backups.ts";
 import { randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
@@ -110,6 +111,8 @@ export function createDossierRepository(db: DatabaseSync): DossierRepository {
 
   return {
     get,
+    restore: (backup) => restoreBackup(db, backup),
+    backup: (id) => safe(() => exportBackup(db, get(id))),
     save: (id, draft, revision) =>
       safe(() => transaction(db, () => write(db, id, draft, revision))),
     list: (query, offset, limit) =>

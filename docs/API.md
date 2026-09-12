@@ -17,9 +17,9 @@ Send `Idempotency-Key` on analyses. Use a random UUID for a new logical attempt 
 
 Same key and canonical validated input shares the running promise or replays the result. `Idempotency-Replayed` indicates this. Different input with the same key returns 409. Other analyses while one runs return 429. Invalid inputs/headers are rejected before reservation. Store capacity returns 503 without executing the provider. Failed provider outcomes are retained, because the remote execution may already have happened.
 
-Entries expire five minutes after completion and the store is bounded to 100. Results and citations temporarily exist in server memory. Process restart, expiry and multiple processes are outside the guarantee. An HTTP disconnect does not cancel a shared provider request; the provider timeout remains 60 seconds. There is no exactly-once or provider-side deduplication claim.
+Entries expire five minutes after completion and the store is bounded to 100. Results and citations temporarily exist in server memory. Process restart, expiry and multiple processes are outside the guarantee. An HTTP disconnect does not cancel a shared provider request; each provider call has a 120-second timeout. Product analysis performs job relevance followed by sequential batches of eight retained passages, at most 16 comparison calls, without automatic retry. There is no exactly-once or provider-side deduplication claim.
 
-The browser does not retry automatically. A deliberately new request may incur another charge. The import and context operations do not call a model and do not use the analysis idempotency store.
+The browser does not retry automatically. A deliberately new request may incur another charge. Resume extraction and context preview do not call a model and do not use the analysis idempotency store.
 
 ## Errors
 
@@ -73,3 +73,11 @@ Offer imports have a separate bounded single-flight, five-minute/100-entry outco
 cache with the same replay/conflict/failure semantics as analysis. Neither cache
 survives process restart. No background job or interrupted request is automatically
 resumed. SQLite persistence does not imply durable provider request idempotency.
+
+Analysis metadata optionally includes `preparationVersion` and `contextPassages` (original quote and classification reason). These record job-only semantic preparation; original dossier snapshots remain unchanged. Duration and token totals include both calls. Context preview shows the complete source catalog and explains preparation; it cannot predict the selected catalog without a paid call. Offer URL import uses a model to structure the retrieved page.
+
+## 0.3 clarification and portability
+
+Documents optionally include `clarifications` (16,000 characters) and `reviewedJobQuotes` (up to 128 original passages). Both participate in snapshots and idempotency fingerprints. Findings optionally include `clarificationQuote`; it is never labelled as CV evidence. Exact original job text is required for a manual reinclusion to have any effect.
+
+`GET /api/v1/dossiers/:id/backup` exports format `rolevidence-backup-v1`, dossier and up to 100 analyses within 8 MiB. `POST /api/v1/dossiers/restore` accepts that format (8 MiB body), validates source/dossier linkage, and returns 201 + Location for an isolated copy. Restoration is transactional; existing dossiers are unchanged. Each explicit successful POST creates a new copy; no automatic client retry. Normal dossier bodies retain the 2 MiB limit. Restored results are user-imported historical data, not reverified model executions.

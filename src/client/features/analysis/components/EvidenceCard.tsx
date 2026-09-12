@@ -7,6 +7,7 @@ type Finding = AnalysisResult["matches"][number];
 
 type Props = {
   finding: Finding;
+  expanded?: boolean;
   group: {
     tone: Exclude<BadgeTone, "outline">;
     symbol: string;
@@ -72,6 +73,7 @@ function VerificationDetails({ finding }: { finding: Finding }) {
 
 function SourceQuotes({ finding }: { finding: Finding }) {
   const quotes = [
+    { label: fr.clarificationSource, text: finding.clarificationQuote },
     { label: fr.profileSource, text: finding.profileQuote },
     { label: fr.preferencesSource, text: finding.preferencesQuote },
     { label: fr.jobSource, text: finding.jobQuote },
@@ -81,17 +83,21 @@ function SourceQuotes({ finding }: { finding: Finding }) {
     return <p>{fr.noQuotes}</p>;
   }
 
-  return quotes.map((quote) => (
-    <blockquote
-      className="my-3 border-l-2 border-input bg-muted px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words"
-      key={quote.label}
-    >
-      <small className="mb-1 block text-xs tracking-wide text-muted-foreground">
-        {quote.label}
-      </small>
-      {quote.text}
-    </blockquote>
-  ));
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {quotes.map((quote) => (
+        <blockquote
+          className="my-3 border-l-2 border-input bg-muted px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words"
+          key={quote.label}
+        >
+          <small className="mb-1 block text-xs tracking-wide text-muted-foreground">
+            {quote.label}
+          </small>
+          {quote.text}
+        </blockquote>
+      ))}
+    </div>
+  );
 }
 
 function wasReclassified(finding: Finding) {
@@ -101,18 +107,19 @@ function wasReclassified(finding: Finding) {
   );
 }
 
-export function EvidenceCard({ finding, group }: Props) {
+export function EvidenceCard({ finding, group, expanded = false }: Props) {
   const corrected = wasReclassified(finding);
 
   return (
-    <article className="flex gap-3 border-b border-border py-4 [&>div]:min-w-0 [&_p]:my-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_summary]:text-sm [&_summary]:text-primary">
+    <article className="flex gap-3 border-b border-border py-4 [&>div]:min-w-0 [&>div]:w-full [&_p]:my-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_summary]:text-sm [&_summary]:text-primary">
       <StatusIcon tone={group.tone}>{group.symbol}</StatusIcon>
       <div>
-        <div className="flex flex-wrap items-center gap-2 [&>h3]:text-sm [&>h3]:font-semibold">
+        <div className="flex flex-wrap items-center gap-2 [&>h3]:text-xl [&>h3]:font-semibold">
           <h3>{finding.subject}</h3>
           <Badge tone={group.tone}>{group.singular}</Badge>
         </div>
         <p>{summary(finding)}</p>
+        {expanded && <SourceQuotes finding={finding} />}
         <details>
           <summary>{fr.viewQuotes}</summary>
           <p>
@@ -139,7 +146,7 @@ export function EvidenceCard({ finding, group }: Props) {
             .
           </p>
           <VerificationDetails finding={finding} />
-          <SourceQuotes finding={finding} />
+          {!expanded && <SourceQuotes finding={finding} />}
         </details>
       </div>
     </article>

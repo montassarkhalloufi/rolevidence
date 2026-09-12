@@ -46,6 +46,7 @@ export function createApp({
 
   app.disable("x-powered-by");
   app.use(API_ROOT, requestMetadata(observe), localRequestGuard);
+  app.use("/api/v1/dossiers/restore", express.json({ limit: "8mb" }));
   app.use("/api/v1/dossiers", express.json({ limit: "2mb" }));
   app.use(express.json({ limit: "160kb" }));
   app.get(API_PATHS.bootstrap, async (_req, res) => {

@@ -19,7 +19,7 @@ const response: ProviderResponse = {
 await test("Provider adapter sends bounded structured request and includes prompt/schema versions (fake transport)", async () => {
   const gateway = createOpenAIGateway(async (input) => {
     assert.equal(input.store, false);
-    assert.equal(input.max_output_tokens, 4500);
+    assert.equal(input.max_output_tokens, 9000);
     assert.equal(input.text.format.type, "json_schema");
 
     return response;

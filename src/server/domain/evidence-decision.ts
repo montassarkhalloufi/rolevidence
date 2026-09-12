@@ -12,6 +12,9 @@ export function applyEvidenceDecision(
     explanation,
     experienceComparison: null,
     candidateInformation: candidateQuote ? "provided" : "not_provided",
+    ...(requirement.candidateSource === "clarification"
+      ? { clarificationQuote: candidateQuote }
+      : {}),
     profileQuote:
       requirement.candidateSource === "profile" ? candidateQuote : null,
     preferencesQuote:
