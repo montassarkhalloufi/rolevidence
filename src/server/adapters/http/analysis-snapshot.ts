@@ -20,12 +20,16 @@ export function analysisSnapshot(
   const documents = Documents.parse(saved.documents);
 
   const requested = {
+    reviewedJobQuotes: reviewedQuotes(input),
+    clarifications: clarificationText(input),
     profile: input.profile,
     job: input.job,
     preferences: input.preferences ?? emptyPreferences,
   };
 
   const normalized = {
+    reviewedJobQuotes: reviewedQuotes(documents),
+    clarifications: clarificationText(documents),
     profile: documents.profile,
     job: documents.job,
     preferences: documents.preferences ?? emptyPreferences,
@@ -43,4 +47,12 @@ export function analysisSnapshot(
   }
 
   return { ...saved, documents: normalized };
+}
+
+function clarificationText(value: { clarifications?: string | undefined }) {
+  return value.clarifications ?? "";
+}
+
+function reviewedQuotes(value: { reviewedJobQuotes?: string[] | undefined }) {
+  return value.reviewedJobQuotes ?? [];
 }

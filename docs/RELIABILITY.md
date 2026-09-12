@@ -1,4 +1,4 @@
-# Reliability observations — 2026-09-11
+# Reliability observations
 
 These are real HTTP calls through the local Express API to the configured OpenAI provider, using fictional documents. Expectations were fixed before each dataset was executed. Repetitions use distinct idempotency keys. Failed baselines remain intact.
 
@@ -96,3 +96,28 @@ and no-retry tests. OpenAI tests explicitly assert Responses transport and
 `store:false`. Incomplete outputs are rejected even if their JSON parses. LangSmith
 is checked through a fake sink for privacy and failure isolation; hosted delivery
 has not been tested. A configured model is not necessarily available to an account.
+
+## Public-offer relevance observations (2026-09-11)
+
+Two paid product-adapter observations used a fictional Camille profile and the public Hellowork offer 83003216, not a private CV. Raw outputs remain in ignored local artifacts.
+
+- `job-relevance-1789146567660`: combined preparation/comparison excluded real duties and conditions among 54 context passages. Rejected approach; failure retained.
+- `job-relevance-1789146719386`: separate job-only preparation classified 20 headings/company passages as context. Manual inspection found duties retained. Comparison returned 8 matches, 3 unknowns and 37 omitted passages, exposed as partial coverage. Duration: 28.8 seconds; 5,874 input and 2,372 output tokens across both calls. This is not a complete-analysis pass or an accuracy benchmark.
+
+Reproduce explicitly with `node --env-file-if-exists=.env scripts/eval-job-relevance.ts https://www.hellowork.com/fr-fr/emplois/83003216.html`. Current runs perform one preparation call plus bounded comparison batches, all potentially billable and fetches a changing public source. Broader semantic regression and repeated multi-provider validation remain necessary before claiming general reliability.
+
+## v0.3 completion checks (2026-09-12)
+
+The same public offer and fictional profile now use required passage keys in batches of eight. Run `job-relevance-1789222611534` returned 34 matches, 28 unknowns, no gaps, no verification findings and **zero omitted retained passages** (62 findings; 20 context passages). Combined model duration was 93.4 seconds, with 34,442 input and 8,937 output tokens. This demonstrates passage coverage on this observation, not exhaustive atomic decomposition or semantic correctness. The source can change and model relevance classification can still exclude a real criterion; the UI lets users reinclude an original context passage explicitly.
+
+The first new provider smoke run (`providers-1789223166962`) passed 4/5 cases: spurious duration metadata downgraded a direct TypeScript statement. The domain now ignores duration metadata when the offer criterion has no duration requirement. Its regression test passes, and the fresh unchanged smoke suite passed **5/5** (`providers-1789223317343`). Failed observations were retained.
+
+Six additional real comparisons passed in `release-1789223652493`: three fictional scenarios repeated twice. They check a Java declaration separately attributed from a JavaScript-only CV, RAG training remaining unknown for production experience, and atomic Java/TypeScript/Node.js/PostgreSQL comparison (three matches and one unknown). These small development evaluations are not an independent general-accuracy benchmark. Reproduce with `node --env-file-if-exists=.env scripts/eval-release.ts`; provider keys must be configured and calls are billable.
+
+Artifacts above live under ignored `artifacts/evaluations/<run>/`; they are local observations, not files distributed with the repository. No private CV was used in these release evaluations. Anthropic live parity and hosted LangSmith delivery remain untested because their keys were not configured.
+
+A clean source copy without keys, storage or dependencies passed `npm ci`, production build and startup under Node 24.18.0. The production server served the built React app and initialized SQLite with analysis correctly reported as unconfigured. This installation check ran on macOS, not Windows or Linux.
+
+The final real HTTP regression replay `api-1789224139293` passed **18/18** unchanged historical scenarios (one repetition each) on `evidence-v4-required-passages`. This covers salary units/ranges/bonuses, work arrangements, duration scope, technology distinctions, RAG and the known injection regression. It is a regression replay, not a fresh held-out benchmark or a broad injection audit.
+
+Final v0.3 local verification: **79 backend/evaluation tests, 9 React tests and 7 browser scenarios** passed (95 total), plus strict types, lint, architecture boundaries, OpenAPI drift, formatting and production build. The browser run used installed Chrome on macOS; CI independently installs Chromium on Linux.

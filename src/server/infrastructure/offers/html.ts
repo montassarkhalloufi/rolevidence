@@ -58,12 +58,38 @@ export function extractJobText(html: string) {
   let text: string;
 
   if (jobs[0]) {
-    text = Object.entries(jobs[0])
-      .filter(([key]) => !key.startsWith("@"))
-      .map(
-        ([key, value]) =>
-          `${key}: ${plain(typeof value === "string" ? value : JSON.stringify(value))}`,
-      )
+    const job = jobs[0];
+
+    const fields = [
+      "description",
+      "responsibilities",
+      "qualifications",
+      "skills",
+      "educationRequirements",
+      "experienceRequirements",
+      "employmentType",
+      "baseSalary",
+      "jobLocation",
+      "jobLocationType",
+      "applicantLocationRequirements",
+    ];
+
+    const lines = fields.flatMap((key) => {
+      const value = job[key];
+
+      if (value === undefined) {
+        return [];
+      }
+
+      const content = plain(
+        typeof value === "string" ? value : JSON.stringify(value),
+      );
+
+      return key === "description" ? [content] : [`${key}: ${content}`];
+    });
+
+    text = [typeof job.title === "string" ? `# ${job.title}` : "", ...lines]
+      .filter(Boolean)
       .join("\n");
   } else {
     const content =

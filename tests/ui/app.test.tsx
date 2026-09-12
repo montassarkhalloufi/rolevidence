@@ -198,3 +198,102 @@ test("Unverified candidate evidence does not invalidate the verified job quote o
   );
   assert.equal(screen.queryByText(/État retenu par le code : Soutenue/), null);
 });
+
+test("result filters keep omissions separate from candidate conclusions", async () => {
+  const { ResultsPanel } =
+    await import("../../src/client/features/analysis/components/ResultsPanel.tsx");
+
+  const { AnalysisResponse } = await import("../../src/shared/analysis.ts");
+
+  const { unassessedRequirement } =
+    await import("../../src/server/domain/coverage.ts");
+
+  const result = AnalysisResponse.parse({
+    ...output,
+    analysis: {
+      ...output.analysis,
+      needsReview: [unassessedRequirement("Tests unitaires requis.")],
+    },
+    metadata: {
+      ...output.metadata,
+      contextPassages: [
+        { quote: "Entreprise fondée en 2003.", reason: "company_background" },
+      ],
+    },
+  });
+
+  render(<ResultsPanel result={result} loading={false} />);
+  const user = userEvent.setup();
+
+  assert(screen.getByRole("heading", { name: "TypeScript" }));
+  assert(screen.getByText(/Points non évalués/));
+  assert(screen.getByRole("button", { name: "À vérifier (0)" }));
+  await user.click(screen.getByRole("button", { name: "Inconnues (0)" }));
+  assert.equal(screen.queryByRole("heading", { name: "TypeScript" }), null);
+  await user.click(screen.getByRole("button", { name: "Correspondances (1)" }));
+  assert(screen.getByRole("heading", { name: "TypeScript" }));
+});
+
+test("criterion selection displays its own source quotations", async () => {
+  const { ResultsPanel } =
+    await import("../../src/client/features/analysis/components/ResultsPanel.tsx");
+
+  const { AnalysisResponse } = await import("../../src/shared/analysis.ts");
+
+  const first = output.analysis.matches[0];
+
+  const result = AnalysisResponse.parse({
+    ...output,
+    analysis: {
+      ...output.analysis,
+      matches: [
+        first,
+        {
+          ...first,
+          subject: "Node.js",
+          profileQuote: "API Node.js en production",
+          jobQuote: "Node.js requis",
+        },
+      ],
+    },
+  });
+
+  render(<ResultsPanel result={result} loading={false} />);
+  const user = userEvent.setup();
+
+  await user.click(
+    screen.getByRole("button", { name: /Node.js · Correspondance/ }),
+  );
+  assert(screen.getByRole("heading", { name: "Node.js" }));
+  assert(screen.getByText("API Node.js en production"));
+  assert(screen.getByText("Node.js requis"));
+  assert.equal(screen.queryByRole("heading", { name: "TypeScript" }), null);
+});
+
+test("analysis progress takes focus and failure replaces the loader", async () => {
+  const { ResultsPanel } =
+    await import("../../src/client/features/analysis/components/ResultsPanel.tsx");
+
+  const view = render(<ResultsPanel result={null} loading saving />);
+
+  assert(screen.getByRole("heading", { name: "Analyse en cours" }));
+  assert(screen.getByText("Enregistrement du dossier…"));
+  assert.equal(
+    document.activeElement,
+    screen.getByLabelText("Analyse en cours"),
+  );
+  view.rerender(<ResultsPanel result={null} loading />);
+  assert(screen.getByText("Lecture de l’offre et comparaison du profil…"));
+  view.rerender(
+    <ResultsPanel
+      result={null}
+      loading={false}
+      error="Fournisseur indisponible."
+    />,
+  );
+  assert(screen.getByRole("alert"));
+  assert.equal(
+    screen.queryByRole("heading", { name: "Analyse en cours" }),
+    null,
+  );
+});

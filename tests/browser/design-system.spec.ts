@@ -129,7 +129,7 @@ for (const width of [375, 1280]) {
     await expect(
       page.getByRole("heading", { name: "TypeScript", exact: true }),
     ).toBeVisible();
-    await page.getByText("Voir les passages cités", { exact: true }).click();
+    await expect(page.locator("blockquote").first()).toBeVisible();
     await expect(page.locator("blockquote").first()).toContainText(profile);
     expect(analyses).toBe(1);
     expect(

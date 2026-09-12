@@ -37,6 +37,8 @@ export const DossierDraft = z
     purpose: z.enum(["job_search", "recruiting"]),
     documents: z
       .object({
+        reviewedJobQuotes: z.array(z.string().max(16000)).max(128).optional(),
+        clarifications: z.string().max(DOCUMENT_MAX_CHARACTERS).optional(),
         profile: z.string().max(DOCUMENT_MAX_CHARACTERS),
         job: z.string().max(DOCUMENT_MAX_CHARACTERS),
         preferences: Preferences,
@@ -96,3 +98,26 @@ export type DossierDraftData = z.infer<typeof DossierDraft>;
 export type SavedAnalysisData = z.infer<typeof SavedAnalysis>;
 
 export type OfferSourceData = z.infer<typeof OfferSource>;
+
+export const BACKUP_MAX_BYTES = 8 * 1024 * 1024;
+
+export const BACKUP_MAX_ANALYSES = 100;
+
+export const Backup = z
+  .object({
+    format: z.literal("rolevidence-backup-v1"),
+    dossier: Dossier,
+    analyses: z.array(SavedAnalysis).max(BACKUP_MAX_ANALYSES),
+  })
+  .strict()
+  .refine(
+    (backup) =>
+      backup.analyses.every(
+        (analysis) =>
+          analysis.dossierId === backup.dossier.id &&
+          analysis.snapshot.id === backup.dossier.id,
+      ),
+    "Inconsistent dossier sources",
+  );
+
+export type BackupData = z.infer<typeof Backup>;

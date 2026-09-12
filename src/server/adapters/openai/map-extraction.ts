@@ -25,14 +25,26 @@ function mapRequirement(
   // document and retains invalid text only in verification diagnostics.
   return {
     ...requirement,
+    ...(requirement.candidateSource === "clarification"
+      ? {
+          clarificationQuote:
+            resolveProfileEvidence(
+              catalog.clarifications,
+              profileEvidenceId,
+              profileEvidenceQuote,
+            ) ?? profileEvidenceQuote,
+        }
+      : {}),
     explanation: sourceText(catalog.job, jobEvidenceId) ?? "",
     experienceComparison,
     profileQuote:
-      resolveProfileEvidence(
-        catalog.profile,
-        profileEvidenceId,
-        profileEvidenceQuote,
-      ) ?? profileEvidenceQuote,
+      requirement.candidateSource === "clarification"
+        ? null
+        : (resolveProfileEvidence(
+            catalog.profile,
+            profileEvidenceId,
+            profileEvidenceQuote,
+          ) ?? profileEvidenceQuote),
     preferencesQuote: sourceText(catalog.preferences, preferencesEvidenceId),
     jobQuote: sourceText(catalog.job, jobEvidenceId),
   };

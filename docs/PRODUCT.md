@@ -18,7 +18,7 @@ Explicitly saved dossiers and immutable analysis snapshots are stored in local S
 - Job: explicit requirements and offered conditions.
 - Candidate preferences: desired conditions, distinct from CV evidence.
 - Analysis: findings, quotations, unknowns and model/prompt/schema versions.
-- Clarification (planned): an answer attributed to its author, distinct from original documents.
+- Clarification: an answer attributed to its author, distinct from original documents.
 - Application/campaign (planned): a profile–job relationship with human notes and progress.
 
 Human notes and decisions must remain separate from model conclusions. Role-specific presentation must not change the evidentiary standard.

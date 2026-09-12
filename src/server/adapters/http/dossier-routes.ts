@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { z } from "zod";
-import { DossierSave } from "../../../shared/dossiers.ts";
+import { DossierSave, Backup } from "../../../shared/dossiers.ts";
 import type { DossierRepository } from "../../application/dossiers.ts";
 import { AppError } from "../../application/errors.ts";
 
@@ -29,6 +29,14 @@ export function registerDossierRoutes(
 ) {
   const root = "/api/v1/dossiers";
 
+  app.post(`${root}/restore`, (req, res) => {
+    const restored = repository.restore(parseInput(Backup, req.body));
+
+    res.status(201).location(`${root}/${restored.id}`).json(restored);
+  });
+  app.get(`${root}/:id/backup`, (req, res) =>
+    res.json(repository.backup(parseInput(z.uuid(), req.params.id))),
+  );
   app.get(root, (req, res) => {
     const { q, offset, limit } = parseInput(Page, req.query);
 

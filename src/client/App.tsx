@@ -81,7 +81,7 @@ function AnalysisWorkbench({ bootstrap }: { bootstrap: BootstrapData }) {
               <p role="alert">{fr.missingKey}</p>
             </Alert>
           )}
-          <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div className="grid items-start gap-6">
             <Card asChild>
               <form
                 className="min-w-0 space-y-4"

@@ -1,5 +1,10 @@
+import { useSavedAnalysis } from "./useSavedAnalysis.ts";
+import { fr } from "../../shared/i18n/fr.ts";
+import { WorkflowStatus } from "./WorkflowStatus.tsx";
+import { Alert } from "../../shared/ui/alert.tsx";
 import { ContextPanel } from "../analysis/components/ContextPanel.tsx";
 import { useState } from "react";
+import type { ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dossierApi } from "./api.ts";
 import { useDossierEditor } from "./useDossierEditor.ts";
@@ -9,6 +14,7 @@ import type { DossierData } from "../../../shared/dossiers.ts";
 import { workspaceFr as t } from "../../shared/i18n/workspace-fr.ts";
 import { PageLayout } from "../../app/PageLayout.tsx";
 import { Card } from "../../shared/ui/card.tsx";
+import { Textarea } from "../../shared/ui/textarea.tsx";
 import { Input } from "../../shared/ui/input.tsx";
 import { Button } from "../../shared/ui/button.tsx";
 import { NativeSelect } from "../../shared/ui/native-select.tsx";
@@ -69,14 +75,20 @@ function DossierEditor({
 
   const analysis = useAnalysis();
 
-  const [importing, setImporting] = useState(false);
+  const { submitting, generation, analyze } = useSavedAnalysis(
+    editor,
+    analysis,
+  );
 
-  const [generation, setGeneration] = useState(0);
+  const [importing, setImporting] = useState(false);
 
   const { draft, saved, dirty, save } = editor;
 
   const busy =
-    analysis.state.status === "loading" || save.isPending || importing;
+    submitting ||
+    analysis.state.status === "loading" ||
+    save.isPending ||
+    importing;
 
   const configured = providerAvailable(bootstrap, draft.selection);
 
@@ -85,79 +97,59 @@ function DossierEditor({
     analysis.clear();
   }
 
-  async function analyze() {
-    await analysis.run({
-      ...draft.documents,
-      selection: draft.selection,
-      dossierId: saved.id,
-      dossierRevision: saved.revision,
-    });
-    setGeneration((value) => value + 1);
-  }
-
   return (
-    <PageLayout model={draft.selection.model}>
-      <div className="mb-6 flex flex-wrap items-center gap-3">
-        <Button
-          variant="outline"
-          disabled={busy}
-          onClick={() => {
-            if (!dirty || window.confirm(t.leave)) {
-              onBack();
-            }
-          }}
-        >
-          {t.back}
-        </Button>
-        <span role="status" className="text-sm">
-          {dirty ? t.unsaved : t.saved}
-        </span>
-      </div>
+    <PageLayout model={draft.selection.model} title={draft.title}>
+      <DossierNavigation busy={busy} dirty={dirty} onBack={onBack} />
       <div className="space-y-6">
-        <DossierSettings
-          editor={editor}
-          change={change}
-          busy={busy}
-          bootstrap={bootstrap}
+        <WorkflowStatus
+          saving={save.isPending}
+          loading={analysis.state.status === "loading"}
+          importing={importing}
+          complete={analysis.state.status === "success"}
         />
-        <OfferImport
-          onBusy={setImporting}
-          selection={draft.selection}
-          disabled={busy || !configured}
-          onAdopt={(offerSource, text) =>
-            change({
-              ...draft,
-              offerSource,
-              documents: { ...draft.documents, job: text },
-            })
-          }
-        />
-        <div className="grid items-start gap-6 lg:grid-cols-2">
-          <DossierForm
+        <DocumentPreparation
+          collapsed={submitting || analysis.state.status === "success"}
+        >
+          <DossierSettings
             editor={editor}
-            analysis={analysis}
-            busy={busy}
-            configured={configured}
-            importing={importing}
-            setImporting={setImporting}
             change={change}
-            analyze={analyze}
+            busy={busy}
             bootstrap={bootstrap}
           />
-          <ResultsPanel
-            loading={analysis.state.status === "loading"}
-            result={
-              analysis.state.status === "success" ? analysis.state.result : null
+          <OfferImport
+            onBusy={setImporting}
+            selection={draft.selection}
+            disabled={busy || !configured}
+            onAdopt={(offerSource, text) =>
+              change({
+                ...draft,
+                offerSource,
+                documents: { ...draft.documents, job: text },
+              })
             }
           />
-        </div>
-        <ContextPanel
-          key={JSON.stringify({
-            documents: draft.documents,
-            selection: draft.selection,
-          })}
-          documents={{ ...draft.documents, selection: draft.selection }}
+          <div>
+            <DossierForm
+              editor={editor}
+              analysis={analysis}
+              busy={busy}
+              configured={configured}
+              importing={importing}
+              setImporting={setImporting}
+              change={change}
+              analyze={analyze}
+              bootstrap={bootstrap}
+            />
+          </div>
+        </DocumentPreparation>
+        <WorkspaceResults
+          analysis={analysis}
+          submitting={submitting}
+          saving={save.isPending}
+          onInclude={(quote) => change(includeQuote(draft, quote))}
+          onClarify={(text) => change(appendClarification(draft, text))}
         />
+        <DossierContext draft={draft} />
         <DossierHistory id={saved.id} generation={generation} />
       </div>
     </PageLayout>
@@ -223,7 +215,11 @@ function DossierSettings({
           </Button>
         </div>
       </fieldset>
-      {save.error && <p role="alert">{save.error.message}</p>}
+      {save.error && (
+        <Alert>
+          <p>{save.error.message}</p>
+        </Alert>
+      )}
     </Card>
   );
 }
@@ -255,7 +251,7 @@ function DossierForm({
 
   const disabled =
     busy ||
-    dirty ||
+    !draft.title.trim() ||
     !configured ||
     !draft.documents.profile.trim() ||
     !draft.documents.job.trim();
@@ -266,7 +262,7 @@ function DossierForm({
         className="space-y-5"
         onSubmit={(event) => {
           event.preventDefault();
-          if (!busy && !dirty && configured) {
+          if (!disabled) {
             void analyze();
           }
         }}
@@ -280,6 +276,8 @@ function DossierForm({
               ...draft,
               documents: {
                 ...documents,
+                reviewedJobQuotes: draft.documents.reviewedJobQuotes,
+                clarifications: draft.documents.clarifications,
                 preferences:
                   documents.preferences ?? draft.documents.preferences,
               },
@@ -290,6 +288,8 @@ function DossierForm({
               ...draft,
               documents: {
                 ...bootstrap.documents,
+                reviewedJobQuotes: draft.documents.reviewedJobQuotes,
+                clarifications: draft.documents.clarifications,
                 preferences: draft.documents.preferences,
               },
             })
@@ -305,16 +305,18 @@ function DossierForm({
             })
           }
         />
+        <Clarifications draft={draft} change={change} busy={busy} />
         {dirty && (
           <p className="text-sm text-muted-foreground">{t.saveFirst}</p>
         )}
         <AnalyzeButton
           activity={importing ? "importing" : analysis.state.status}
           disabled={disabled}
+          saving={editor.save.isPending}
+          saveRequired={dirty}
         />
         {analysis.state.status === "error" && (
-          <div role="alert">
-            <p>{analysis.state.message}</p>
+          <div>
             <Button variant="outline" onClick={analysis.clear}>
               {t.newRequest}
             </Button>
@@ -337,4 +339,160 @@ function providerAvailable(
         option.configured,
     ) ?? false
   );
+}
+
+function DossierContext({
+  draft,
+}: {
+  draft: ReturnType<typeof useDossierEditor>["draft"];
+}) {
+  return (
+    <ContextPanel
+      key={JSON.stringify({
+        documents: draft.documents,
+        selection: draft.selection,
+      })}
+      documents={{ ...draft.documents, selection: draft.selection }}
+    />
+  );
+}
+
+function DossierNavigation({
+  busy,
+  dirty,
+  onBack,
+}: {
+  busy: boolean;
+  dirty: boolean;
+  onBack: () => void;
+}) {
+  return (
+    <div className="mb-6 flex flex-wrap items-center gap-3">
+      <Button
+        variant="outline"
+        disabled={busy}
+        onClick={() => {
+          if (!dirty || window.confirm(t.leave)) {
+            onBack();
+          }
+        }}
+      >
+        {t.back}
+      </Button>
+      <span role="status" className="text-sm">
+        {dirty ? t.unsaved : t.saved}
+      </span>
+    </div>
+  );
+}
+
+function WorkspaceResults({
+  analysis,
+  submitting,
+  saving,
+  onClarify,
+  onInclude,
+}: {
+  analysis: ReturnType<typeof useAnalysis>;
+  submitting: boolean;
+  saving: boolean;
+  onClarify: (text: string) => void;
+  onInclude: (quote: string) => void;
+}) {
+  return (
+    <ResultsPanel
+      loading={submitting || analysis.state.status === "loading"}
+      saving={saving}
+      onClarify={onClarify}
+      onInclude={onInclude}
+      error={
+        analysis.state.status === "error" ? analysis.state.message : undefined
+      }
+      result={
+        analysis.state.status === "success" ? analysis.state.result : null
+      }
+    />
+  );
+}
+
+function DocumentPreparation({
+  collapsed,
+  children,
+}: {
+  collapsed: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <details
+      open={!collapsed}
+      className="rounded-md border border-border bg-card p-4"
+    >
+      <summary className="font-semibold text-primary">
+        {fr.editDocuments}
+      </summary>
+      <div className="mt-5 space-y-5">{children}</div>
+    </details>
+  );
+}
+
+function Clarifications({
+  draft,
+  change,
+  busy,
+}: {
+  draft: ReturnType<typeof useDossierEditor>["draft"];
+  change: DossierFormProps["change"];
+  busy: boolean;
+}) {
+  return (
+    <label className="block space-y-2 text-sm">
+      <strong>{fr.clarificationsTitle}</strong>
+      <p className="text-muted-foreground">{fr.clarificationsHelp}</p>
+      <Textarea
+        rows={5}
+        maxLength={16000}
+        disabled={busy}
+        value={draft.documents.clarifications ?? ""}
+        onChange={(event) =>
+          change({
+            ...draft,
+            documents: {
+              ...draft.documents,
+              clarifications: event.target.value,
+            },
+          })
+        }
+      />
+    </label>
+  );
+}
+
+function includeQuote(
+  draft: ReturnType<typeof useDossierEditor>["draft"],
+  quote: string,
+) {
+  return {
+    ...draft,
+    documents: {
+      ...draft.documents,
+      reviewedJobQuotes: [
+        ...new Set([...(draft.documents.reviewedJobQuotes ?? []), quote]),
+      ],
+    },
+  };
+}
+
+function appendClarification(
+  draft: ReturnType<typeof useDossierEditor>["draft"],
+  text: string,
+) {
+  return {
+    ...draft,
+    documents: {
+      ...draft.documents,
+      clarifications: [draft.documents.clarifications, text]
+        .filter(Boolean)
+        .join("\n"),
+    },
+  };
 }

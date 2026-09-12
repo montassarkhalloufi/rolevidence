@@ -61,7 +61,15 @@ export type Page<T> = {
   limit: number;
 };
 
+export type DossierBackup = {
+  format: "rolevidence-backup-v1";
+  dossier: Dossier;
+  analyses: SavedAnalysis[];
+};
+
 export interface DossierRepository {
+  backup(id: string): DossierBackup;
+  restore(backup: DossierBackup): Dossier;
   list(query: string, offset: number, limit: number): Page<DossierSummary>;
   get(id: string): Dossier;
   save(id: string, draft: DossierDraft, revision: number): Dossier;

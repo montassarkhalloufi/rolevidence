@@ -1,3 +1,4 @@
+import { draftKey } from "./draft-key.ts";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { dossierApi } from "./api.ts";
@@ -18,8 +19,8 @@ export function useDossierEditor(initial: DossierData) {
   });
 
   const dirty =
-    JSON.stringify(draft) !==
-    JSON.stringify({
+    draftKey(draft) !==
+    draftKey({
       title: saved.title,
       purpose: saved.purpose,
       documents: saved.documents,

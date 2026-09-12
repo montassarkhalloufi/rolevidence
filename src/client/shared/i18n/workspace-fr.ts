@@ -1,4 +1,14 @@
 export const workspaceFr = {
+  workflow: "Progression du dossier",
+  prepareStep: "Préparer les documents",
+  analyzeStep: "Lancer l’analyse",
+  reviewStep: "Examiner les résultats",
+  savingProgress: "Enregistrement du dossier…",
+  analysisProgress: "Lecture des critères puis comparaison par l’IA…",
+  importProgress: "Import du document ou de l’offre…",
+  progressHelp:
+    "L’offre est lue, puis comparée par lots de critères. Les offres longues nécessitent plusieurs appels IA et peuvent demander quelques minutes. Les contrôles seront réactivés à la fin.",
+
   title: "Mes dossiers",
   introduction:
     "Conservez vos candidatures et retrouvez vos analyses, sur cet ordinateur.",
@@ -20,7 +30,7 @@ export const workspaceFr = {
   previous: "Précédent",
   next: "Suivant",
   loading: "Chargement…",
-  saveFirst: "Enregistrez vos modifications avant d’analyser.",
+  saveFirst: "Vos modifications seront enregistrées avant l’appel IA.",
   history: "Historique des analyses",
   noHistory: "Aucune analyse enregistrée.",
   snapshot: "Documents exacts de cette analyse",

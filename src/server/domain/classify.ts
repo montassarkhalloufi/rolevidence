@@ -32,18 +32,23 @@ const categories = {
 } as const;
 
 function resolveEvidence(requirement: Requirement, documents: DocumentsInput) {
-  const profile = requirement.candidateSource === "profile";
+  const sources = {
+    profile: { text: documents.profile, quote: requirement.profileQuote },
+    preferences: {
+      text: preferencesText(documents.preferences),
+      quote: requirement.preferencesQuote,
+    },
+    clarification: {
+      text: documents.clarifications ?? "",
+      quote: requirement.clarificationQuote ?? null,
+    },
+  };
 
-  const proposedCandidate = profile
-    ? requirement.profileQuote
-    : requirement.preferencesQuote;
+  const source = sources[requirement.candidateSource];
 
   return {
-    proposedCandidate,
-    candidate: resolveQuote(
-      profile ? documents.profile : preferencesText(documents.preferences),
-      proposedCandidate,
-    ),
+    proposedCandidate: source.quote,
+    candidate: resolveQuote(source.text, source.quote),
     job: resolveQuote(documents.job, requirement.jobQuote),
   };
 }
@@ -123,6 +128,9 @@ function classifyRequirement(
   const value: Finding = {
     ...finding,
     evidenceState: status.state,
+    ...(candidateSource === "clarification"
+      ? { clarificationQuote: evidence.candidate }
+      : {}),
     profileQuote: candidateSource === "profile" ? evidence.candidate : null,
     preferencesQuote:
       candidateSource === "preferences" ? evidence.candidate : null,

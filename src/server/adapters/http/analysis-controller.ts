@@ -38,11 +38,18 @@ export function createAnalysisController(
       );
     }
 
-    const { profile, job, preferences = emptyPreferences } = parsed.data;
+    const {
+      profile,
+      job,
+      preferences = emptyPreferences,
+      clarifications,
+    } = parsed.data;
 
     const fingerprint = createHash("sha256")
       .update(
         JSON.stringify({
+          reviewedJobQuotes: parsed.data.reviewedJobQuotes,
+          clarifications,
           profile,
           job,
           preferences,
@@ -61,6 +68,8 @@ export function createAnalysisController(
       const snapshot = analysisSnapshot(parsed.data, dossiers);
 
       const output = await selectedService.analyze({
+        reviewedJobQuotes: parsed.data.reviewedJobQuotes,
+        clarifications,
         profile,
         job,
         preferences,

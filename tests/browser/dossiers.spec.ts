@@ -13,7 +13,24 @@ function backend(path: string) {
   const db = openDatabase(path);
 
   const service = createAnalysisService("test-model", async () => ({
-    extraction: { requirements: [] },
+    extraction: {
+      requirements: [
+        {
+          subject: "TypeScript",
+          explanation: "Pratique déclarée",
+          candidateSource: "profile",
+          candidateInformation: "provided",
+          profileQuote: "Camille utilise TypeScript",
+          preferencesQuote: null,
+          jobQuote: "TypeScript requis.",
+          interpretation: {
+            relation: "equivalence",
+            describedPractice: "TypeScript",
+            justification: "Déclaration",
+          },
+        },
+      ],
+    },
     metadata: {
       provider: "openai",
       responseId: "fake-browser",
@@ -103,14 +120,20 @@ test("two local dossiers, saved analysis, server restart, immutable history and 
       .getByLabel("Offre · collez la description du poste")
       .fill("TypeScript requis.");
     await expect(
-      page.getByRole("button", { name: "Analyser la correspondance" }),
-    ).toBeDisabled();
-    await page.getByRole("button", { name: "Enregistrer le dossier" }).click();
-    await page
-      .getByRole("button", { name: "Analyser la correspondance" })
-      .click();
+      page.getByRole("button", { name: "Enregistrer et analyser" }),
+    ).toBeEnabled();
+    await page.getByRole("button", { name: "Enregistrer et analyser" }).click();
     await expect(
       page.getByRole("button", { name: /openai · test-model/ }),
+    ).toBeVisible();
+    await expect(
+      page.getByLabel("Offre · collez la description du poste"),
+    ).toBeHidden();
+    await page
+      .getByText("Documents et préférences · modifier", { exact: true })
+      .click();
+    await expect(
+      page.getByLabel("Offre · collez la description du poste"),
     ).toBeVisible();
     await page.getByRole("button", { name: "Retour aux dossiers" }).click();
     await page.getByLabel("Nom du dossier").fill("Deuxième candidature");
@@ -189,12 +212,21 @@ test("offer review is explicit and a failed save retains user edits", async ({
   await once(runtime.server, "listening");
   let rejectSave = false;
 
+  let analysisRequests = 0;
+
   const sourceText =
     "Développeur backend. TypeScript et Node.js requis. Télétravail : hybride. Salaire : 65000.";
 
   try {
     await page.route("http://127.0.0.1:5174/api/**", async (route) => {
       const original = new URL(route.request().url());
+
+      if (
+        original.pathname.endsWith("analyses") &&
+        route.request().method() === "POST"
+      ) {
+        analysisRequests += 1;
+      }
 
       if (original.pathname.endsWith("offer-imports")) {
         await route.fulfill({
@@ -268,14 +300,20 @@ test("offer review is explicit and a failed save retains user edits", async ({
     await expect(
       page.getByLabel("Offre · collez la description du poste"),
     ).toHaveValue(sourceText);
+    await page.getByRole("button", { name: "Profil candidat" }).click();
+    await page
+      .getByLabel("Profil candidat · texte modifiable")
+      .fill("Camille utilise TypeScript.");
+    await page.getByRole("button", { name: "Offre d’emploi" }).click();
     rejectSave = true;
-    await page.getByRole("button", { name: "Enregistrer le dossier" }).click();
+    await page.getByRole("button", { name: "Enregistrer et analyser" }).click();
     await expect(page.getByRole("alert")).toContainText(
       "L’enregistrement local a échoué.",
     );
     await expect(
       page.getByLabel("Offre · collez la description du poste"),
     ).toHaveValue(sourceText);
+    expect(analysisRequests).toBe(0);
     rejectSave = false;
     await page.getByRole("button", { name: "Enregistrer le dossier" }).click();
     await expect(
@@ -292,6 +330,96 @@ test("offer review is explicit and a failed save retains user edits", async ({
     await new Promise<void>((resolve, reject) =>
       runtime.server.close((error) => (error ? reject(error) : resolve())),
     );
+    runtime.db.close();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("clarification, report download, backup and restoration preserve sources", async ({
+  page,
+}) => {
+  const directory = await mkdtemp(join(tmpdir(), "rolevidence-portability-"));
+
+  const runtime = backend(join(directory, "test.sqlite"));
+
+  await once(runtime.server, "listening");
+  try {
+    await page.route("http://127.0.0.1:5174/api/**", async (route) => {
+      const address = runtime.server.address();
+
+      if (!address || typeof address === "string") {
+        throw new Error("missing address");
+      }
+
+      const url = new URL(route.request().url());
+
+      await route.fulfill({
+        response: await route.fetch({
+          url: `http://127.0.0.1:${address.port}${url.pathname}${url.search}`,
+        }),
+      });
+    });
+    await page.goto("/");
+    await page.getByLabel("Nom du dossier").fill("Dossier exportable");
+    await page.getByRole("button", { name: "Créer un dossier" }).click();
+    await page
+      .getByLabel("Profil candidat · texte modifiable")
+      .fill("Camille utilise TypeScript en production.");
+    await page.getByRole("button", { name: "Offre d’emploi" }).click();
+    await page
+      .getByLabel("Offre · collez la description du poste")
+      .fill("TypeScript requis.");
+    await page.getByRole("button", { name: "Enregistrer et analyser" }).click();
+    await page.getByText("Apporter une précision", { exact: true }).click();
+    await page
+      .getByLabel("Réponse factuelle (contexte, pratique, durée si connue)")
+      .fill("J’écris des tests unitaires avec Jest depuis 2021.");
+    await page
+      .getByRole("button", { name: "Ajouter aux précisions du dossier" })
+      .click();
+    await expect(
+      page.getByLabel(/Précisions et réponses complémentaires/),
+    ).toHaveValue(/Déclaration du candidat.*Jest/);
+    await page.getByRole("button", { name: /Profil candidat/ }).click();
+    await expect(
+      page.getByLabel("Profil candidat · texte modifiable"),
+    ).toHaveValue("Camille utilise TypeScript en production.");
+    await page.getByRole("button", { name: "Enregistrer et analyser" }).click();
+    await expect(
+      page.getByRole("button", { name: /openai · test-model/ }),
+    ).toHaveCount(2);
+    await page
+      .getByRole("button", { name: /openai · test-model/ })
+      .first()
+      .click();
+    const report = page.waitForEvent("download");
+
+    await page
+      .getByRole("button", { name: "Exporter le rapport HTML imprimable" })
+      .click();
+    expect((await report).suggestedFilename()).toBe("rolevidence-report.html");
+    const download = page.waitForEvent("download");
+
+    await page.getByRole("button", { name: "Sauvegarder ce dossier" }).click();
+    const path = join(directory, "backup.json");
+
+    await (await download).saveAs(path);
+    await page.getByRole("button", { name: "Retour aux dossiers" }).click();
+    await page.getByText("Restaurer une sauvegarde", { exact: true }).click();
+    await page.getByLabel("Fichier de sauvegarde JSON").setInputFiles(path);
+    await expect(
+      page.getByRole("button", { name: /openai · test-model/ }),
+    ).toHaveCount(2);
+    await expect(
+      page.getByLabel(/Précisions et réponses complémentaires/),
+    ).toHaveValue(/Jest/);
+    await page.getByRole("button", { name: "Retour aux dossiers" }).click();
+    await expect(
+      page.getByRole("heading", { name: "Dossier exportable", exact: true }),
+    ).toHaveCount(2);
+  } finally {
+    runtime.server.closeAllConnections();
+    await new Promise<void>((resolve) => runtime.server.close(() => resolve()));
     runtime.db.close();
     await rm(directory, { recursive: true, force: true });
   }

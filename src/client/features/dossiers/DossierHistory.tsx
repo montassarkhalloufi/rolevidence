@@ -1,3 +1,7 @@
+import { BackupExport } from "../exports/BackupControls.tsx";
+import { renderReport } from "../exports/report.ts";
+import { downloadFile } from "../exports/download.ts";
+import { fr } from "../../shared/i18n/fr.ts";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { dossierApi } from "./api.ts";
@@ -27,6 +31,7 @@ export function DossierHistory({
   return (
     <Card>
       <h2 className="font-editorial text-2xl">{t.history}</h2>
+      <BackupExport id={id} />
       {history.error && <p role="alert">{history.error.message}</p>}
       {history.isPending && <p role="status">{t.loading}</p>}
       {history.data?.total === 0 && <p className="my-3">{t.noHistory}</p>}
@@ -60,6 +65,18 @@ export function DossierHistory({
         <div className="mt-4 space-y-4">
           <Button variant="outline" onClick={() => setSelected(null)}>
             {t.current}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() =>
+              downloadFile(
+                "rolevidence-report.html",
+                renderReport(selected),
+                "text/html",
+              )
+            }
+          >
+            {fr.reportExport}
           </Button>
           <details>
             <summary>{t.snapshot}</summary>

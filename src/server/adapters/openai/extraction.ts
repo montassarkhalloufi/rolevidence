@@ -19,8 +19,11 @@ export function createExtractionSchema(catalog: SourceCatalog) {
       explanation: z.string(),
       interpretation: Interpretation,
       candidateInformation: z.enum(["provided", "not_provided"]),
-      candidateSource: z.enum(["profile", "preferences"]),
-      profileEvidenceId: reference(catalog.profile).describe(
+      candidateSource: z.enum(["profile", "preferences", "clarification"]),
+      profileEvidenceId: reference([
+        ...catalog.profile,
+        ...catalog.clarifications,
+      ]).describe(
         "Select the exact supporting profile passage, or null. Never invent a quote.",
       ),
       profileEvidenceQuote: z

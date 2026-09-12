@@ -17,6 +17,9 @@ function passages(text: string, prefix: string): SourcePassage[] {
 export function createSourceCatalog(documents: DocumentsInput) {
   return {
     profile: profilePassages(documents.profile),
+    clarifications: passages(documents.clarifications ?? "", "C").filter(
+      (item) => !isResponseDirective(item.text),
+    ),
     job: passages(documents.job, "J"),
     preferences: passages(preferencesText(documents.preferences), "R"),
   };

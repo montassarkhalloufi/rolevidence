@@ -48,6 +48,8 @@ export function configureProviders(config: ReturnType<typeof loadConfig>) {
         provider: option.provider,
         model,
         messages: createMessages(documents),
+        preparation:
+          "Job-only relevance classification precedes comparison. These are the complete source inputs; contextual passages are removed only after that explicit model classification.",
       }),
     ),
   }));

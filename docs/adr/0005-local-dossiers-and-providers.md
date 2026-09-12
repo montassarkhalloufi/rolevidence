@@ -40,3 +40,7 @@ SQLite is unencrypted and backups/OS snapshots remain the user's responsibility.
 Deletion is logical removal, not guaranteed forensic erasure. Analysis request
 idempotency remains bounded and process-local; saved results survive restart,
 but an interrupted paid request is not automatically resumed or retried.
+
+## Amendment — Portable copies and reports (2026-09-12)
+
+JSON backups include saved documents, attributed clarifications, model selection, provenance and history. Validate schema and dossier linkage, bound size/count and restore all records in one SQLite transaction under fresh IDs. Do not overwrite existing dossiers. Each explicit restoration creates a copy; this is not an idempotent import API. HTML reports escape untrusted content, deny active/external content via CSP and retain exact snapshots and model metadata. Exports contain private data and are not encrypted.

@@ -1,4 +1,73 @@
 export const fr = {
+  includeCriterion: "Inclure dans la prochaine analyse",
+  clarifyAction: "Apporter une précision",
+  clarifyQuestion:
+    "Quelle expérience ou information pouvez-vous préciser concernant",
+  clarifyAuthor: "Origine de la déclaration",
+  clarifyCandidate: "Déclaration du candidat",
+  clarifyRecruiter: "Compte rendu du recruteur",
+  clarifyAnswer: "Réponse factuelle (contexte, pratique, durée si connue)",
+  clarifySave: "Ajouter aux précisions du dossier",
+  clarifyNext:
+    "La réponse complète le brouillon, sans modifier le CV. Enregistrez et relancez l’analyse pour la prendre en compte.",
+
+  reportExport: "Exporter le rapport HTML imprimable",
+  reportSources: "Sources exactes et préférences de cette analyse",
+  backupExport: "Sauvegarder ce dossier",
+  backupRestore: "Restaurer une sauvegarde",
+  backupRestoreHelp:
+    "La restauration crée une copie avec ses analyses et leurs sources, sans écraser les dossiers existants. Aucun appel IA n’est effectué.",
+  backupChoose: "Fichier de sauvegarde JSON",
+  backupBusy: "Traitement de la sauvegarde…",
+  backupPrivacy:
+    "Le fichier contient les textes, préférences et résultats enregistrés. Conservez-le dans un emplacement privé.",
+  backupSize: "La sauvegarde dépasse 8 Mo.",
+  backupInvalid: "Sauvegarde Rolevidence invalide ou incompatible.",
+
+  clarificationSource: "DÉCLARATION COMPLÉMENTAIRE",
+  clarificationsTitle: "Précisions et réponses complémentaires",
+  clarificationsHelp:
+    "Ces déclarations sont enregistrées séparément du CV. Indiquez qui répond, la date et l’expérience concrète. Elles seront transmises au modèle lors de la prochaine analyse ; les résultats précédents restent inchangés.",
+
+  progressTitle: "Analyse en cours",
+  progressSaving: "Enregistrement du dossier…",
+  progressComparing: "Lecture de l’offre et comparaison du profil…",
+  progressExplanation:
+    "L’IA examine les textes, puis les preuves sont vérifiées. Vous pouvez rester sur cette page ; aucun autre lancement n’est nécessaire.",
+  progressElapsed: "Temps écoulé",
+  progressWaiting: "Résultats à venir",
+  progressError: "L’analyse n’a pas abouti",
+  progressErrorHelp:
+    "Vos documents sont conservés. Consultez le message ci-dessous avant de préparer une nouvelle tentative.",
+
+  evidenceWorkspace: "Les faits, face aux exigences.",
+  selectedCriterion: "Critère sélectionné",
+  noFilteredResults: "Aucun critère dans cette catégorie.",
+  editDocuments: "Documents et préférences · modifier",
+  localStorage: "Stockage local",
+  dossiersLink: "Mes dossiers",
+  evidenceLimits:
+    "Les faits cités sont déclaratifs ; ils ne constituent pas une évaluation du niveau réel.",
+  filterResults: "Filtrer les conclusions",
+  incompleteCoverage: "Points non évalués",
+  coverageHelp:
+    "L’analyse ne couvre pas encore tous les éléments ci-dessous. Il s’agit d’une limite de l’analyse, pas d’une compétence absente du CV ni d’un écart établi.",
+  analysisDetails: "Détails de l’analyse",
+  candidateActionTitle: "Pour préparer votre candidature :",
+  candidateCoverageAction:
+    "repérez les attentes importantes et les expériences que vous pourrez présenter pour y répondre.",
+  recruiterActionTitle: "Pour préparer un entretien :",
+  recruiterCoverageAction:
+    "repérez les attentes à approfondir avec le candidat, sans présumer qu’il ne les satisfait pas.",
+  coverageSourceHelp:
+    "Extraits de l’offre non évalués, conservés dans leur formulation d’origine. Un extrait peut contenir plusieurs attentes ou du contexte.",
+  offerContext: "Contexte de l’offre, hors comparaison",
+  contextClassificationHelp:
+    "Le modèle a classé ces passages comme contexte. Cette sélection reste vérifiable : une exigence mal classée doit être réintégrée lors d’une nouvelle analyse.",
+  saveAndAnalyze: "Enregistrer et analyser",
+  saving: "Enregistrement en cours…",
+  allResults: "Tous",
+
   correctedModelInterpretation:
     "Interprétation du modèle corrigée par les règles",
   originalModelReasoning: "Raisonnement initial du modèle, non retenu :",
@@ -25,7 +94,7 @@ export const fr = {
   retry: "Réessayer",
   homeLabel: "Rolevidence accueil",
   applicationMode: "Analyse locale",
-  versionLabel: "v0.2.0",
+  versionLabel: "v0.3.0",
   mottoFirst: "Des critères clairs.",
   mottoSecond: "Des preuves visibles.",
   eyebrow: "PROFILS ET OFFRES · ANALYSE EXPLICABLE",
