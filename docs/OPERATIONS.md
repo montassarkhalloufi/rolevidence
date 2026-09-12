@@ -26,3 +26,11 @@ Open an analysis in history and export HTML. The file includes classifications, 
 Run `npm run quality` and `npm run test:browser`. Browser suites use fictional providers and local SQLite. Real OpenAI evaluations are separate paid runs in ignored artifacts. Anthropic and hosted LangSmith require their own keys and are not declared live-validated when those keys are absent.
 
 The local desktop validation does not establish Windows compatibility or a complete assistive-technology audit. GitHub CI checks Linux. This application is local and unauthenticated; do not expose it as a multi-user web service.
+
+## Upgrade to 0.4 and interrupted work
+
+Stop the application and back up its SQLite file before upgrading. Schema 3 adds campaign/job tables without rewriting saved document payloads. Older versions reject the newer schema: downgrade by restoring the pre-upgrade database backup, not by changing PRAGMA user_version. Run one server process per database.
+
+Closing a browser leaves accepted jobs running locally. Reopen the dossier to read current progress. A stopped server leaves interrupted work available for explicit resume; no startup model call is made. Resume uses the original documents/provider selection and completed checkpoints. Cancel/resume controls carry the observed attempt number to reject stale actions. A provider call interrupted before its response was saved can already be billed; explicit resumption can invoke that unfinished step again.
+
+Campaign membership is a grouping of independent copies. Edits to a source dossier do not update members. Recruiter campaigns deliberately start with empty candidate preferences/clarifications. Review each member before analysis. Group deletion retains dossiers; dossier deletion removes its own analyses, jobs and membership. To preserve grouping and in-progress checkpoints, use a whole-database backup while stopped. Per-dossier JSON preserves tracking and completed results only.

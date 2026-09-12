@@ -42,7 +42,7 @@ Thumbs.db
 .codex/
 .agents/
 
-# Video production stays outside the source distribution
+# Video production is maintained outside the source distribution
 /scripts/media/
 /docs/media/*.mp4
 /docs/media/*-poster.png

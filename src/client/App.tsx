@@ -1,3 +1,4 @@
+import { CampaignWorkspace } from "./features/workflows/CampaignWorkspace.tsx";
 import { DossierHome } from "./features/dossiers/DossierHome.tsx";
 import { DossierWorkspace } from "./features/dossiers/DossierWorkspace.tsx";
 import { Alert } from "./shared/ui/alert.tsx";
@@ -19,6 +20,8 @@ import type { BootstrapData, DocumentsInput } from "../shared/analysis.ts";
 export function App() {
   const bootstrap = useBootstrap();
 
+  const [campaignId, setCampaignId] = useState<string | null>(null);
+
   const [dossierId, setDossierId] = useState<string | null>(null);
 
   if (bootstrap.isPending) {
@@ -35,16 +38,34 @@ export function App() {
     );
   }
 
+  if (campaignId && !dossierId) {
+    return (
+      <CampaignWorkspace
+        id={campaignId}
+        onBack={() => setCampaignId(null)}
+        onDossier={setDossierId}
+      />
+    );
+  }
+
   if (bootstrap.data.dossiersEnabled) {
     return dossierId ? (
       <DossierWorkspace
         key={dossierId}
         id={dossierId}
         bootstrap={bootstrap.data}
+        onCampaign={(id) => {
+          setDossierId(null);
+          setCampaignId(id);
+        }}
         onBack={() => setDossierId(null)}
       />
     ) : (
-      <DossierHome bootstrap={bootstrap.data} onOpen={setDossierId} />
+      <DossierHome
+        bootstrap={bootstrap.data}
+        onOpen={setDossierId}
+        onCampaign={setCampaignId}
+      />
     );
   }
 

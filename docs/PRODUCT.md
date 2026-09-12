@@ -10,7 +10,7 @@ The product supports human understanding and decisions. It does not verify compe
 
 Single-user local installation, user-owned provider key, loopback-only server. No accounts or cloud database are required. Local execution does not imply offline AI: analysis transmits the document texts and candidate preferences to the selected provider. The key stays on the server. Preview is available before submission.
 
-Explicitly saved dossiers and immutable analysis snapshots are stored in local SQLite. Unsaved edits remain in browser memory; paid-request idempotency is temporary and process-local. Do not expose the unauthenticated service to a network or use real personal documents as repository fixtures.
+Explicitly saved dossiers and immutable analysis snapshots are stored in local SQLite. Unsaved edits remain in browser memory; legacy synchronous paid-request idempotency is temporary and process-local; durable dossier job identity and checkpoints are stored in SQLite. Do not expose the unauthenticated service to a network or use real personal documents as repository fixtures.
 
 ## Shared concepts
 
@@ -19,6 +19,6 @@ Explicitly saved dossiers and immutable analysis snapshots are stored in local S
 - Candidate preferences: desired conditions, distinct from CV evidence.
 - Analysis: findings, quotations, unknowns and model/prompt/schema versions.
 - Clarification: an answer attributed to its author, distinct from original documents.
-- Application/campaign (planned): a profile–job relationship with human notes and progress.
+- Application/campaign: independent profile–job dossiers grouped for evidence comparison, with human notes and progress.
 
 Human notes and decisions must remain separate from model conclusions. Role-specific presentation must not change the evidentiary standard.

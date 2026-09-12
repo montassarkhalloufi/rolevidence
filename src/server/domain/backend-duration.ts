@@ -25,13 +25,17 @@ export function compareBackendDuration(
     return { ...requirement, experienceComparison: null };
   }
 
+  if (!/\bbackend\b/iu.test(jobQuote)) {
+    return requirement;
+  }
+
   const candidate = resolveQuote(documents.profile, requirement.profileQuote);
 
   if (!candidate) {
     return requirement;
   }
 
-  const duration = candidate ? BACKEND_DURATION.exec(candidate.trim()) : null;
+  const duration = BACKEND_DURATION.exec(candidate.trim());
 
   const normalized = { ...requirement, candidateSource: "profile" as const };
 

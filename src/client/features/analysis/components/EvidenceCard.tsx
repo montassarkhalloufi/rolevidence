@@ -1,3 +1,4 @@
+import { findingLabel } from "../finding-label.ts";
 import { Badge, type BadgeTone } from "../../../shared/ui/badge.tsx";
 import { StatusIcon } from "../../../shared/ui/status-icon.tsx";
 import { fr } from "../../../shared/i18n/fr.ts";
@@ -38,7 +39,7 @@ const verificationLabels = {
 function summary(finding: Finding) {
   return finding.verification
     ? verificationLabels[finding.verification.code]
-    : finding.explanation;
+    : finding.interpretation.justification;
 }
 
 function VerificationDetails({ finding }: { finding: Finding }) {
@@ -76,7 +77,10 @@ function SourceQuotes({ finding }: { finding: Finding }) {
     { label: fr.clarificationSource, text: finding.clarificationQuote },
     { label: fr.profileSource, text: finding.profileQuote },
     { label: fr.preferencesSource, text: finding.preferencesQuote },
-    { label: fr.jobSource, text: finding.jobQuote },
+    {
+      label: fr.jobSource,
+      text: finding.jobQuotes?.join("\n\n") || finding.jobQuote,
+    },
   ].filter((quote) => quote.text);
 
   if (!quotes.length) {
@@ -84,7 +88,7 @@ function SourceQuotes({ finding }: { finding: Finding }) {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid gap-4 @md/quotes:grid-cols-2">
       {quotes.map((quote) => (
         <blockquote
           className="my-3 border-l-2 border-input bg-muted px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap break-words"
@@ -113,10 +117,12 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
   return (
     <article className="flex gap-3 border-b border-border py-4 [&>div]:min-w-0 [&>div]:w-full [&_p]:my-2 [&_p]:text-sm [&_p]:leading-relaxed [&_p]:text-muted-foreground [&_summary]:text-sm [&_summary]:text-primary">
       <StatusIcon tone={group.tone}>{group.symbol}</StatusIcon>
-      <div>
+      <div className="@container/quotes">
         <div className="flex flex-wrap items-center gap-2 [&>h3]:text-xl [&>h3]:font-semibold">
           <h3>{finding.subject}</h3>
-          <Badge tone={group.tone}>{group.singular}</Badge>
+          <Badge tone={group.tone}>
+            {findingLabel(finding, group.singular)}
+          </Badge>
         </div>
         <p>{summary(finding)}</p>
         {expanded && <SourceQuotes finding={finding} />}
@@ -134,10 +140,12 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
               {fr.practice} {finding.interpretation.describedPractice}
             </p>
           )}
-          <p>
-            {corrected && <strong>{fr.originalModelReasoning} </strong>}
-            {finding.interpretation.justification}
-          </p>
+          {finding.verification && (
+            <p>
+              {corrected && <strong>{fr.originalModelReasoning} </strong>}
+              {finding.interpretation.justification}
+            </p>
+          )}
           <p>
             {fr.retainedState}{" "}
             {finding.verification?.code === "UNVERIFIED_QUOTES"

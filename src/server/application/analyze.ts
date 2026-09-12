@@ -1,3 +1,4 @@
+import type { AnalysisExecution } from "./execution.ts";
 import type {
   DocumentsInput,
   ExtractionResult,
@@ -6,6 +7,7 @@ import type {
 import { classifyRequirements } from "../domain/classify.ts";
 
 export type ModelMetadata = {
+  offerWarnings?: { explanation: string; quotes: string[] }[] | undefined;
   preparationVersion?: string | undefined;
   contextPassages?: { quote: string; reason: string }[] | undefined;
   provider?: "openai" | "anthropic" | undefined;
@@ -28,6 +30,7 @@ export type AnalysisRequest = { documents: DocumentsInput; model: string };
 export type ModelGateway = (
   request: AnalysisRequest,
   signal?: AbortSignal,
+  execution?: AnalysisExecution,
 ) => Promise<{ extraction: ExtractionResult; metadata: ModelMetadata }>;
 
 export type RequestPreview = (
@@ -47,10 +50,12 @@ export function createAnalysisService(
     analyze: async (
       documents: DocumentsInput,
       signal?: AbortSignal,
+      execution?: AnalysisExecution,
     ): Promise<AnalysisOutput> => {
       const { extraction, metadata } = await gateway(
         { documents, model },
         signal,
+        execution,
       );
 
       return {

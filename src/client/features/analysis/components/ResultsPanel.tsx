@@ -1,3 +1,5 @@
+import { findingLabel } from "../finding-label.ts";
+import { OfferWarnings } from "./OfferWarnings.tsx";
 import { ClarificationAnswer } from "../../dossiers/ClarificationAnswer.tsx";
 import { AnalysisProgress } from "./AnalysisProgress.tsx";
 import { Alert } from "../../../shared/ui/alert.tsx";
@@ -82,7 +84,7 @@ export function ResultsPanel({
   }
 
   return (
-    <Card asChild>
+    <Card asChild className="@container/results">
       <section
         className="min-w-0"
         aria-labelledby={titleId}
@@ -104,6 +106,7 @@ export function ResultsPanel({
             <p className="my-5 border-l-2 border-input pl-3 text-sm leading-relaxed text-muted-foreground">
               {fr.reviewNote}
             </p>
+            <OfferWarnings warnings={result.metadata.offerWarnings} />
             <ResultFilters
               value={filter}
               onChange={setFilter}
@@ -211,7 +214,7 @@ function EvidenceReader({
   }
 
   return (
-    <div className="grid items-start gap-5 lg:grid-cols-[minmax(240px,1fr)_minmax(0,2fr)]">
+    <div className="grid items-start gap-5 @3xl/results:grid-cols-[minmax(240px,1fr)_minmax(0,2fr)]">
       <div
         aria-label={fr.filterResults}
         className="min-w-0 divide-y divide-border overflow-hidden rounded-md border border-border"
@@ -221,13 +224,15 @@ function EvidenceReader({
             key={`${group.key}-${index}`}
             variant="ghost"
             aria-pressed={index === selected}
-            aria-label={`${finding.subject} · ${group.singular}`}
+            aria-label={`${finding.subject} · ${findingLabel(finding, group.singular)}`}
             onClick={() => setSelected(index)}
             className={`h-auto w-full justify-start rounded-none border-l-4 px-4 py-4 text-left whitespace-normal ${index === selected ? "border-primary bg-accent" : "border-transparent"}`}
           >
             <span className="min-w-0 space-y-2 break-words">
               <span className="block font-semibold">{finding.subject}</span>
-              <Badge tone={group.tone}>{group.singular}</Badge>
+              <Badge tone={group.tone}>
+                {findingLabel(finding, group.singular)}
+              </Badge>
             </span>
           </Button>
         ))}

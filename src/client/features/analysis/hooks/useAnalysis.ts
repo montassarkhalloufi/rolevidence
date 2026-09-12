@@ -1,3 +1,4 @@
+import { useDurableAnalysis } from "../../workflows/useDurableAnalysis.ts";
 import { useRef } from "react";
 import { useMutation } from "@tanstack/react-query";
 import type { UseMutationResult } from "@tanstack/react-query";
@@ -5,7 +6,9 @@ import type { AnalysisResponseData } from "../../../../shared/analysis.ts";
 import { api } from "../../../shared/api/client.ts";
 import type { AnalysisInputData as DocumentsInput } from "../../../../shared/analysis.ts";
 
-export function useAnalysis() {
+export function useAnalysis(dossierId?: string, revision?: number) {
+  const durable = useDurableAnalysis(dossierId, revision);
+
   const request = useRef<{ payload: string; key: string } | null>(null);
 
   const pending = useRef(false);
@@ -43,7 +46,16 @@ export function useAnalysis() {
 
   const state = analysisState(mutation);
 
+  if (dossierId) {
+    return durable;
+  }
+
   return {
+    actionError: undefined,
+    job: null,
+    actionPending: false,
+    resume: () => {},
+    cancel: () => {},
     state,
     run,
     clear: () => {

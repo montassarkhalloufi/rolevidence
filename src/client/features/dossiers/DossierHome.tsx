@@ -1,3 +1,4 @@
+import { CampaignList } from "../workflows/CampaignList.tsx";
 import { BackupRestore } from "../exports/BackupControls.tsx";
 import { useDossierHome } from "./useDossierHome.ts";
 import type { BootstrapData } from "../../../shared/analysis.ts";
@@ -10,7 +11,9 @@ import { Button } from "../../shared/ui/button.tsx";
 export function DossierHome({
   bootstrap,
   onOpen,
+  onCampaign,
 }: {
+  onCampaign: (id: string) => void;
   bootstrap: BootstrapData;
   onOpen: (id: string) => void;
 }) {
@@ -63,6 +66,7 @@ export function DossierHome({
         <BackupRestore onOpen={onOpen} />
         <DossierList state={state} onOpen={onOpen} />
       </Card>
+      {bootstrap.workflowsEnabled && <CampaignList onOpen={onCampaign} />}
     </PageLayout>
   );
 }

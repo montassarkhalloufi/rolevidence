@@ -1,3 +1,6 @@
+import { createJobRunner } from "./application/jobs.ts";
+import { createJobRepository } from "./infrastructure/persistence/jobs.ts";
+import { createCampaignRepository } from "./infrastructure/persistence/campaigns.ts";
 import { configureProviders } from "./infrastructure/providers.ts";
 import { openDatabase } from "./infrastructure/persistence/database.ts";
 import { createDossierRepository } from "./infrastructure/persistence/dossiers.ts";
@@ -17,7 +20,18 @@ const database = openDatabase(config.DATABASE_PATH);
 
 const dossiers = createDossierRepository(database);
 
+const workflows = {
+  campaigns: createCampaignRepository(database, dossiers),
+  jobs: createJobRunner(
+    createJobRepository(database),
+    dossiers,
+    (selection) => providers.resolve(selection),
+    () => new Date().toISOString(),
+  ),
+};
+
 const app = createApp({
+  workflows,
   service: fallback,
   providers,
   extractOffer,
@@ -36,6 +50,19 @@ server.on("error", () => {
   console.error("Serveur indisponible : vérifie notamment le port configuré.");
   process.exitCode = 1;
 });
+let closing = false;
+
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
-  process.on(signal, () => server.close(() => database.close()));
+  process.on(signal, () => {
+    if (closing) {
+      return;
+    }
+
+    closing = true;
+    const drained = workflows.jobs.shutdown();
+
+    server.close(() => {
+      void drained.then(() => database.close());
+    });
+  });
 }

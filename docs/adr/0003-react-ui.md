@@ -41,25 +41,18 @@ A dirty dossier offers an explicit “Enregistrer et analyser” action. Save co
 
 The approved redesign replaces ivory/forest styling with cool light surfaces, midnight navigation and violet actions, retaining distinct semantic status colors and labels. Successful dossier analyses collapse preparation controls; users can reopen them explicitly. Results use a selectable criterion list and adjacent evidence reader, stacked on mobile. Unknown information and unverified evidence remain separate filters. Evidence quotations preserve original text without generated highlights or unsupported document-location links. Diagnostic model reasoning remains available in a disclosure. No provider or persistence behavior changes.
 
+## Amendment — Campaign panels and durable progress (2026-09-12)
+
+Evidence layout responds to its containing panel, not only viewport width, so quotations remain readable in side-by-side campaigns. Durable jobs use TanStack Query polling of actual stage/batch state; mutations explicitly start, cancel or resume. Polling stops on terminal states. A focus hook synchronizes the progress panel with the DOM; no fabricated percentage or provider retry is introduced. Job identity persists server-side so leaving the page does not lose the operation. Member CV import remains local and explicitly reviewed before campaign creation.
+
 ## Component maintenance reference
 
-## Ownership
+Semantic colors and radii live in `src/client/shared/styles/tokens.css`; global
+styles in `src/client/styles.css` are document defaults only. Shared primitives
+own their variants; feature components use Tailwind for layout. Local compositions
+are not advertised as unmodified upstream shadcn components. Preserve attribution.
 
-The UI uses owned shadcn-style primitives and Tailwind v4. Button retains the attributed shadcn/Radix Slot foundation. Card, Badge, Alert, StatusIcon, Input, Textarea, NativeSelect and CodeBlock are local compositions; they are not presented as unmodified upstream copies.
-
-- Semantic colors and radii: src/client/shared/styles/tokens.css.
-- Document defaults only: src/client/styles.css.
-- Component variants and native semantics: src/client/shared/ui.
-- Feature layout: Tailwind utilities in feature components.
-
-Use Button variant/size for appearance, and className for layout (for example w-full). Avoid restyling shared primitives from global selectors. Use semantic status tones rather than green/amber classes; always retain the written label. Native selects intentionally preserve platform keyboard and mobile behavior.
-
-## States and accessibility
-
-Control styles share focus-visible outlines, invalid states and disabled affordances. Field labels remain connected by HTML IDs. Buttons default to type=button to avoid accidental submissions. Use explicit type=submit for analysis. Loading actions expose aria-busy; reduced-motion users do not receive the loading animation. Fields use 16px text to avoid mobile input zoom; the long document editor is separately styled for reading.
-
-## Verification
-
-Run npm run quality and npm run test:browser. Install Chromium with npx playwright install chromium first, or select locally installed Chrome with PLAYWRIGHT_CHANNEL=chrome. Browser tests use fake API responses and never call OpenAI. Screenshots are ignored under test-results/. CI installs Chromium and runs the browser suite.
-
-The checks are regression guards, not certification of every accessibility requirement. Review actual screenshots and keyboard behavior when adding variants, error states or dense layouts.
+Buttons default to `type="button"`; submit actions opt in explicitly. Native inputs
+use readable text sizing and connected labels. Keep keyboard focus, invalid and
+disabled states visible. Run `npm run quality` and `npm run test:browser`; browser
+screenshots use fictional inputs and remain ignored under `test-results/`.

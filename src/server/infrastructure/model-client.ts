@@ -10,6 +10,7 @@ import {
   MAX_OUTPUT_TOKENS,
 } from "../adapters/openai/request.ts";
 import { AppError } from "../application/errors.ts";
+import { assertOutputIntegrity } from "../adapters/models/output-integrity.ts";
 
 export type ModelKeys = {
   openai: string | undefined;
@@ -85,7 +86,14 @@ export function createStructuredModel(
   keys: ModelKeys,
   transport: typeof fetch = fetch,
 ): StructuredModel {
+  let pending = false;
+
   return async (request, signal) => {
+    if (pending) {
+      throw new AppError("BUSY", "Un appel au fournisseur est déjà en cours.");
+    }
+
+    pending = true;
     const started = performance.now();
 
     const timeout = AbortSignal.timeout(MODEL_TIMEOUT_MS);
@@ -105,6 +113,8 @@ export function createStructuredModel(
       return modelResult(request, response, started);
     } catch (error) {
       throw safeModelError(error, bounded);
+    } finally {
+      pending = false;
     }
   };
 }
@@ -133,6 +143,8 @@ function modelResult(
       "La réponse ne respecte pas le contrat de données.",
     );
   }
+
+  assertOutputIntegrity(parsed.data);
 
   return {
     value: parsed.data,

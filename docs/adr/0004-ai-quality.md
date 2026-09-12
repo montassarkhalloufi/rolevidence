@@ -81,3 +81,97 @@ The first combined classification/comparison experiment wrongly excluded real du
 Replace one unbounded comparison response with sequential groups of eight passages (maximum 16 groups). Each request-specific JSON schema requires every passage ID and a nonempty finding array. Map job quotations from the owning key. Failure rejects the analysis, never triggers an automatic paid repair. This fixed bounded workflow is not an agent loop. More calls trade cost/latency for verifiable passage coverage; atomic semantic completeness and correct conclusions remain unproven by structure.
 
 Clarifications have separate C references and source quotes. Human-requested job passage reinclusion is honored only for exact source passages. Sources, overrides and statements belong to the immutable snapshot and input fingerprint. An observed model error attached duration metadata to a TypeScript criterion; duration rules now require duration information in the job before changing that conclusion.
+
+## Amendment — Output integrity and repeated sources (2026-09-12)
+
+A saved real result contained missing diacritics and U+0002 in candidate quotations
+and interpretations while its immutable input texts were intact. Completed jobs do
+not retain raw provider responses, so the stored result alone cannot attribute the
+corruption to generation or decoding. Provider-adapter regression tests now verify
+Unicode round trips through both actual LangChain integrations with mocked HTTP.
+
+Reject parsed responses containing unexpected C0 controls, DEL or the Unicode
+replacement character before checkpointing or accepting results. Tabs and line
+breaks remain allowed. Recheck resumed checkpoint values. Never repair such text,
+automatically retry a paid call, or relax quotation matching. Missing letters
+without a control character remain detectable only through quotation verification;
+this guard is not a general semantic or spelling validator.
+
+Identical trimmed offer lines share one comparison entry, keeping the first original
+ID and leaving the saved document unchanged. Distinct wording and conflicting
+structured/prose requirements remain separate; this is not semantic deduplication.
+The job-only relevance model can mark hiring logistics as recruitment_process;
+employee duties involving interviews and mixed passages must remain retained.
+Prompt versions change to invalidate incompatible interrupted checkpoints. Existing
+completed snapshots remain immutable and require an explicit new analysis.
+
+## Amendment — Canonical criteria before evidence comparison
+
+After job-only relevance selection, a fixed job-only planning call creates atomic
+criteria and groups equivalent mentions while retaining every original source ID.
+It has no CV or preference access. All retained passage IDs must be covered;
+unknown references or missing passage coverage reject the analysis. One source
+paragraph can support multiple atomic criteria. Distinct levels, durations, locations
+and work arrangements remain separate. Differences between prose and structured
+metadata produce sourced offer warnings, outside candidate conclusion counts.
+
+Comparison runs in batches of eight canonical criteria, at most 128 criteria,
+with exactly one finding per planned criterion. Every consolidated job quote is
+materialized from the source catalog and independently checked against the original
+document. Source planning is still an untrusted semantic interpretation: ID coverage
+does not prove correct grouping or exhaustive decomposition. No lexical skill
+merging, automatic paid retry, tool access or agent loop is introduced.
+
+Planning adds at most one paid call, included in latency/token totals and resumable
+checkpoints (maximum 18 calls: relevance, planning, 16 comparisons). Old prompt
+checkpoints are incompatible; completed saved results remain unchanged. Optional
+jobQuotes and metadata.offerWarnings preserve old snapshots while exposing grouped
+sources and ambiguity in the UI and exports. The backend duration policy now applies
+only to backend requirements; it must not overwrite a fullstack comparison.
+
+GPT-5.4 becomes the default following six targeted real executions passing versus
+two of six for GPT-4.1-mini on identical final prompts and fixtures. Mini remains
+selectable to preserve existing dossier choices; no analysis silently switches
+providers/models. These small calibration results justify a local default, not a
+universal accuracy claim. Pricing and account access depend on the provider; the
+model remains configurable in .env. See RELIABILITY.md for failed and successful
+runs. Official capability reference: https://developers.openai.com/api/docs/models/gpt-5.4
+(Responses and structured output supported; default reasoning effort unchanged).
+
+A real follow-up exposed a JSON-LD salary minimum misclassified as a ceiling and an
+employer HR label counted as a candidate requirement. Extend the conservative salary
+field guard to baseSalary; unsupported gross/fixed units cannot establish a match
+or gap even when the JSON supplies numeric bounds. Job-only relevance distinguishes
+employer branding/training opportunities/HR certifications from requested employee
+duties. This remains semantic model classification, not a company-name denylist.
+
+## Amendment — Qualified conclusions and declared education
+
+Keep the four broad result groups while adding domain-owned assessment labels for
+possible salary compatibility, a gap in the qualification presented, and a negotiable
+preference. Partial model evidence remains unknown but is visibly labelled as an
+indication needing clarification. Show the retained explanation prominently instead
+of repeating the job quotation; keep original quotes and rejected reasoning separate.
+
+The model can interpret the highest relevant completed qualification explicitly
+presented, with candidate/required post-baccalaureate levels and an explicit,
+recognized-qualification or uncertain basis. A recognized qualification is a model
+interpretation, not an official equivalence decision. Only source-resolved education
+quotes with provided candidate information and a lower interpreted level support a
+narrowly labelled declared-qualification gap. Missing or uncertain qualifications
+remain unknown. An unfinished course cannot establish an invented intermediate
+degree. No conclusion asserts that the candidate has no other qualification or that
+experience will be accepted/rejected by a recruiter. The quotation-kind guard is
+conservative and not a universal international credential recognizer.
+
+A verified open annual EUR salary minimum has no established upper bound. It stays
+unknown with possible-compatibility wording, never an inferred promise of the desired
+budget. Unrecognised units/currencies, malformed JSON or contradictory bounds do not
+receive this label. Fixed annual gross salary rules are unchanged.
+
+Optional salaryPriority/workModePriority values distinguish required from preferred.
+Absent fields retain legacy required semantics and are not materialized into old
+snapshots. A preferred condition is not a hard gap; preserve the observed difference
+and explain negotiation remains open. No clarification text silently overwrites
+structured preference choices. Priorities are part of saved inputs, request identity
+and model context. Original saved results remain immutable.

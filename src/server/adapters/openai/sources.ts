@@ -2,7 +2,12 @@ import { isResponseDirective } from "../../domain/document-directives.ts";
 import type { DocumentsInput } from "../../domain/models.ts";
 import { preferencesText } from "../../domain/preferences.ts";
 
-export type SourcePassage = { id: string; text: string };
+export type SourcePassage = {
+  id: string;
+  text: string;
+  criterion?: string;
+  sourceQuotes?: string[];
+};
 
 export type SourceCatalog = ReturnType<typeof createSourceCatalog>;
 
@@ -20,9 +25,23 @@ export function createSourceCatalog(documents: DocumentsInput) {
     clarifications: passages(documents.clarifications ?? "", "C").filter(
       (item) => !isResponseDirective(item.text),
     ),
-    job: passages(documents.job, "J"),
+    job: uniqueJobPassages(passages(documents.job, "J")),
     preferences: passages(preferencesText(documents.preferences), "R"),
   };
+}
+
+function uniqueJobPassages(items: SourcePassage[]) {
+  const seen = new Set<string>();
+
+  return items.filter(({ text }) => {
+    if (seen.has(text)) {
+      return false;
+    }
+
+    seen.add(text);
+
+    return true;
+  });
 }
 
 export function substantiveJobPassages(catalog: SourceCatalog) {

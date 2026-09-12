@@ -1,3 +1,5 @@
+import { applyPreferencePriority } from "./preference-priority.ts";
+import { compareDeclaredEducation } from "./education.ts";
 import { rejectDirectiveEvidence } from "./directive-evidence.ts";
 import { recoverExplicitConditions } from "./condition-recovery.ts";
 import { constrainContradiction } from "./contradiction.ts";
@@ -135,6 +137,15 @@ function classifyRequirement(
     preferencesQuote:
       candidateSource === "preferences" ? evidence.candidate : null,
     jobQuote: evidence.job,
+    ...(finding.jobQuotes
+      ? {
+          jobQuotes: finding.jobQuotes.flatMap((quote) => {
+            const verified = resolveQuote(documents.job, quote);
+
+            return verified ? [verified] : [];
+          }),
+        }
+      : {}),
     verification: verificationNote(requirement, evidence, status),
   };
 
@@ -172,7 +183,13 @@ export function classifyRequirements(
       documents,
     );
 
-    const { category, value } = classifyRequirement(normalized, documents);
+    const { category, value } = classifyRequirement(
+      applyPreferencePriority(
+        compareDeclaredEducation(normalized, documents),
+        documents,
+      ),
+      documents,
+    );
 
     result[category].push(value);
   }

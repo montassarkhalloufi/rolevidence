@@ -11,6 +11,7 @@ export function useDossierEditor(initial: DossierData) {
   const [saved, setSaved] = useState(initial);
 
   const [draft, setDraft] = useState<DossierDraftData>({
+    tracking: initial.tracking,
     title: initial.title,
     purpose: initial.purpose,
     documents: initial.documents,
@@ -21,6 +22,7 @@ export function useDossierEditor(initial: DossierData) {
   const dirty =
     draftKey(draft) !==
     draftKey({
+      tracking: saved.tracking,
       title: saved.title,
       purpose: saved.purpose,
       documents: saved.documents,

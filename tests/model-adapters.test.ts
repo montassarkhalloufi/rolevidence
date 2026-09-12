@@ -226,3 +226,36 @@ await test("explicit provider refusals are reported without validating a fabrica
     { code: "REFUSAL" },
   );
 });
+
+for (const provider of ["openai", "anthropic"] as const) {
+  await test(`${provider}: Unicode survives transport; corrupted text rejects without retry`, async () => {
+    const answer =
+      "Développement React/TypeScript ; contribution à l’optimisation.\nDiplôme d’ingénieur.";
+
+    let calls = 0;
+
+    let payload = answer;
+
+    const invoke = createStructuredModel(
+      { openai: "fake", anthropic: "fake" },
+      async () => {
+        calls++;
+        const text = JSON.stringify({ answer: payload });
+
+        return Response.json(
+          provider === "openai" ? openai(text) : anthropic(text),
+        );
+      },
+    );
+
+    const request = { ...base, selection: { provider, model: "fake" } };
+
+    assert.deepEqual((await invoke(request)).value, { answer });
+    for (const corrupted of ["l\u0002optimisation", "D\ufffdveloppement"]) {
+      payload = corrupted;
+      await assert.rejects(invoke(request), { code: "INVALID_OUTPUT" });
+    }
+
+    assert.equal(calls, 3);
+  });
+}

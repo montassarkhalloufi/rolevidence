@@ -2,17 +2,19 @@
 
 Evidence-based profile–job comparison for job seekers and recruiters. Run the application locally with your own OpenAI or Anthropic API key, inspect supporting quotations and identify what still needs clarification.
 
-**Version 0.3:** saved dossiers, public offer import, criterion-by-criterion evidence, attributed clarifications, printable reports and portable backups. Multiple comparisons remain outside this release. This tool supports human review; it does not verify competence or make hiring decisions.
+**Version 0.4:** local comparison campaigns, application tracking, resumable analyses, reviewed offer imports, attributed clarifications, printable reports and backups. This tool supports human review; it does not verify competence or make hiring decisions.
 
-## Video preview — v0.4
-
-Watch the French walkthrough directly below. It previews the upcoming v0.4
-workflow with fictional documents and clearly labelled simulated results; the
-current stable installation remains v0.3 until the version is merged.
+## See the workflow
 
 https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af
 
-[Explore the v0.4 documentation](https://github.com/montassarkhalloufi/rolevidence/blob/feat/v0.4-comparison-workflows/docs/USER_GUIDE.fr.md)
+[Watch/download the French walkthrough](https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af) ·
+[Read its transcript](docs/media/TRANSCRIPT.fr.md) ·
+[Guide utilisateur en français](docs/USER_GUIDE.fr.md) ·
+[How it works and feature reference](docs/HOW_IT_WORKS.md)
+
+The narrated walkthrough uses the real UI with fictional documents and clearly
+labelled simulated results. It makes no provider calls and is not an accuracy benchmark.
 
 ## Quick start
 
@@ -43,6 +45,9 @@ For development, run `npm run dev` and open http://127.0.0.1:5173. Vite proxies 
 7. Open an analysis in history to download an HTML report; open the file in a browser and print/save as PDF.
 8. Export the saved dossier as JSON, then restore it from the home page to create an isolated copy with its history. Exports include private source texts.
 9. Reopen the dossier after restart. Older analyses retain their original sources.
+10. From a saved source dossier, create a campaign with 2–10 offers (job search) or profiles (recruitment). Import member CVs locally or paste text, then review each independent dossier. Open the campaign to compare saved evidence side by side.
+11. Record status, private notes and interview preparation/accounts under application tracking. These fields never enter model requests.
+12. Watch preparation and comparison batch progress. Cancel explicitly or leave the page and reopen it later. After an interruption, choose Resume to reuse saved stages with the original documents; the unfinished provider call can already have been billed.
 
 Save edits explicitly before leaving. Deleting a dossier also deletes its analyses;
 other dossiers remain intact. The evidence standard is identical for both audiences.
@@ -60,6 +65,14 @@ PDF, DOCX and UTF-8 TXT are supported within configured limits: 5 MiB upload, 20
 - Runtime files, traces and secrets are ignored by Git. Use fictional fixtures when reporting issues.
 
 See [SECURITY.md](SECURITY.md) and the precise [API idempotency guarantees](docs/API.md).
+
+## Model selection
+
+The default OpenAI model is `gpt-5.4`; set `OPENAI_MODEL` in `.env` to change it.
+Existing dossiers keep their saved model selection, with `gpt-4.1-mini` still
+available. Canonical criterion preparation adds one bounded job-only call for
+multi-passage offers. Review source quotations and offer ambiguity warnings before
+using the results; model/API usage is billed by your provider.
 
 ## Development and verification
 

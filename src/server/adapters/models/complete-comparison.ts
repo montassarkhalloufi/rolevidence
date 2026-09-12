@@ -1,3 +1,4 @@
+import type { AnalysisProgress } from "../../application/execution.ts";
 import { z } from "zod";
 import type { StructuredModel } from "./structured.ts";
 import type { Selection } from "../../application/dossiers.ts";
@@ -9,7 +10,7 @@ import { createMessages } from "../openai/messages.ts";
 import { mapExtraction } from "../openai/map-extraction.ts";
 import { AppError } from "../../application/errors.ts";
 
-export const COMPARISON_VERSION = "evidence-v4-required-passages";
+export const COMPARISON_VERSION = "evidence-v6.1-qualified-conclusions";
 
 export const COMPARISON_BATCH_SIZE = 8;
 
@@ -21,6 +22,7 @@ export async function compareComplete(
   catalog: SourceCatalog,
   selection: Selection,
   signal?: AbortSignal,
+  onProgress?: (value: AnalysisProgress) => void,
 ) {
   if (catalog.job.length > COMPARISON_BATCH_SIZE * MAX_COMPARISON_BATCHES) {
     throw new AppError(
@@ -50,11 +52,20 @@ export async function compareComplete(
     const schema = z
       .object(
         Object.fromEntries(
-          batch.job.map(({ id }) => [id, z.array(item).min(1)]),
+          batch.job.map(({ id, criterion }) => [
+            id,
+            criterion ? z.array(item).length(1) : z.array(item).min(1),
+          ]),
         ),
       )
       .strict();
 
+    signal?.throwIfAborted();
+    onProgress?.({
+      stage: "comparison",
+      completed: offset / COMPARISON_BATCH_SIZE,
+      total: Math.ceil(catalog.job.length / COMPARISON_BATCH_SIZE),
+    });
     const response = await invoke(
       {
         selection,
@@ -66,7 +77,7 @@ export async function compareComplete(
           {
             role: "user",
             content:
-              "Réponds dans chaque clé J demandée avec toutes ses exigences atomiques. Ne regroupe pas plusieurs technologies dans une conclusion. Chaque clé exige au moins une analyse ; un fait non établi reste inconnu. Les autres passages de l’offre peuvent être utiles au contexte mais seules les clés de ce lot sont à évaluer.",
+              "Si un passage porte criterion, évalue UNIQUEMENT ce critère atomique, une seule conclusion, en utilisant text et sourceQuotes comme preuves. Ne réextrais pas les autres critères de ce paragraphe. Réponds dans chaque clé J demandée avec toutes ses exigences atomiques. Ne regroupe pas plusieurs technologies dans une conclusion. Chaque clé exige au moins une analyse ; un fait non établi reste inconnu. Les autres passages de l’offre peuvent être utiles au contexte mais seules les clés de ce lot sont à évaluer.",
           },
         ],
       },

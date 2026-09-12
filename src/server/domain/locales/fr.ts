@@ -14,6 +14,8 @@ export const workModeMessages = {
 export const numericMessages = {
   salaryPreferenceMissing:
     "Le salaire souhaité n’est pas renseigné dans les préférences ; la compatibilité reste à préciser.",
+  salaryOpenMinimum:
+    "Compatibilité possible, budget à confirmer : l’offre annonce un minimum, pas un plafond. Le montant souhaité n’est donc pas exclu, mais il n’est pas confirmé. La base brut/net et la part fixe restent aussi à vérifier si elles ne sont pas précisées.",
   salaryUncertain:
     "La rémunération ne permet pas une comparaison certaine en EUR brut annuel fixe : préciser le montant, la devise, la période et la part fixe hors bonus.",
   salaryBelow:
@@ -35,4 +37,20 @@ export const evidenceMessages = {
     "Le passage cité contient une instruction visant à manipuler la réponse, pas une preuve de compétence. Cette conclusion reste à confirmer.",
   unsupportedContradiction:
     "La citation ne contient pas de fait négatif explicite permettant d’affirmer cet écart. Le niveau ou le contexte demandé reste à confirmer.",
+};
+
+export const preferenceMessages = {
+  salaryPriority: (priority: "required" | "preferred") =>
+    `Priorité salaire : ${priority === "preferred" ? "souhait négociable" : "contrainte obligatoire"}.`,
+  modePriority: (priority: "required" | "preferred") =>
+    `Priorité mode de travail et jours : ${priority === "preferred" ? "souhait négociable" : "contrainte obligatoire"}.`,
+  negotiable: (explanation: string) =>
+    `Souhait négociable : cette préférence n’est pas une condition éliminatoire. Les modalités acceptables restent à discuter. ${explanation}`,
+};
+
+export const educationMessages = {
+  incomplete:
+    "Le passage décrit un cursus en cours ou un diplôme non obtenu. Il ne permet pas d’attribuer un niveau de diplôme achevé. La qualification effectivement obtenue reste à préciser.",
+  declaredGap: (candidate: number, required: number) =>
+    `Le diplôme présenté est interprété comme un niveau Bac+${candidate}, face à un niveau Bac+${required} demandé. Écart sur la formation déclarée ; l’acceptation d’une équivalence ou de l’expérience reste à confirmer. Cela n’établit ni l’absence d’un autre diplôme ni une décision de recrutement.`,
 };

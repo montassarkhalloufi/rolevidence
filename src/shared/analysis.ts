@@ -35,8 +35,25 @@ export const Interpretation = z
   })
   .strict();
 
+export const EducationComparison = z
+  .object({
+    candidateLevel: z.number().int().min(0).max(12),
+    requiredLevel: z.number().int().min(1).max(12),
+    basis: z.enum(["explicit_level", "recognized_qualification", "uncertain"]),
+  })
+  .strict();
+
 export const finding = z
   .object({
+    assessment: z
+      .enum([
+        "possible_compatibility",
+        "declared_education_gap",
+        "negotiable_preference",
+      ])
+      .optional(),
+    educationComparison: EducationComparison.nullable().optional(),
+    jobQuotes: z.array(z.string()).optional(),
     clarificationQuote: z.string().nullable().optional(),
     subject: z.string(),
     interpretation: Interpretation,
@@ -87,6 +104,8 @@ export type AnalysisResult = z.infer<typeof Analysis>;
 
 export const Preferences = z
   .object({
+    salaryPriority: z.enum(["required", "preferred"]).optional(),
+    workModePriority: z.enum(["required", "preferred"]).optional(),
     minimumAnnualSalary: z
       .number()
       .int()
@@ -143,6 +162,9 @@ export const AnalysisResponse = z.object({
   analysis: Analysis,
   metadata: z.object({
     preparationVersion: z.string().optional(),
+    offerWarnings: z
+      .array(z.object({ explanation: z.string(), quotes: z.array(z.string()) }))
+      .optional(),
     contextPassages: z
       .array(z.object({ quote: z.string(), reason: z.string() }))
       .optional(),
@@ -165,6 +187,7 @@ export const Bootstrap = z.object({
   configured: z.boolean(),
   providers: z.array(ProviderOption).optional(),
   dossiersEnabled: z.boolean().optional(),
+  workflowsEnabled: z.boolean().optional(),
 });
 
 export type BootstrapData = z.infer<typeof Bootstrap>;

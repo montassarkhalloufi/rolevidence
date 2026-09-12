@@ -81,3 +81,49 @@ Analysis metadata optionally includes `preparationVersion` and `contextPassages`
 Documents optionally include `clarifications` (16,000 characters) and `reviewedJobQuotes` (up to 128 original passages). Both participate in snapshots and idempotency fingerprints. Findings optionally include `clarificationQuote`; it is never labelled as CV evidence. Exact original job text is required for a manual reinclusion to have any effect.
 
 `GET /api/v1/dossiers/:id/backup` exports format `rolevidence-backup-v1`, dossier and up to 100 analyses within 8 MiB. `POST /api/v1/dossiers/restore` accepts that format (8 MiB body), validates source/dossier linkage, and returns 201 + Location for an isolated copy. Restoration is transactional; existing dossiers are unchanged. Each explicit successful POST creates a new copy; no automatic client retry. Normal dossier bodies retain the 2 MiB limit. Restored results are user-imported historical data, not reverified model executions.
+
+## v0.4 campaigns and durable analyses
+
+- `GET /api/v1/campaigns?offset=0`: stable creation/ID ordering, 20 summaries per page, offset up to 100,000.
+- `PUT /api/v1/campaigns/{uuid}`: validated title, baseId/baseRevision and 2–10 named document texts. Copies the shared side according to the source dossier's purpose. Identical UUID/input replays (201); changed input returns 409. All members are created transactionally.
+- `GET /api/v1/campaigns/{uuid}`: members with latest immutable analyses. A changed dossier does not rewrite that result.
+- `DELETE /api/v1/campaigns/{uuid}`: removes grouping, retains dossiers/history. Deleting a dossier independently removes its memberships.
+- `PUT /api/v1/analysis-jobs/{uuid}`: `{ dossierId, revision }`, requires complete saved inputs. Returns 202 and Location while accepted/stopped; completed replay returns 200. Same UUID/input never starts another call; changed identity returns 409. One active job, no implicit queue.
+- `GET /api/v1/analysis-jobs/{uuid}` and `GET /api/v1/dossiers/{uuid}/latest-job`: actual stage, completed/total batches, attempt, status and optional saved result. Latest may be null. Raw checkpoint responses are never part of the public job DTO.
+- `POST /api/v1/analysis-jobs/{uuid}/cancel` and `/resume`: `{ attempt }`, compared with the observed attempt. Cancel requests transport abort and returns current state (200); poll until cancellation settles. Resume returns 202, increments attempt and retains original sources. Stale attempts conflict. These commands are never automatically retried by the client.
+
+All mutations require the local request guard. Campaign input has a 2 MiB body limit. Job identity replaces a transient idempotency header for these new resources; the legacy synchronous analysis route keeps its previous contract. Closing the browser does not cancel a job. Restart never resumes paid calls automatically. Completed checkpointed responses are schema-validated again on explicit resume; an interrupted uncheckpointed call may be charged twice. A storage failure never authorizes an automatic model retry.
+
+Optional dossier `tracking` contains status, notes, preparation and interview fields (8,000 characters each). It is included in local backups/snapshots but excluded from provider inputs. Workflow startup resolves the exact saved selection. Use a single server process per SQLite database.
+
+## Canonical criterion preparation
+
+The current workflow performs relevance selection, an additional job-only canonical
+criterion planning call when multiple passages remain, then batches of eight
+canonical criteria. Maximum: 128 criteria and 18 provider calls. All retained source
+IDs must be represented; failure is explicit without an automatic paid retry.
+Planning responses are checkpointed and included in token/duration totals. Existing
+idempotency and immutable input snapshot semantics remain unchanged.
+
+Findings optionally include `jobQuotes`, all verified original passages supporting
+a grouped criterion; `jobQuote` remains its primary source for compatibility.
+Metadata optionally includes `offerWarnings: [{ explanation, quotes }]` for ambiguous
+or differing offer conditions. These warnings are separate from candidate findings.
+Older saved payloads without either field remain valid. Generated OpenAPI includes
+both additions; upgrade local frontend and backend together.
+
+## Qualified assessments and preference priorities
+
+Preferences accept optional `salaryPriority` and `workModePriority` (`required` or
+`preferred`); omission preserves the earlier required semantics. Work-mode priority
+also applies to the requested remote-day minimum. Explicit changes belong to the
+saved document revision and analysis fingerprint, never an update to old results.
+
+Findings optionally carry domain-owned `assessment` values (`possible_compatibility`,
+`declared_education_gap`, `negotiable_preference`) and a nullable `educationComparison`
+with interpreted candidate/required levels and basis. These refine presentation,
+not the four top-level groups. Provider education proposals are independently checked
+for quote provenance and invalid/incomplete qualification evidence before a declared
+education gap is retained. Old responses without these optional fields remain valid.
+Generated OpenAPI describes the updated contracts. No endpoint/idempotency/retry
+semantics change. Comparison prompt version is evidence-v6.1-qualified-conclusions.

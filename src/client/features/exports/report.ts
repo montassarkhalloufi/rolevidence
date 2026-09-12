@@ -1,3 +1,4 @@
+import { findingLabel } from "../analysis/finding-label.ts";
 import type { SavedAnalysisData } from "../../../shared/dossiers.ts";
 import { fr } from "../../shared/i18n/fr.ts";
 
@@ -23,11 +24,14 @@ export function renderReport(saved: SavedAnalysisData) {
       return `<section><h2>${escape(label)}</h2>${findings
         .map(
           (finding) =>
-            `<article><h3>${escape(finding.subject)}</h3><p>${escape(finding.explanation)}</p>${finding.verification ? `<p><strong>${escape(fr.reviewEvidence)}</strong> · ${escape(finding.verification.code)}</p>` : ""}${[
+            `<article><h3>${escape(finding.subject)}</h3><p>${escape(findingLabel(finding, label))}</p><p>${escape(finding.verification ? finding.explanation : finding.interpretation.justification)}</p>${finding.verification ? `<p><strong>${escape(fr.reviewEvidence)}</strong> · ${escape(finding.verification.code)}</p>` : ""}${[
               [fr.profileSource, finding.profileQuote],
               [fr.clarificationSource, finding.clarificationQuote],
               [fr.preferencesSource, finding.preferencesQuote],
-              [fr.jobSource, finding.jobQuote],
+              [
+                fr.jobSource,
+                finding.jobQuotes?.join("\n\n") || finding.jobQuote,
+              ],
             ]
               .filter((entry) => entry[1])
               .map(

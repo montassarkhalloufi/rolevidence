@@ -26,6 +26,7 @@ const Page = z.object({
 export function registerDossierRoutes(
   app: Express,
   repository: DossierRepository,
+  onDelete?: (id: string) => void,
 ) {
   const root = "/api/v1/dossiers";
 
@@ -65,6 +66,14 @@ export function registerDossierRoutes(
       req.body,
     );
 
+    if (repository.get(id).revision !== revision) {
+      throw new AppError(
+        "IDEMPOTENCY_CONFLICT",
+        "Le dossier a changé. Rouvrez-le avant de supprimer.",
+      );
+    }
+
+    onDelete?.(id);
     repository.delete(id, revision);
     res.json({ deleted: true });
   });

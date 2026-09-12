@@ -108,3 +108,30 @@ await test("Exact backend durations and lower bounds produce different conclusio
     assert.equal(result[expected].length, 1, profile);
   }
 });
+
+await test("backend-only arithmetic does not reclassify a fullstack requirement as backend", () => {
+  const result = analyze(
+    "6 ans d’expérience fullstack.",
+    "Au moins 3 ans d’expérience en développement fullstack.",
+  );
+
+  assert.equal(result.matches.length, 1);
+  assert.doesNotMatch(
+    result.matches[0]?.interpretation.justification ?? "",
+    /durée backend/,
+  );
+});
+
+await test("JSON-LD salary minima cannot become a ceiling or imply a gross fixed basis", () => {
+  for (const job of [
+    'baseSalary: {"currency":"EUR","value":{"minValue":35000,"unitText":"YEAR"}}',
+    'baseSalary: {"currency":"EUR","value":{"minValue":35000,"maxValue":70000,"unitText":"YEAR"}}',
+  ]) {
+    const result = analyze("Profil fictif", job, true);
+
+    assert.equal(result.gaps.length, 0);
+    assert.equal(result.matches.length, 0);
+    assert.equal(result.unknowns.length, 1);
+    assert.equal(result.unknowns[0]?.profileQuote, null);
+  }
+});

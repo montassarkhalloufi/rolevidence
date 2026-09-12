@@ -121,3 +121,111 @@ A clean source copy without keys, storage or dependencies passed `npm ci`, produ
 The final real HTTP regression replay `api-1789224139293` passed **18/18** unchanged historical scenarios (one repetition each) on `evidence-v4-required-passages`. This covers salary units/ranges/bonuses, work arrangements, duration scope, technology distinctions, RAG and the known injection regression. It is a regression replay, not a fresh held-out benchmark or a broad injection audit.
 
 Final v0.3 local verification: **79 backend/evaluation tests, 9 React tests and 7 browser scenarios** passed (95 total), plus strict types, lint, architecture boundaries, OpenAPI drift, formatting and production build. The browser run used installed Chrome on macOS; CI independently installs Chromium on Linux.
+
+## v0.4 resumability observation (2026-09-12)
+
+`node --env-file-if-exists=.env scripts/eval-resume.ts` uses a fictional TypeScript profile and performs a deliberate interruption after preparation has completed and been checkpointed. The explicit second invocation resumes with that saved checkpoint. Run `resume-1789234420111` passed: preparation response identity was retained, one comparison completed, the final result contained one supported finding and no verification issues. Stored responses numbered two (preparation and comparison); combined completed-call duration was 4.5 seconds, with 2,177 input and 181 output tokens. Artifacts remain ignored locally.
+
+This observes interruption between completed stages, not cancellation of a provider's billable in-flight work. Fake transport tests separately observe abort signaling, checkpoint counts and no repeated validated calls. The underlying semantic prompt is unchanged from v0.3; this is a workflow regression check, not a new semantic benchmark. Anthropic and hosted LangSmith still lack live verification.
+
+The v0.4 offline suite includes 87 backend/evaluation tests, 9 React tests and 9 browser scenarios (105 total), with campaign source isolation in both directions, v0.3 database migration, transactional rollback, checkpoints, cancellation, stale commands, graceful/hard-stop recovery and deduplication after lost storage acknowledgement. Browser coverage includes mobile campaign layout, two independently saved comparisons and local member CV import. Strict types, lint, architecture, OpenAPI drift, formatting and production build are required before publication.
+
+## Source integrity regression — 2026-09-12
+
+Run `node --env-file-if-exists=.env scripts/eval-source-integrity.ts` explicitly
+for paid calls. The two fictional cases run twice with fresh requests: accented
+React/Node.js evidence plus an exact repeated job duty and absent Java; hiring
+interview logistics versus an employee duty conducting technical interviews.
+
+The first run passed 4/4 with unchanged expectations, no gaps or unverified quotes:
+`artifacts/evaluations/source-integrity-1789236633867/observations.json`.
+This is targeted calibration, not a held-out benchmark. No private CV was sent for
+this evaluation. The reported user's completed historical result was inspected
+locally and remains immutable. Its input accents were intact but some output
+quotations were damaged. Raw completed provider payloads are unavailable, so their
+origin cannot be established retrospectively. Offline adapter tests cover Unicode
+round trips, explicit rejection of corrupted text without retries, and preservation
+of unresolved quotes when letters are missing. Semantic duplicates and conflicting
+JobPosting/prose requirements remain an explicit limitation.
+
+## Canonical planning and model comparison — 2026-09-12
+
+The source-integrity script now includes a third fictional scenario: repeated degree
+wording and Node.js practice, explicit fullstack duration, differing 3-year/12-month
+thresholds, residence in France versus workplace Nice, TELECOMMUTE with hybrid/day
+preferences and an additional onsite statement, and salary with incomplete units.
+The existing two scenarios are unchanged. Each scenario runs twice, with fresh
+requests and unchanged final expected counts. Counts are supplemented by independent
+quote checks and a required source warning in the conflicting-metadata scenario;
+they are not a general semantic entailment grader.
+
+Preserved intermediate runs:
+
+- `source-integrity-1789240074267`: GPT-4.1-mini, 3/6; includes a rejected corrupted
+  response, duplicate Node.js and an erroneous backend-only policy applied to fullstack.
+- `source-integrity-1789240158248`: GPT-5.4, 4/6; no corrupted output, but over-separation
+  of generic Node.js practice and over-conservative general-duration interpretation.
+
+After correcting backend scope and clarifying generic practice versus explicit
+advanced requirements, the identical final code, prompts and six expectations gave:
+
+- `source-integrity-1789240266947`: GPT-5.4, **6/6**, 3.1–15.6 seconds per analysis;
+  32,881 input and 4,964 output tokens across six completed analyses.
+- `source-integrity-1789240320422`: GPT-4.1-mini, **2/6**, including another explicitly
+  rejected corrupted response. Failed cases remain in the recorded observations.
+
+Reproduce separately using `OPENAI_MODEL=gpt-5.4 node --env-file-if-exists=.env
+scripts/eval-source-integrity.ts` and the same command with `gpt-4.1-mini`. Both are
+paid operations; never run automatically in CI. The model change is a calibrated
+product default, not evidence of universal accuracy. No private CV was used in this
+comparison. Semantic over-grouping, missing atomic concepts within a covered paragraph,
+provider errors and ambiguous candidate preferences remain limitations requiring review.
+
+A subsequent real dossier verification (private snapshot retained locally only)
+revealed two further errors despite the fictional comparison passing: a JSON-LD
+salary minimum was interpreted as a maximum, and an employer HR certification was
+turned into a candidate criterion. The failed saved analysis remains immutable.
+The independent salary policy now treats `baseSalary` like other salary fields:
+without a supported fixed gross annual basis it stays unknown, regardless of the
+model's proposed match/gap. Job relevance instructions distinguish employer-brand
+promises from candidate duties. A fourth fictional scenario covers both observed
+errors; its introduction is additional calibration, not a held-out evaluation.
+
+The expanded four-case suite passed **8/8** with GPT-5.4:
+`source-integrity-1789240649722`. The real follow-up then contained no salary gap,
+no unverified quotations and no employer HR certification criterion; source
+experience-threshold warnings remained visible. A remaining over-split degree/level
+prompted a fifth fixture with concatenated imported degree and duration wording.
+With planning prompt `atomic-criteria-v3-qualified-atoms`, the targeted new case
+passed **2/2**: `source-integrity-1789240844772`. A degree and its Bac+5 qualifier,
+like a language and its proficiency, must remain one criterion. The earlier 8-case
+run preceded that final prompt clarification and is not relabelled as a fresh run.
+Use EVAL_FILTER=degree-level-is-one-qualified-criterion for the targeted paid test.
+The default suite now has five scenarios, each repeated twice. No automatic paid
+retry or hidden correction of failed history occurs.
+
+The last private-dossier follow-up completed with 9 matches, 9 unknowns, no gaps
+and no unverified quotations. It retained one sourced experience warning, kept
+salary unknown, removed the employer HR-label criterion and kept the engineering
+degree with its Bac+5 qualifier. The differently worded postgraduate credential
+remained separate because equivalence across qualifications is not established.
+These are observed counts, not verified candidate competence or an accuracy score.
+The saved user snapshot remains local and is not a public evaluation fixture.
+
+## Qualified conclusions — 2026-09-12
+
+`node --env-file-if-exists=.env scripts/eval-qualified-conclusions.ts` is an explicit
+paid suite of eight fictional scenarios. It checks a completed licence below Bac+5,
+an incomplete master, the highest completed degree, JavaScript versus Java, an open
+JSON-LD salary minimum, negotiable salary/work mode and required work mode. Expected
+categories, one finding per scenario and relevant assessment labels are fixed.
+
+The first run (`qualified-conclusions-1789242078438`) passed 7/8. The model wrongly
+invented a completed Bac+4 level from a master in progress. The failed observation is
+preserved. The prompt now explicitly forbids this inference and a source-bound guard
+keeps unfinished qualification evidence unknown. With unchanged expectations,
+`qualified-conclusions-1789242222290` passed **8/8** on GPT-5.4. This is targeted
+calibration, not independent proof of universal qualification/semantic accuracy.
+No private CV is included in these fixtures or committed observations. Offline
+regressions cover invalid references, uncertain qualifications, non-education facts,
+unsupported salary bounds and negotiable/legacy preference behavior.

@@ -1,3 +1,4 @@
+import { identityPlan } from "./plan-fixture.ts";
 import test from "node:test";
 import { createLangChainGateway } from "../src/server/adapters/models/gateway.ts";
 import assert from "node:assert/strict";
@@ -30,6 +31,7 @@ const unknownRequirement = {
   profileEvidenceId: null,
   profileEvidenceQuote: null,
   preferencesEvidenceId: null,
+  educationComparison: null,
   experienceComparison: null,
 };
 
@@ -95,6 +97,10 @@ await test("gateway compares retained sources only, exposes omissions and totals
 
   const gateway = createLangChainGateway("openai", async (request) => {
     names.push(request.name);
+    if (request.name === "atomic_job_criteria") {
+      return { value: identityPlan(request), metadata };
+    }
+
     if (request.name === "job_passage_relevance") {
       return {
         value: { passages: [{ id: "J1", kind: "company_background" }] },
@@ -106,7 +112,7 @@ await test("gateway compares retained sources only, exposes omissions and totals
     assert.match(request.messages[1]?.content ?? "", /tests unitaires/);
 
     return {
-      value: { J2: [unknownRequirement], J3: [unknownRequirement] },
+      value: { J1: [unknownRequirement], J2: [unknownRequirement] },
       metadata,
     };
   });
@@ -119,15 +125,23 @@ await test("gateway compares retained sources only, exposes omissions and totals
     model: "fake",
   });
 
-  assert.deepEqual(names, ["job_passage_relevance", "requirements_evidence"]);
+  assert.deepEqual(names, [
+    "job_passage_relevance",
+    "atomic_job_criteria",
+    "requirements_evidence",
+  ]);
   assert.equal(result.metadata.contextPassages?.length, 1);
-  assert.equal(result.metadata.inputTokens, 2);
-  assert.equal(result.metadata.durationMs, 2);
+  assert.equal(result.metadata.inputTokens, 3);
+  assert.equal(result.metadata.durationMs, 3);
   assert.equal(result.extraction.unassessedJobQuotes?.length, 0);
 });
 
 await test("reviewed exact job passages are reintroduced without admitting invented text", async () => {
   const gateway = createLangChainGateway("openai", async (request) => {
+    if (request.name === "atomic_job_criteria") {
+      return { value: identityPlan(request), metadata };
+    }
+
     if (request.name === "job_passage_relevance") {
       return {
         value: { passages: [{ id: "J1", kind: "company_background" }] },
@@ -165,4 +179,39 @@ await test("reviewed exact job passages are reintroduced without admitting inven
 
   assert.equal(result.extraction.requirements.length, 3);
   assert.deepEqual(result.metadata.contextPassages, []);
+});
+
+await test("interview logistics are context, conducting interviews remains a duty", async () => {
+  const job =
+    "Vous rencontrerez notre recruteuse puis le manager.\nVous conduirez les entretiens techniques des développeurs.";
+
+  const sources = createSourceCatalog({ profile: "Camille", job }).job;
+
+  const classify = createJobRelevance(async () => ({
+    value: {
+      passages: [
+        { id: "J1", kind: "recruitment_process" },
+        { id: "J2", kind: "candidate_criterion" },
+      ],
+    },
+    metadata,
+  }));
+
+  const result = await classify(sources, { provider: "openai", model: "fake" });
+
+  assert.deepEqual(result.passages, [sources[1]]);
+  assert.equal(result.contextPassages[0]?.reason, "recruitment_process");
+});
+
+await test("identical job passages compare once, conflicting and distinct requirements survive", () => {
+  const job =
+    "Au moins 3 ans d’expérience.\nReact et Node.js requis.\nAu moins 3 ans d’expérience.\nexperienceRequirements: 12 mois\nJava requis.\nJavaScript requis.";
+
+  const catalog = createSourceCatalog({ profile: "Camille", job });
+
+  assert.deepEqual(
+    catalog.job.map(({ id }) => id),
+    ["J1", "J2", "J4", "J5", "J6"],
+  );
+  assert.equal(job.split("\n").length, 6);
 });
