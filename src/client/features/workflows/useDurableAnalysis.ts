@@ -9,7 +9,7 @@ export function useDurableAnalysis(dossierId?: string, revision?: number) {
 
   const [hidden, setHidden] = useState<string | null>(null);
 
-  const requestKey = useRef<string | null>(null);
+  const requestKey = useRef<{ id: string; identity: string } | null>(null);
 
   const queryKey = ["latest-job", dossierId];
 
@@ -28,10 +28,17 @@ export function useDurableAnalysis(dossierId?: string, revision?: number) {
 
   const start = useMutation({
     mutationFn: (input: AnalysisInputData) => {
-      requestKey.current ??= crypto.randomUUID();
+      const identity = JSON.stringify({
+        dossierId: input.dossierId,
+        revision: input.dossierRevision,
+      });
+
+      if (requestKey.current?.identity !== identity) {
+        requestKey.current = { id: crypto.randomUUID(), identity };
+      }
 
       return workflowApi.start(
-        requestKey.current,
+        requestKey.current.id,
         input.dossierId ?? "",
         input.dossierRevision ?? 0,
       );

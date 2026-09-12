@@ -1,3 +1,4 @@
+import { Button } from "../../shared/ui/button.tsx";
 import type { DossierDraftData } from "../../../shared/dossiers.ts";
 import {
   Tracking,
@@ -11,10 +12,16 @@ export function TrackingForm({
   value,
   onChange,
   disabled,
+  onSave,
+  canSave,
+  error,
 }: {
   value: DossierDraftData["tracking"];
   onChange: (value: NonNullable<DossierDraftData["tracking"]>) => void;
   disabled: boolean;
+  onSave: () => void;
+  canSave: boolean;
+  error?: string | undefined;
 }) {
   const tracking = value ?? {
     status: "preparing",
@@ -60,7 +67,11 @@ export function TrackingForm({
             />
           </label>
         ))}
+        <Button disabled={!canSave} onClick={onSave}>
+          {t.saveTracking}
+        </Button>
       </fieldset>
+      {error && <p role="alert">{error}</p>}
     </details>
   );
 }

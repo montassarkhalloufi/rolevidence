@@ -259,6 +259,34 @@ for (const purpose of ["job_search", "recruiting"] as const) {
       await expect(
         page.getByRole("region", { name: "Progression réelle" }),
       ).toContainText("Analyse enregistrée");
+      await page.getByText("Suivi de la candidature", { exact: true }).click();
+      await page
+        .getByLabel("Notes personnelles", { exact: true })
+        .fill("Mise à jour après analyse");
+      await page
+        .getByRole("button", {
+          name: "Enregistrer les modifications du dossier",
+          exact: true,
+        })
+        .click();
+      await expect(
+        page.getByRole("button", {
+          name: "Enregistrer les modifications du dossier",
+          exact: true,
+        }),
+      ).toBeDisabled();
+      await page
+        .getByRole("button", {
+          name: "Analyser la correspondance",
+          exact: true,
+        })
+        .click();
+      await expect(
+        page.getByRole("region", { name: "Progression réelle" }),
+      ).toContainText("Analyse enregistrée");
+      await expect(
+        page.getByRole("button", { name: /openai · test-workflow/ }),
+      ).toHaveCount(2);
       await page
         .getByRole("button", { name: "Retour aux dossiers", exact: true })
         .click();

@@ -30,6 +30,7 @@ export const workflowsFr = {
     "Comparez les preuves dans chaque colonne. Les critères d’offres différentes ne sont pas supposés équivalents. Aucun classement automatique n’est calculé.",
   stale:
     "Le dossier a été modifié depuis cette analyse. Les preuves ci-dessous concernent sa version précédente.",
+  saveTracking: "Enregistrer les modifications du dossier",
   tracking: "Suivi de la candidature",
   trackingHelp:
     "Notes humaines, séparées des conclusions. Ces champs ne sont jamais envoyés au modèle. Enregistrez le dossier pour les conserver.",
