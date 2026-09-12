@@ -6,7 +6,7 @@ Evidence-based profile–job comparison for job seekers and recruiters. Run the 
 
 ## See the workflow
 
-[![Rolevidence walkthrough: source-backed findings in the real interface](docs/media/rolevidence-tour-poster.png)](docs/media/rolevidence-tour.fr.mp4)
+https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af
 
 [Watch/download the French walkthrough](docs/media/rolevidence-tour.fr.mp4) ·
 [Read its transcript](docs/media/TRANSCRIPT.fr.md) ·

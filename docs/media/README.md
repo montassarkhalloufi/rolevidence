@@ -44,9 +44,12 @@ from the application and rendering code.
 
 ## GitHub presentation
 
-The README uses a linked poster, with an explicit video link and text transcript.
-This works without depending on embedded HTML video support in GitHub Markdown.
-The MP4 uses H.264 video, AAC audio and fast-start metadata. GitHub also supports
-[video attachments](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files)
-in supported editors; a maintainer can upload this same file there if a native
-inline player is desired. No release tag or public hosted application is needed.
+The README embeds the public GitHub video attachment as a standalone URL, enabling
+GitHub's native player. The repository MP4, local player and transcript remain
+available as fallbacks. The attachment was uploaded through GitHub CLI's `--attach`
+option to [PR #2](https://github.com/montassarkhalloufi/rolevidence/pull/2#issuecomment-5648470837).
+See GitHub's [attachment documentation](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/attaching-files).
+
+The speech renderer uses “Guit Hub” only in synthesis input to retain the hard g
+in French. Captions and visible copy retain “GitHub”. The published pronunciation
+fix replaces only the affected spoken word; its encoded video stream is unchanged.
