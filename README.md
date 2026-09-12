@@ -8,7 +8,7 @@ Evidence-based profile–job comparison for job seekers and recruiters. Run the 
 
 https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af
 
-[Watch/download the French walkthrough](docs/media/rolevidence-tour.fr.mp4) ·
+[Watch/download the French walkthrough](https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af) ·
 [Read its transcript](docs/media/TRANSCRIPT.fr.md) ·
 [Guide utilisateur en français](docs/USER_GUIDE.fr.md) ·
 [How it works and feature reference](docs/HOW_IT_WORKS.md)
@@ -88,7 +88,7 @@ Offline tests use fake provider transports. Explicit real evaluations are separa
 
 React features and TanStack Query call an Express API. Backend dependencies point inward through domain, application, adapters and infrastructure; provider and filesystem effects remain behind ports. Shared runtime schemas validate API boundaries. Architecture checks, lint and tests run in CI.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md), [implementation status](docs/IMPLEMENTATION.md), [ADRs](docs/adr) and [ROADMAP.md](ROADMAP.md). Release notes are in [CHANGELOG.md](CHANGELOG.md). Third-party attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md), [functionality and limits](docs/HOW_IT_WORKS.md), [ADRs](docs/adr) and [ROADMAP.md](ROADMAP.md). Release notes are in [CHANGELOG.md](CHANGELOG.md). Third-party attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 

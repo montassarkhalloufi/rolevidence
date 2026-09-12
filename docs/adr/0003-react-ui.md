@@ -44,3 +44,15 @@ The approved redesign replaces ivory/forest styling with cool light surfaces, mi
 ## Amendment — Campaign panels and durable progress (2026-09-12)
 
 Evidence layout responds to its containing panel, not only viewport width, so quotations remain readable in side-by-side campaigns. Durable jobs use TanStack Query polling of actual stage/batch state; mutations explicitly start, cancel or resume. Polling stops on terminal states. A focus hook synchronizes the progress panel with the DOM; no fabricated percentage or provider retry is introduced. Job identity persists server-side so leaving the page does not lose the operation. Member CV import remains local and explicitly reviewed before campaign creation.
+
+## Component maintenance reference
+
+Semantic colors and radii live in `src/client/shared/styles/tokens.css`; global
+styles in `src/client/styles.css` are document defaults only. Shared primitives
+own their variants; feature components use Tailwind for layout. Local compositions
+are not advertised as unmodified upstream shadcn components. Preserve attribution.
+
+Buttons default to `type="button"`; submit actions opt in explicitly. Native inputs
+use readable text sizing and connected labels. Keep keyboard focus, invalid and
+disabled states visible. Run `npm run quality` and `npm run test:browser`; browser
+screenshots use fictional inputs and remain ignored under `test-results/`.

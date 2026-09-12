@@ -67,7 +67,7 @@ primitives and semantic Tailwind tokens. There are no microfrontends. Shared sch
 validate API boundaries without importing UI or provider SDKs into the domain.
 
 See [ADRs](adr), [API semantics](API.md), [engineering policy](../CONTRIBUTING.md)
-and [implementation details](IMPLEMENTATION.md) for the authoritative decisions.
+and [product scope](PRODUCT.md) for the authoritative decisions.
 
 ## Reliability and privacy
 
@@ -82,3 +82,23 @@ the configured provider. API keys remain server-side. Optional LangSmith events
 exclude document content and automatic payload tracing stays disabled. Cancellation
 is best effort; checkpoint recovery cannot undo provider billing. See
 [SECURITY.md](../SECURITY.md) and [OPERATIONS.md](OPERATIONS.md).
+
+## Operational boundaries
+
+Current storage uses SQLite schema 3 and optimistic dossier revisions. Original
+CV binaries are not archived. Model preparation and comparison are bounded; each
+comparison call handles up to eight passages, with at most 16 comparison calls.
+Completed snapshots are immutable and require an explicit new analysis to benefit
+from later model or prompt changes. Canonical criteria retain their source quotes;
+conflicting offer statements receive separate warnings rather than invented facts.
+
+Public imports support default HTTP(S) ports with bounded redirects and retrieval.
+Login walls, browser-rendered pages and ambiguous multiple JobPostings can require
+manual pasting. Worker isolation is not an OS security sandbox. Unknown newer
+SQLite schemas fail closed. Deletion cannot remove exported copies or OS backups;
+legacy synchronous idempotency entries can remain in process memory until expiry.
+
+OpenAI observations are documented in [RELIABILITY.md](RELIABILITY.md). Live Anthropic
+accuracy, hosted LangSmith delivery, Windows compatibility and a complete assistive
+technology audit remain outside the verified coverage. Follow [OPERATIONS.md](OPERATIONS.md)
+for upgrades, backup limits, cancellation and checkpoint compatibility.

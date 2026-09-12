@@ -5,7 +5,7 @@ avec des citations consultables. Il s’utilise localement, par une personne en
 recherche d’emploi ou par un recruteur. Il ne donne pas de score d’employabilité
 et ne décide pas de retenir ou de rejeter une candidature.
 
-[Installation](../README.md#quick-start) · [Vidéo de découverte](media/rolevidence-tour.fr.mp4) · [Fonctionnement technique](HOW_IT_WORKS.md)
+[Installation](../README.md#quick-start) · [Vidéo de découverte](https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af) · [Fonctionnement technique](HOW_IT_WORKS.md)
 
 ## Premier démarrage
 
