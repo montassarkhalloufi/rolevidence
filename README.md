@@ -4,6 +4,18 @@ Evidence-based profile–job comparison for job seekers and recruiters. Run the 
 
 **Version 0.4:** local comparison campaigns, application tracking, resumable analyses, reviewed offer imports, attributed clarifications, printable reports and backups. This tool supports human review; it does not verify competence or make hiring decisions.
 
+## See the workflow
+
+[![Rolevidence walkthrough: source-backed findings in the real interface](docs/media/rolevidence-tour-poster.png)](docs/media/rolevidence-tour.fr.mp4)
+
+[Watch/download the French walkthrough](docs/media/rolevidence-tour.fr.mp4) ·
+[Read its transcript](docs/media/TRANSCRIPT.fr.md) ·
+[Guide utilisateur en français](docs/USER_GUIDE.fr.md) ·
+[How it works and feature reference](docs/HOW_IT_WORKS.md)
+
+The narrated walkthrough uses the real UI with fictional documents and clearly
+labelled simulated results. It makes no provider calls and is not an accuracy benchmark.
+
 ## Quick start
 
 Requires Node.js 24.15 or newer within the 24.x release line, and npm. Clone this repository, open its directory, then:
