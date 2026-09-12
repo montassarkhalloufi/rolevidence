@@ -4,6 +4,16 @@ Evidence-based profile–job comparison for job seekers and recruiters. Run the 
 
 **Version 0.3:** saved dossiers, public offer import, criterion-by-criterion evidence, attributed clarifications, printable reports and portable backups. Multiple comparisons remain outside this release. This tool supports human review; it does not verify competence or make hiring decisions.
 
+## Video preview — v0.4
+
+Watch the French walkthrough directly below. It previews the upcoming v0.4
+workflow with fictional documents and clearly labelled simulated results; the
+current stable installation remains v0.3 until the version is merged.
+
+https://github.com/user-attachments/assets/2c94b977-5deb-4a33-8840-f26ab18e16af
+
+[Explore the v0.4 documentation](https://github.com/montassarkhalloufi/rolevidence/blob/feat/v0.4-comparison-workflows/docs/USER_GUIDE.fr.md)
+
 ## Quick start
 
 Requires Node.js 24.15 or newer within the 24.x release line, and npm. Clone this repository, open its directory, then:
