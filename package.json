@@ -1,6 +1,6 @@
 {
   "name": "rolevidence",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "type": "module",
   "engines": {
@@ -28,15 +28,22 @@
     "eval:acceptance": "node --env-file-if-exists=.env scripts/eval-semantics.ts --acceptance",
     "eval:api": "node scripts/eval-api.ts",
     "eval:api-contract": "node scripts/eval-api-contract.ts",
-    "test:browser": "playwright test"
+    "test:browser": "playwright test",
+    "eval:providers": "node --env-file-if-exists=.env scripts/eval-providers.ts"
   },
   "dependencies": {
+    "@langchain/anthropic": "^1.5.10",
+    "@langchain/core": "^1.2.10",
+    "@langchain/openai": "^1.5.12",
     "@radix-ui/react-slot": "^1.3.3",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5.102.8",
+    "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "express": "5.2.1",
+    "ipaddr.js": "^2.5.0",
+    "langsmith": "^0.10.3",
     "mammoth": "1.12.2",
     "multer": "2.3.0",
     "openai": "7.14.0",

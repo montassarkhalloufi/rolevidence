@@ -21,8 +21,8 @@ export function compareBackendDuration(
 
   const minimum = BACKEND_MINIMUM.exec(jobQuote.trim())?.[1];
 
-  if (!minimum && !requirement.experienceComparison) {
-    return requirement;
+  if (!minimum && !isExperienceDuration(jobQuote)) {
+    return { ...requirement, experienceComparison: null };
   }
 
   const candidate = resolveQuote(documents.profile, requirement.profileQuote);
@@ -77,4 +77,11 @@ function compareDuration(duration: RegExpExecArray, required: number) {
       ? numericMessages.durationBelow
       : numericMessages.durationCompatible,
   };
+}
+
+function isExperienceDuration(quote: string) {
+  return (
+    /\b(?:expérience|experience|ancienneté)\b/iu.test(quote) &&
+    /\b(?:ans?|années?|years?|mois|months?)\b/iu.test(quote)
+  );
 }

@@ -7,7 +7,7 @@ function transportError(error: unknown): AppError {
   if (error instanceof OpenAI.APIConnectionTimeoutError) {
     return new AppError(
       "TIMEOUT",
-      "Le modèle a dépassé le délai de 60 secondes.",
+      "Le modèle a dépassé le délai de 120 secondes.",
     );
   }
 

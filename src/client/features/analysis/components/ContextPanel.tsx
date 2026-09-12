@@ -4,7 +4,7 @@ import { fr } from "../../../shared/i18n/fr.ts";
 import { Button } from "../../../shared/ui/button.tsx";
 
 import { useContextPreview } from "../hooks/useContextPreview.ts";
-import type { DocumentsInput } from "../../../../shared/analysis.ts";
+import type { AnalysisInputData as DocumentsInput } from "../../../../shared/analysis.ts";
 
 export function ContextPanel({ documents }: { documents: DocumentsInput }) {
   const preview = useContextPreview();

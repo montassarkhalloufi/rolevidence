@@ -1,3 +1,5 @@
+import { DossierHome } from "./features/dossiers/DossierHome.tsx";
+import { DossierWorkspace } from "./features/dossiers/DossierWorkspace.tsx";
 import { Alert } from "./shared/ui/alert.tsx";
 import { AnalyzeButton } from "./features/analysis/components/AnalyzeButton.tsx";
 import { PageLayout } from "./app/PageLayout.tsx";
@@ -17,6 +19,8 @@ import type { BootstrapData, DocumentsInput } from "../shared/analysis.ts";
 export function App() {
   const bootstrap = useBootstrap();
 
+  const [dossierId, setDossierId] = useState<string | null>(null);
+
   if (bootstrap.isPending) {
     return <p role="status">{fr.loadingApp}</p>;
   }
@@ -28,6 +32,19 @@ export function App() {
         {bootstrap.error.message}{" "}
         <Button onClick={() => void bootstrap.refetch()}>{fr.retry}</Button>
       </div>
+    );
+  }
+
+  if (bootstrap.data.dossiersEnabled) {
+    return dossierId ? (
+      <DossierWorkspace
+        key={dossierId}
+        id={dossierId}
+        bootstrap={bootstrap.data}
+        onBack={() => setDossierId(null)}
+      />
+    ) : (
+      <DossierHome bootstrap={bootstrap.data} onOpen={setDossierId} />
     );
   }
 
@@ -64,7 +81,7 @@ function AnalysisWorkbench({ bootstrap }: { bootstrap: BootstrapData }) {
               <p role="alert">{fr.missingKey}</p>
             </Alert>
           )}
-          <div className="grid items-start gap-6 lg:grid-cols-2">
+          <div className="grid items-start gap-6">
             <Card asChild>
               <form
                 className="min-w-0 space-y-4"

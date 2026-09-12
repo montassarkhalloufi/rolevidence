@@ -8,9 +8,9 @@ The product supports human understanding and decisions. It does not verify compe
 
 ## Deployment and privacy
 
-Single-user local installation, user-owned provider key, loopback-only server. No accounts or cloud database are required. Local execution does not imply offline AI: analysis transmits the document texts and candidate preferences to OpenAI. The key stays on the server. Preview is available before submission.
+Single-user local installation, user-owned provider key, loopback-only server. No accounts or cloud database are required. Local execution does not imply offline AI: analysis transmits the document texts and candidate preferences to the selected provider. The key stays on the server. Preview is available before submission.
 
-The initial release keeps drafts in memory and temporarily retains analysis outcomes for idempotency. Durable local storage is planned, not implemented. Do not expose the unauthenticated service to a network or use real personal documents as repository fixtures.
+Explicitly saved dossiers and immutable analysis snapshots are stored in local SQLite. Unsaved edits remain in browser memory; paid-request idempotency is temporary and process-local. Do not expose the unauthenticated service to a network or use real personal documents as repository fixtures.
 
 ## Shared concepts
 
@@ -18,7 +18,7 @@ The initial release keeps drafts in memory and temporarily retains analysis outc
 - Job: explicit requirements and offered conditions.
 - Candidate preferences: desired conditions, distinct from CV evidence.
 - Analysis: findings, quotations, unknowns and model/prompt/schema versions.
-- Clarification (planned): an answer attributed to its author, distinct from original documents.
+- Clarification: an answer attributed to its author, distinct from original documents.
 - Application/campaign (planned): a profile–job relationship with human notes and progress.
 
 Human notes and decisions must remain separate from model conclusions. Role-specific presentation must not change the evidentiary standard.

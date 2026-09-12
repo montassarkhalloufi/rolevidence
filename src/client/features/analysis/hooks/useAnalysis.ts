@@ -3,7 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { UseMutationResult } from "@tanstack/react-query";
 import type { AnalysisResponseData } from "../../../../shared/analysis.ts";
 import { api } from "../../../shared/api/client.ts";
-import type { DocumentsInput } from "../../../../shared/analysis.ts";
+import type { AnalysisInputData as DocumentsInput } from "../../../../shared/analysis.ts";
 
 export function useAnalysis() {
   const request = useRef<{ payload: string; key: string } | null>(null);

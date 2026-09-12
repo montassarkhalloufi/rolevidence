@@ -1,4 +1,5 @@
 export type AppErrorCode =
+  | "STORAGE_ERROR"
   | "BUSY"
   | "CAPACITY"
   | "CONNECTION"

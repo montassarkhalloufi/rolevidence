@@ -1,48 +1,36 @@
 # Product roadmap
 
-A local, individual application for job seekers and recruiters. Both use the same evidence-based profile–job comparison engine. The application runs on the user's machine; analysis sends selected content to the configured AI provider. It is not an offline model or a hosted multi-user service.
+Rolevidence is a local individual application for job seekers and recruiters.
+Both use the same evidence-based comparison engine and retain human responsibility
+for interpreting declared experience. Local execution still sends selected text to
+the chosen AI provider.
 
-## Initial release — current scope
+## 0.2.0 — Local dossiers and offer import
 
-- One profile and one job description per analysis.
-- Local PDF/DOCX/TXT text extraction and editable inputs.
-- Candidate salary/work preferences kept separate from CV evidence.
-- Supported matches, contradictions, unknowns and conclusions requiring review, with source quotations.
-- Request preview, error handling and bounded in-memory idempotency.
-- Offline quality checks and documented live evaluation observations.
+- Saved dossiers and immutable analysis history, SQLite migrations and deletion.
+- Public offer URL import with source review and manual-paste fallback.
+- OpenAI/Anthropic selection through LangChain adapters.
+- Optional private-content-free LangSmith technical telemetry.
+- Reopening, conflict, storage failure, provider and browser verification.
 
-The UI serves the same comparison for both audiences. Dedicated role-specific workspaces, saved profiles, exports and interactive clarification are not implemented yet.
+## 0.3.0 — Clarification and reviewable exports
 
-## Next: complete the individual workflow
+- Questions for unknown criteria; attributed answers stored separately from CVs.
+- Reassessment preserves earlier snapshots and identifies newly supplied facts.
+- Export source references, conclusions, limitations and model/prompt versions.
+- Local backup/export UX and installation verification with disclosed platform coverage.
 
-- Role-appropriate onboarding and copy without changing evidence semantics.
-- Clarification questions, answers with explicit provenance, and reassessment.
-- Export a reviewable analysis with source references and model/prompt versions.
-- Real-browser end-to-end and accessibility checks.
-- Validate installation from a clean checkout on supported operating systems.
+Acceptance: a user can clarify a missing fact and share a sourced report without
+silently changing the original CV or erasing prior conclusions.
 
-Acceptance: an external user completes import → analysis → clarification → export without developer assistance.
-
-## Then: local persistence
-
-- SQLite with versioned migrations, stored profiles/offers and analysis history.
-- Explicit save, backup, export and deletion controls.
-- Personal application tracking and recruiter campaign tracking.
-- Keep user records outside versioned fixtures and evaluation data.
-
-Acceptance: users resume work after restart and can delete their stored information.
-
-## Then: multiple comparisons
+## Later — Multiple comparisons
 
 - One profile against several offers, or one offer against several profiles.
-- Criterion-by-criterion comparison with direct evidence access.
-- Bounded jobs, progress, cancellation, explicit retry and usage limits.
-- No automatic rejection or opaque aggregate employability score.
+- Criterion-by-criterion evidence access, bounded jobs and progress.
+- Explicit cancellation/retry, per-analysis cost visibility and failure handling.
+- No automatic rejection or opaque employability score.
 
-Acceptance: failures and costs remain understandable per analysis; missing evidence is never silently treated as a negative fact.
-
-## Release gates
-
-Each release needs passing offline CI, appropriate independent AI evaluations, a changelog, reviewed migrations when applicable and explicit known limitations. Measure false matches, false gaps, omitted requirements, evidence relevance, latency and token usage separately. Calibration results do not establish general accuracy.
-
-Agent frameworks, RAG, additional providers and shared hosting require concrete product needs and an ADR. They are not roadmap milestones by themselves.
+LangGraph requires a real branching/resumable orchestration need. Deep Agents and
+RAG remain deferred. Framework adoption is an architectural decision, not a
+product milestone. Every release needs passing checks and disclosed live-evaluation
+limits; a finite calibration suite cannot establish universal accuracy.

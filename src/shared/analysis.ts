@@ -1,3 +1,4 @@
+import { ModelSelection, ProviderOption } from "./providers.ts";
 import {
   DOCUMENT_MAX_CHARACTERS,
   MAX_ANNUAL_SALARY_EUR,
@@ -36,6 +37,7 @@ export const Interpretation = z
 
 export const finding = z
   .object({
+    clarificationQuote: z.string().nullable().optional(),
     subject: z.string(),
     interpretation: Interpretation,
     evidenceState: EvidenceState,
@@ -119,6 +121,8 @@ export const emptyPreferences: PreferencesInput = {
 
 export const Documents = z
   .object({
+    reviewedJobQuotes: z.array(z.string().max(16000)).max(128).optional(),
+    clarifications: z.string().max(DOCUMENT_MAX_CHARACTERS).optional(),
     preferences: Preferences.optional(),
     profile: z
       .string()
@@ -138,6 +142,11 @@ export type DocumentsInput = z.infer<typeof Documents>;
 export const AnalysisResponse = z.object({
   analysis: Analysis,
   metadata: z.object({
+    preparationVersion: z.string().optional(),
+    contextPassages: z
+      .array(z.object({ quote: z.string(), reason: z.string() }))
+      .optional(),
+    provider: z.enum(["openai", "anthropic"]).optional(),
     responseId: z.string(),
     model: z.string(),
     durationMs: z.number(),
@@ -154,6 +163,16 @@ export const Bootstrap = z.object({
   documents: Documents,
   model: z.string(),
   configured: z.boolean(),
+  providers: z.array(ProviderOption).optional(),
+  dossiersEnabled: z.boolean().optional(),
 });
 
 export type BootstrapData = z.infer<typeof Bootstrap>;
+
+export const AnalysisInput = Documents.extend({
+  selection: ModelSelection.optional(),
+  dossierId: z.uuid().optional(),
+  dossierRevision: z.number().int().positive().optional(),
+});
+
+export type AnalysisInputData = z.infer<typeof AnalysisInput>;

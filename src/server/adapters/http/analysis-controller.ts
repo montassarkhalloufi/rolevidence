@@ -1,7 +1,11 @@
+import { analysisSnapshot } from "./analysis-snapshot.ts";
+import type { AnalysisOutput } from "../../application/analyze.ts";
+import type { ProviderRegistry } from "../../application/provider-registry.ts";
+import type { DossierRepository } from "../../application/dossiers.ts";
 import { IDEMPOTENCY_HEADER } from "../../../shared/api-config.ts";
 import { createHash } from "node:crypto";
 import type { RequestHandler } from "express";
-import { Documents, emptyPreferences } from "../../../shared/analysis.ts";
+import { AnalysisInput, emptyPreferences } from "../../../shared/analysis.ts";
 import type { AnalysisService } from "../../application/analyze.ts";
 import { AppError } from "../../application/errors.ts";
 import { createIdempotentAnalysis } from "../../application/idempotency.ts";
@@ -9,12 +13,14 @@ import type { AnalysisStore } from "../../application/idempotency.ts";
 
 export function createAnalysisController(
   service: AnalysisService,
-  store: AnalysisStore,
+  store: AnalysisStore<SavedExecution>,
+  providers?: ProviderRegistry,
+  dossiers?: DossierRepository,
 ): RequestHandler {
   const run = createIdempotentAnalysis(store);
 
   return async (req, res) => {
-    const parsed = Documents.safeParse(req.body);
+    const parsed = AnalysisInput.safeParse(req.body);
 
     if (!parsed.success) {
       throw new AppError(
@@ -32,15 +38,58 @@ export function createAnalysisController(
       );
     }
 
-    const { profile, job, preferences = emptyPreferences } = parsed.data;
+    const {
+      profile,
+      job,
+      preferences = emptyPreferences,
+      clarifications,
+    } = parsed.data;
 
     const fingerprint = createHash("sha256")
-      .update(JSON.stringify({ profile, job, preferences }))
+      .update(
+        JSON.stringify({
+          reviewedJobQuotes: parsed.data.reviewedJobQuotes,
+          clarifications,
+          profile,
+          job,
+          preferences,
+          selection: parsed.data.selection,
+          dossierId: parsed.data.dossierId,
+          dossierRevision: parsed.data.dossierRevision,
+        }),
+      )
       .digest("hex");
 
-    const execution = run(key, fingerprint, () => service.analyze(parsed.data));
+    const selectedService = providers
+      ? providers.resolve(parsed.data.selection)
+      : service;
+
+    const execution = run(key, fingerprint, async () => {
+      const snapshot = analysisSnapshot(parsed.data, dossiers);
+
+      const output = await selectedService.analyze({
+        reviewedJobQuotes: parsed.data.reviewedJobQuotes,
+        clarifications,
+        profile,
+        job,
+        preferences,
+      });
+
+      return { output, snapshot };
+    });
 
     res.set("Idempotency-Replayed", String(execution.replayed));
-    res.json(await execution.result);
+    const { output, snapshot } = await execution.result;
+
+    if (snapshot) {
+      dossiers?.append(snapshot, output, key);
+    }
+
+    res.json(output);
   };
 }
+
+export type SavedExecution = {
+  output: AnalysisOutput;
+  snapshot: ReturnType<typeof analysisSnapshot>;
+};

@@ -1,8 +1,8 @@
 # Rolevidence
 
-Evidence-based profile–job comparison for job seekers and recruiters. Run the application locally with your own OpenAI API key, inspect supporting quotations and identify what still needs clarification.
+Evidence-based profile–job comparison for job seekers and recruiters. Run the application locally with your own OpenAI or Anthropic API key, inspect supporting quotations and identify what still needs clarification.
 
-**Initial release:** one profile and one offer per analysis. Saved workspaces, multiple comparisons and interactive clarification are planned. This tool supports human review; it does not verify competence or make hiring decisions.
+**Version 0.3:** saved dossiers, public offer import, criterion-by-criterion evidence, attributed clarifications, printable reports and portable backups. Multiple comparisons remain outside this release. This tool supports human review; it does not verify competence or make hiring decisions.
 
 ## Quick start
 
@@ -13,32 +13,39 @@ git clone https://github.com/montassarkhalloufi/rolevidence.git
 cd rolevidence
 npm ci
 cp .env.example .env
-# Set OPENAI_API_KEY in .env using your editor.
+# Set OPENAI_API_KEY and/or ANTHROPIC_API_KEY in .env using your editor.
 npm run build
 npm start
 ```
 
-Open http://127.0.0.1:3001. The production build is served by the local Express server. Without a key, fictional inputs, document import and request preview remain available; analysis requires a configured key and incurs provider usage charges. Restart after changing `.env`.
+Open http://127.0.0.1:3001. The production build is served by the local Express server. Without a key, local dossiers, document import and request preview remain available; analysis requires a configured key and incurs provider usage charges. Restart after changing `.env`.
 
 For development, run `npm run dev` and open http://127.0.0.1:5173. Vite proxies the API to the local server. Both bind to loopback by default. Do not expose this unauthenticated application publicly.
 
 ## Use the application
 
-1. Import a CV or edit the fictional profile.
-2. Paste an offer and optionally supply the candidate's salary/work preferences.
-3. Review extracted text and preview the exact provider context.
-4. Submit and inspect matches, contradictions, unknowns and conclusions requiring review.
-5. Open the supporting quotations and compare them with the original documents.
+1. Create a named dossier for a job search or recruitment review.
+2. Import a CV and paste an offer, or import its public URL with a configured provider.
+3. Review the source and editable extracted fields. Adopt the offer text explicitly.
+4. Enter candidate preferences, select the provider/model, then use Save and analyze.
+5. Preview the provider context, analyze, then inspect findings and source quotations.
+6. Add a dated candidate statement or recruiter account from a criterion, save and reanalyze. The original CV and older analyses stay unchanged.
+7. Open an analysis in history to download an HTML report; open the file in a browser and print/save as PDF.
+8. Export the saved dossier as JSON, then restore it from the home page to create an isolated copy with its history. Exports include private source texts.
+9. Reopen the dossier after restart. Older analyses retain their original sources.
 
-Job seekers use their own profile; recruiters use a candidate's profile. The evidence standard is identical. Dedicated role-specific workspaces are planned; the current interface provides the shared comparison workflow.
+Save edits explicitly before leaving. Deleting a dossier also deletes its analyses;
+other dossiers remain intact. The evidence standard is identical for both audiences.
 
 PDF, DOCX and UTF-8 TXT are supported within configured limits: 5 MiB upload, 20 PDF pages, 16,000 text characters and a 15-second parsing deadline. Scanned PDFs without text are rejected. Missing evidence is not a contradiction, and a cited passage does not necessarily prove mastery.
 
 ## Privacy and costs
 
-- Parsing and preview are local. Analysis sends both texts and the candidate preferences to OpenAI.
+- CV parsing and preview are local. Analysis sends texts and preferences to the selected provider. URL import contacts the public site and sends extracted offer text to that provider.
 - The API key stays server-side. Remove unnecessary contact details before submission.
-- Browser drafts are not persisted. A bounded in-memory cache temporarily retains responses for idempotency; it is not a durable workspace.
+- Explicitly saved dossiers live in `storage/rolevidence.sqlite` (configurable via DATABASE_PATH). Browser drafts are not persisted. Stop the server before copying this unencrypted database for backup. Runtime data is ignored by Git.
+- Optional LangSmith technical telemetry is disabled by default (`ROLEVIDENCE_TELEMETRY=false`). No document content is included; automatic LangChain tracing is disabled.
+- Analysis first classifies the offer, then compares up to eight passages per call (maximum 16 comparison calls). Long offers cost more and take longer; mandatory passage coverage does not prove semantic correctness.
 - Failed requests never become fabricated results. Automatic paid retries are disabled. A deliberate new attempt can incur another charge.
 - Runtime files, traces and secrets are ignored by Git. Use fictional fixtures when reporting issues.
 
@@ -63,3 +70,5 @@ Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md),
 ## License
 
 [MIT](LICENSE). Copyright (c) 2026 montassarkhalloufi. See THIRD_PARTY_NOTICES.md for bundled component attribution.
+
+See [local operations](docs/OPERATIONS.md) for installation, recovery, exports and release validation limits.
