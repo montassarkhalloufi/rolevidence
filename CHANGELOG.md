@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.4.0 — Unreleased
+## 0.4.0 — 2026-09-13
 
 - Qualified salary/education/partial-evidence explanations and explicit required versus negotiable preferences.
 
