@@ -41,3 +41,9 @@ Thumbs.db
 *~
 .codex/
 .agents/
+
+# Video production stays outside the source distribution
+/scripts/media/
+/docs/media/*.mp4
+/docs/media/*-poster.png
+/docs/media/player.html

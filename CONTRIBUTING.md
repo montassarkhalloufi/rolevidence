@@ -1,6 +1,6 @@
 # Contributing
 
-Rolevidence is a local application for job seekers and recruiters that compares declared experience with job requirements. It does not verify competence or make hiring decisions. Start with the accepted decisions in [docs/adr](docs/adr) and the current status in [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md).
+Rolevidence is a local application for job seekers and recruiters that compares declared experience with job requirements. It does not verify competence or make hiring decisions. Start with the accepted decisions in [docs/adr](docs/adr) and the current status in [docs/HOW_IT_WORKS.md](docs/HOW_IT_WORKS.md).
 
 ## Development
 

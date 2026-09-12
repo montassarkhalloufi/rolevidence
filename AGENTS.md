@@ -11,7 +11,7 @@ Read CONTRIBUTING.md and the relevant accepted ADR in docs/adr before changing c
 - Follow docs/API.md for API changes. Preserve idempotency conflict, replay, concurrency, retention and failure semantics. Update generated OpenAPI and its tests with contract changes.
 - Never print/read secrets unnecessarily, commit private CVs, log request bodies or persist browser drafts. Use fictional fixtures. Real model evaluations are separate paid operations and must be reported as real or not run.
 - Run npm run quality before completion. Do not weaken rules or tests just to make them pass; document a concrete, narrowly justified exception if needed.
-- Update the relevant ADR when changing a decision, not for every implementation detail. Update docs/IMPLEMENTATION.md when implementation or limitations change.
+- Update the relevant ADR when changing a decision, not for every implementation detail. Update docs/HOW_IT_WORKS.md when implementation or limitations change.
 - Do not publish, deploy publicly or select a project license without the owner's instruction. The local custom header is not authentication.
 
 A skill is an optional reusable procedure. It does not replace this policy, ADRs, review or CI. Consult the official Vercel React guidance linked in ADR 0003 for applicable React patterns; Next.js/RSC rules do not apply to this Vite client.

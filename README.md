@@ -75,7 +75,7 @@ Offline tests use fake provider transports. Explicit real evaluations are separa
 
 React features and TanStack Query call an Express API. Backend dependencies point inward through domain, application, adapters and infrastructure; provider and filesystem effects remain behind ports. Shared runtime schemas validate API boundaries. Architecture checks, lint and tests run in CI.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md), [implementation status](docs/IMPLEMENTATION.md), [ADRs](docs/adr) and [ROADMAP.md](ROADMAP.md). Release notes are in [CHANGELOG.md](CHANGELOG.md). Third-party attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), [product scope](docs/PRODUCT.md), [functionality and limits](docs/HOW_IT_WORKS.md), [ADRs](docs/adr) and [ROADMAP.md](ROADMAP.md). Release notes are in [CHANGELOG.md](CHANGELOG.md). Third-party attribution is in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
