@@ -129,3 +129,21 @@ Final v0.3 local verification: **79 backend/evaluation tests, 9 React tests and 
 This observes interruption between completed stages, not cancellation of a provider's billable in-flight work. Fake transport tests separately observe abort signaling, checkpoint counts and no repeated validated calls. The underlying semantic prompt is unchanged from v0.3; this is a workflow regression check, not a new semantic benchmark. Anthropic and hosted LangSmith still lack live verification.
 
 The v0.4 offline suite includes 87 backend/evaluation tests, 9 React tests and 9 browser scenarios (105 total), with campaign source isolation in both directions, v0.3 database migration, transactional rollback, checkpoints, cancellation, stale commands, graceful/hard-stop recovery and deduplication after lost storage acknowledgement. Browser coverage includes mobile campaign layout, two independently saved comparisons and local member CV import. Strict types, lint, architecture, OpenAPI drift, formatting and production build are required before publication.
+
+## Source integrity regression — 2026-09-12
+
+Run `node --env-file-if-exists=.env scripts/eval-source-integrity.ts` explicitly
+for paid calls. The two fictional cases run twice with fresh requests: accented
+React/Node.js evidence plus an exact repeated job duty and absent Java; hiring
+interview logistics versus an employee duty conducting technical interviews.
+
+The first run passed 4/4 with unchanged expectations, no gaps or unverified quotes:
+`artifacts/evaluations/source-integrity-1789236633867/observations.json`.
+This is targeted calibration, not a held-out benchmark. No private CV was sent for
+this evaluation. The reported user's completed historical result was inspected
+locally and remains immutable. Its input accents were intact but some output
+quotations were damaged. Raw completed provider payloads are unavailable, so their
+origin cannot be established retrospectively. Offline adapter tests cover Unicode
+round trips, explicit rejection of corrupted text without retries, and preservation
+of unresolved quotes when letters are missing. Semantic duplicates and conflicting
+JobPosting/prose requirements remain an explicit limitation.

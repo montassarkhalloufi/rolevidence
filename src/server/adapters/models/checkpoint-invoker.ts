@@ -1,6 +1,7 @@
 import type { StructuredModel } from "./structured.ts";
 import type { AnalysisExecution } from "../../application/execution.ts";
 import { AppError } from "../../application/errors.ts";
+import { assertOutputIntegrity } from "./output-integrity.ts";
 
 const CHECKPOINT_VERSION = "comparison-checkpoint-v1";
 
@@ -37,6 +38,7 @@ export function checkpointInvoker(
         );
       }
 
+      assertOutputIntegrity(saved.value);
       position++;
 
       return {
@@ -48,6 +50,8 @@ export function checkpointInvoker(
     const result = await invoke(request, requestSignal);
 
     const value = request.schema.parse(result.value);
+
+    assertOutputIntegrity(value);
 
     responses.push({
       name: request.name,

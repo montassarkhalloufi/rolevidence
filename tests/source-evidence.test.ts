@@ -253,3 +253,33 @@ await test("The offer summary uses the original requirement instead of an inflat
     "- Bonne pratique de Java, TypeScript, Node.js et PostgreSQL.",
   );
 });
+
+await test("missing accents are not typographic equivalence for candidate evidence", () => {
+  const source =
+    "Développement React et Node.js ; contribution à l’optimisation.";
+
+  const input = { profile: source, job: "Pratique de React exigée." };
+
+  const sources = createSourceCatalog(input);
+
+  const extraction = createExtractionSchema(sources).parse({
+    requirements: [
+      {
+        ...item,
+        profileEvidenceId: "P1",
+        jobEvidenceId: "J1",
+        profileEvidenceQuote:
+          "Dveloppement React et Node.js ; contribution l’optimisation.",
+      },
+    ],
+  });
+
+  const result = classifyRequirements(
+    mapExtraction(extraction, sources),
+    input,
+  );
+
+  assert.equal(result.matches.length, 0);
+  assert.equal(result.needsReview.length, 1);
+  assert.equal(result.needsReview[0]?.profileQuote, null);
+});

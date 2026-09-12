@@ -20,9 +20,23 @@ export function createSourceCatalog(documents: DocumentsInput) {
     clarifications: passages(documents.clarifications ?? "", "C").filter(
       (item) => !isResponseDirective(item.text),
     ),
-    job: passages(documents.job, "J"),
+    job: uniqueJobPassages(passages(documents.job, "J")),
     preferences: passages(preferencesText(documents.preferences), "R"),
   };
+}
+
+function uniqueJobPassages(items: SourcePassage[]) {
+  const seen = new Set<string>();
+
+  return items.filter(({ text }) => {
+    if (seen.has(text)) {
+      return false;
+    }
+
+    seen.add(text);
+
+    return true;
+  });
 }
 
 export function substantiveJobPassages(catalog: SourceCatalog) {

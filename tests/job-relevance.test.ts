@@ -166,3 +166,38 @@ await test("reviewed exact job passages are reintroduced without admitting inven
   assert.equal(result.extraction.requirements.length, 3);
   assert.deepEqual(result.metadata.contextPassages, []);
 });
+
+await test("interview logistics are context, conducting interviews remains a duty", async () => {
+  const job =
+    "Vous rencontrerez notre recruteuse puis le manager.\nVous conduirez les entretiens techniques des développeurs.";
+
+  const sources = createSourceCatalog({ profile: "Camille", job }).job;
+
+  const classify = createJobRelevance(async () => ({
+    value: {
+      passages: [
+        { id: "J1", kind: "recruitment_process" },
+        { id: "J2", kind: "candidate_criterion" },
+      ],
+    },
+    metadata,
+  }));
+
+  const result = await classify(sources, { provider: "openai", model: "fake" });
+
+  assert.deepEqual(result.passages, [sources[1]]);
+  assert.equal(result.contextPassages[0]?.reason, "recruitment_process");
+});
+
+await test("identical job passages compare once, conflicting and distinct requirements survive", () => {
+  const job =
+    "Au moins 3 ans d’expérience.\nReact et Node.js requis.\nAu moins 3 ans d’expérience.\nexperienceRequirements: 12 mois\nJava requis.\nJavaScript requis.";
+
+  const catalog = createSourceCatalog({ profile: "Camille", job });
+
+  assert.deepEqual(
+    catalog.job.map(({ id }) => id),
+    ["J1", "J2", "J4", "J5", "J6"],
+  );
+  assert.equal(job.split("\n").length, 6);
+});

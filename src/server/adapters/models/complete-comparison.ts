@@ -10,7 +10,7 @@ import { createMessages } from "../openai/messages.ts";
 import { mapExtraction } from "../openai/map-extraction.ts";
 import { AppError } from "../../application/errors.ts";
 
-export const COMPARISON_VERSION = "evidence-v4-required-passages";
+export const COMPARISON_VERSION = "evidence-v4.1-source-integrity";
 
 export const COMPARISON_BATCH_SIZE = 8;
 

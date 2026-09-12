@@ -10,6 +10,7 @@ import {
   MAX_OUTPUT_TOKENS,
 } from "../adapters/openai/request.ts";
 import { AppError } from "../application/errors.ts";
+import { assertOutputIntegrity } from "../adapters/models/output-integrity.ts";
 
 export type ModelKeys = {
   openai: string | undefined;
@@ -142,6 +143,8 @@ function modelResult(
       "La réponse ne respecte pas le contrat de données.",
     );
   }
+
+  assertOutputIntegrity(parsed.data);
 
   return {
     value: parsed.data,

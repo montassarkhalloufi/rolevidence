@@ -81,3 +81,26 @@ The first combined classification/comparison experiment wrongly excluded real du
 Replace one unbounded comparison response with sequential groups of eight passages (maximum 16 groups). Each request-specific JSON schema requires every passage ID and a nonempty finding array. Map job quotations from the owning key. Failure rejects the analysis, never triggers an automatic paid repair. This fixed bounded workflow is not an agent loop. More calls trade cost/latency for verifiable passage coverage; atomic semantic completeness and correct conclusions remain unproven by structure.
 
 Clarifications have separate C references and source quotes. Human-requested job passage reinclusion is honored only for exact source passages. Sources, overrides and statements belong to the immutable snapshot and input fingerprint. An observed model error attached duration metadata to a TypeScript criterion; duration rules now require duration information in the job before changing that conclusion.
+
+## Amendment — Output integrity and repeated sources (2026-09-12)
+
+A saved real result contained missing diacritics and U+0002 in candidate quotations
+and interpretations while its immutable input texts were intact. Completed jobs do
+not retain raw provider responses, so the stored result alone cannot attribute the
+corruption to generation or decoding. Provider-adapter regression tests now verify
+Unicode round trips through both actual LangChain integrations with mocked HTTP.
+
+Reject parsed responses containing unexpected C0 controls, DEL or the Unicode
+replacement character before checkpointing or accepting results. Tabs and line
+breaks remain allowed. Recheck resumed checkpoint values. Never repair such text,
+automatically retry a paid call, or relax quotation matching. Missing letters
+without a control character remain detectable only through quotation verification;
+this guard is not a general semantic or spelling validator.
+
+Identical trimmed offer lines share one comparison entry, keeping the first original
+ID and leaving the saved document unchanged. Distinct wording and conflicting
+structured/prose requirements remain separate; this is not semantic deduplication.
+The job-only relevance model can mark hiring logistics as recruitment_process;
+employee duties involving interviews and mixed passages must remain retained.
+Prompt versions change to invalidate incompatible interrupted checkpoints. Existing
+completed snapshots remain immutable and require an explicit new analysis.
