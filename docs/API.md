@@ -95,3 +95,19 @@ Documents optionally include `clarifications` (16,000 characters) and `reviewedJ
 All mutations require the local request guard. Campaign input has a 2 MiB body limit. Job identity replaces a transient idempotency header for these new resources; the legacy synchronous analysis route keeps its previous contract. Closing the browser does not cancel a job. Restart never resumes paid calls automatically. Completed checkpointed responses are schema-validated again on explicit resume; an interrupted uncheckpointed call may be charged twice. A storage failure never authorizes an automatic model retry.
 
 Optional dossier `tracking` contains status, notes, preparation and interview fields (8,000 characters each). It is included in local backups/snapshots but excluded from provider inputs. Workflow startup resolves the exact saved selection. Use a single server process per SQLite database.
+
+## Canonical criterion preparation
+
+The current workflow performs relevance selection, an additional job-only canonical
+criterion planning call when multiple passages remain, then batches of eight
+canonical criteria. Maximum: 128 criteria and 18 provider calls. All retained source
+IDs must be represented; failure is explicit without an automatic paid retry.
+Planning responses are checkpointed and included in token/duration totals. Existing
+idempotency and immutable input snapshot semantics remain unchanged.
+
+Findings optionally include `jobQuotes`, all verified original passages supporting
+a grouped criterion; `jobQuote` remains its primary source for compatibility.
+Metadata optionally includes `offerWarnings: [{ explanation, quotes }]` for ambiguous
+or differing offer conditions. These warnings are separate from candidate findings.
+Older saved payloads without either field remain valid. Generated OpenAPI includes
+both additions; upgrade local frontend and backend together.

@@ -76,7 +76,10 @@ function SourceQuotes({ finding }: { finding: Finding }) {
     { label: fr.clarificationSource, text: finding.clarificationQuote },
     { label: fr.profileSource, text: finding.profileQuote },
     { label: fr.preferencesSource, text: finding.preferencesQuote },
-    { label: fr.jobSource, text: finding.jobQuote },
+    {
+      label: fr.jobSource,
+      text: finding.jobQuotes?.join("\n\n") || finding.jobQuote,
+    },
   ].filter((quote) => quote.text);
 
   if (!quotes.length) {

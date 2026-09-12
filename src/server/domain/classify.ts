@@ -135,6 +135,15 @@ function classifyRequirement(
     preferencesQuote:
       candidateSource === "preferences" ? evidence.candidate : null,
     jobQuote: evidence.job,
+    ...(finding.jobQuotes
+      ? {
+          jobQuotes: finding.jobQuotes.flatMap((quote) => {
+            const verified = resolveQuote(documents.job, quote);
+
+            return verified ? [verified] : [];
+          }),
+        }
+      : {}),
     verification: verificationNote(requirement, evidence, status),
   };
 

@@ -1,3 +1,4 @@
+import { identityPlan } from "./plan-fixture.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
@@ -200,6 +201,10 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
         JSON.stringify(request.messages),
         /PRIVATE_HUMAN_NOTE|Compte rendu privé/,
       );
+      if (request.name === "atomic_job_criteria") {
+        return { value: identityPlan(request), metadata };
+      }
+
       if (request.name === "job_passage_relevance") {
         return {
           metadata,
@@ -212,7 +217,7 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
         };
       }
 
-      if (calls === 3 && blocking) {
+      if (calls === 4 && blocking) {
         reached?.();
         await new Promise<void>((_resolve, reject) =>
           signal?.addEventListener(
@@ -248,14 +253,14 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
 
     runner.start(id, source.id, source.revision);
     await waiting;
-    assert.equal(repository.get(id).checkpoint?.responses.length, 2);
+    assert.equal(repository.get(id).checkpoint?.responses.length, 3);
     assert.deepEqual(repository.get(id).progress, {
       stage: "comparison",
       completed: 1,
       total: 2,
     });
     runner.start(id, source.id, source.revision);
-    assert.equal(calls, 3);
+    assert.equal(calls, 4);
     assert.throws(
       () => runner.start(randomUUID(), source.id, source.revision),
       /déjà en cours/,
@@ -273,7 +278,7 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
     const done = await terminal(() => runner.get(id));
 
     assert.equal(done.status, "completed");
-    assert.equal(calls, 4);
+    assert.equal(calls, 5);
     assert.equal(
       done.result?.snapshot.documents.profile,
       draft.documents.profile,
@@ -283,7 +288,7 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
     assert.equal(dossiers.analyses(source.id, 0, 20).total, 1);
     assert.throws(() => runner.resume(id, 1), /changé/);
     runner.start(id, source.id, 1);
-    assert.equal(calls, 4);
+    assert.equal(calls, 5);
   } finally {
     db.close();
   }

@@ -54,6 +54,14 @@ PDF, DOCX and UTF-8 TXT are supported within configured limits: 5 MiB upload, 20
 
 See [SECURITY.md](SECURITY.md) and the precise [API idempotency guarantees](docs/API.md).
 
+## Model selection
+
+The default OpenAI model is `gpt-5.4`; set `OPENAI_MODEL` in `.env` to change it.
+Existing dossiers keep their saved model selection, with `gpt-4.1-mini` still
+available. Canonical criterion preparation adds one bounded job-only call for
+multi-passage offers. Review source quotations and offer ambiguity warnings before
+using the results; model/API usage is billed by your provider.
+
 ## Development and verification
 
 ```sh

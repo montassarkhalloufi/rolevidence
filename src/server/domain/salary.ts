@@ -15,7 +15,10 @@ export function compareSalary(
 ): Requirement {
   const quote = resolveQuote(documents.job, requirement.jobQuote);
 
-  if (!quote || !/^(?:[-*•]\s*)?(?:salaire|rémunération)\s*:/iu.test(quote)) {
+  if (
+    !quote ||
+    !/^(?:[-*•]\s*)?(?:salaire|rémunération|baseSalary)\s*:/iu.test(quote)
+  ) {
     return requirement;
   }
 

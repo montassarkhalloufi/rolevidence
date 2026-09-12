@@ -21,10 +21,14 @@ function mapRequirement(
     ...requirement
   } = item;
 
+  const jobSource = catalog.job.find((source) => source.id === jobEvidenceId);
+
   // Preserve unresolved proposals: the domain verifies against the full original
   // document and retains invalid text only in verification diagnostics.
   return {
     ...requirement,
+    subject: jobSource?.criterion ?? requirement.subject,
+    ...(jobSource?.sourceQuotes ? { jobQuotes: jobSource.sourceQuotes } : {}),
     ...(requirement.candidateSource === "clarification"
       ? {
           clarificationQuote:

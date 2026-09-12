@@ -27,7 +27,10 @@ export function renderReport(saved: SavedAnalysisData) {
               [fr.profileSource, finding.profileQuote],
               [fr.clarificationSource, finding.clarificationQuote],
               [fr.preferencesSource, finding.preferencesQuote],
-              [fr.jobSource, finding.jobQuote],
+              [
+                fr.jobSource,
+                finding.jobQuotes?.join("\n\n") || finding.jobQuote,
+              ],
             ]
               .filter((entry) => entry[1])
               .map(

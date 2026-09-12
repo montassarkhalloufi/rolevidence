@@ -28,6 +28,7 @@ export type DocumentsInput = {
 };
 
 export type Evidence = {
+  jobQuotes?: string[] | undefined;
   clarificationQuote?: string | null | undefined;
   subject: string;
   explanation: string;

@@ -81,6 +81,7 @@ export const fr = {
     "La conclusion du modèle reste à vérifier : sa citation n’a pas pu être reliée au texte source. Cela ne signifie pas que la compétence est absente du CV.",
   missingInformation:
     "Les informations déclarées sont insuffisantes pour conclure sur cette exigence.",
+  offerWarnings: "Ambiguïtés de l’offre à confirmer",
   proposedConclusion: "Conclusion proposée par le modèle :",
   proposedCandidateQuote: "Citation candidat proposée, non vérifiée :",
   proposedJobQuote: "Citation offre proposée, non vérifiée :",

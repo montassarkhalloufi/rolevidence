@@ -1814,6 +1814,12 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "jobQuotes": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "clarificationQuote": {
                                         "type": [
                                           "string",
@@ -1955,6 +1961,12 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "jobQuotes": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "clarificationQuote": {
                                         "type": [
                                           "string",
@@ -2096,6 +2108,12 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "jobQuotes": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "clarificationQuote": {
                                         "type": [
                                           "string",
@@ -2237,6 +2255,12 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "jobQuotes": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
                                       "clarificationQuote": {
                                         "type": [
                                           "string",
@@ -2387,6 +2411,28 @@
                               "properties": {
                                 "preparationVersion": {
                                   "type": "string"
+                                },
+                                "offerWarnings": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "explanation": {
+                                        "type": "string"
+                                      },
+                                      "quotes": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "explanation",
+                                      "quotes"
+                                    ],
+                                    "additionalProperties": false
+                                  }
                                 },
                                 "contextPassages": {
                                   "type": "array",
@@ -2971,6 +3017,12 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "jobQuotes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "clarificationQuote": {
                                   "type": [
                                     "string",
@@ -3112,6 +3164,12 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "jobQuotes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "clarificationQuote": {
                                   "type": [
                                     "string",
@@ -3253,6 +3311,12 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "jobQuotes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "clarificationQuote": {
                                   "type": [
                                     "string",
@@ -3394,6 +3458,12 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "jobQuotes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
                                 "clarificationQuote": {
                                   "type": [
                                     "string",
@@ -3544,6 +3614,28 @@
                         "properties": {
                           "preparationVersion": {
                             "type": "string"
+                          },
+                          "offerWarnings": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "explanation": {
+                                  "type": "string"
+                                },
+                                "quotes": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "explanation",
+                                "quotes"
+                              ],
+                              "additionalProperties": false
+                            }
                           },
                           "contextPassages": {
                             "type": "array",
@@ -4013,6 +4105,12 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "jobQuotes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "clarificationQuote": {
                                       "type": [
                                         "string",
@@ -4154,6 +4252,12 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "jobQuotes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "clarificationQuote": {
                                       "type": [
                                         "string",
@@ -4295,6 +4399,12 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "jobQuotes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "clarificationQuote": {
                                       "type": [
                                         "string",
@@ -4436,6 +4546,12 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "jobQuotes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
                                     "clarificationQuote": {
                                       "type": [
                                         "string",
@@ -4586,6 +4702,28 @@
                             "properties": {
                               "preparationVersion": {
                                 "type": "string"
+                              },
+                              "offerWarnings": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "explanation": {
+                                      "type": "string"
+                                    },
+                                    "quotes": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "explanation",
+                                    "quotes"
+                                  ],
+                                  "additionalProperties": false
+                                }
                               },
                               "contextPassages": {
                                 "type": "array",
@@ -5279,6 +5417,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -5420,6 +5564,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -5561,6 +5711,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -5702,6 +5858,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -5852,6 +6014,28 @@
                       "properties": {
                         "preparationVersion": {
                           "type": "string"
+                        },
+                        "offerWarnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "explanation": {
+                                "type": "string"
+                              },
+                              "quotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "explanation",
+                              "quotes"
+                            ],
+                            "additionalProperties": false
+                          }
                         },
                         "contextPassages": {
                           "type": "array",
@@ -7161,6 +7345,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -7302,6 +7492,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -7443,6 +7639,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -7584,6 +7786,12 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "jobQuotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
                               "clarificationQuote": {
                                 "type": [
                                   "string",
@@ -7734,6 +7942,28 @@
                       "properties": {
                         "preparationVersion": {
                           "type": "string"
+                        },
+                        "offerWarnings": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "explanation": {
+                                "type": "string"
+                              },
+                              "quotes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "explanation",
+                              "quotes"
+                            ],
+                            "additionalProperties": false
+                          }
                         },
                         "contextPassages": {
                           "type": "array",
@@ -7950,6 +8180,28 @@
               "preparationVersion": {
                 "type": "string"
               },
+              "offerWarnings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "quotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "explanation",
+                    "quotes"
+                  ],
+                  "additionalProperties": false
+                }
+              },
               "contextPassages": {
                 "type": "array",
                 "items": {
@@ -8147,6 +8399,12 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "jobQuotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "clarificationQuote": {
                       "type": [
                         "string",
@@ -8288,6 +8546,12 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "jobQuotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "clarificationQuote": {
                       "type": [
                         "string",
@@ -8429,6 +8693,12 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "jobQuotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "clarificationQuote": {
                       "type": [
                         "string",
@@ -8570,6 +8840,12 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "jobQuotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
                     "clarificationQuote": {
                       "type": [
                         "string",
@@ -8720,6 +8996,28 @@
             "properties": {
               "preparationVersion": {
                 "type": "string"
+              },
+              "offerWarnings": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "explanation": {
+                      "type": "string"
+                    },
+                    "quotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": [
+                    "explanation",
+                    "quotes"
+                  ],
+                  "additionalProperties": false
+                }
               },
               "contextPassages": {
                 "type": "array",

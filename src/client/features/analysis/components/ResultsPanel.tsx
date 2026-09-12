@@ -1,3 +1,4 @@
+import { OfferWarnings } from "./OfferWarnings.tsx";
 import { ClarificationAnswer } from "../../dossiers/ClarificationAnswer.tsx";
 import { AnalysisProgress } from "./AnalysisProgress.tsx";
 import { Alert } from "../../../shared/ui/alert.tsx";
@@ -104,6 +105,7 @@ export function ResultsPanel({
             <p className="my-5 border-l-2 border-input pl-3 text-sm leading-relaxed text-muted-foreground">
               {fr.reviewNote}
             </p>
+            <OfferWarnings warnings={result.metadata.offerWarnings} />
             <ResultFilters
               value={filter}
               onChange={setFilter}

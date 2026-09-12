@@ -2,7 +2,12 @@ import { isResponseDirective } from "../../domain/document-directives.ts";
 import type { DocumentsInput } from "../../domain/models.ts";
 import { preferencesText } from "../../domain/preferences.ts";
 
-export type SourcePassage = { id: string; text: string };
+export type SourcePassage = {
+  id: string;
+  text: string;
+  criterion?: string;
+  sourceQuotes?: string[];
+};
 
 export type SourceCatalog = ReturnType<typeof createSourceCatalog>;
 

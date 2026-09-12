@@ -7,6 +7,7 @@ import type {
 import { classifyRequirements } from "../domain/classify.ts";
 
 export type ModelMetadata = {
+  offerWarnings?: { explanation: string; quotes: string[] }[] | undefined;
   preparationVersion?: string | undefined;
   contextPassages?: { quote: string; reason: string }[] | undefined;
   provider?: "openai" | "anthropic" | undefined;

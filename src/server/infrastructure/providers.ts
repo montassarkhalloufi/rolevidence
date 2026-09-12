@@ -1,3 +1,4 @@
+import { LEGACY_OPENAI_MODEL } from "./config.ts";
 import { createStructuredModel } from "./model-client.ts";
 import { observeModel, createLangSmithSink } from "./telemetry.ts";
 import { createLangChainGateway } from "../adapters/models/gateway.ts";
@@ -27,11 +28,13 @@ export function configureProviders(config: ReturnType<typeof loadConfig>) {
   );
 
   const options = [
-    {
-      provider: "openai" as const,
-      model: config.OPENAI_MODEL,
-      configured: Boolean(config.OPENAI_API_KEY),
-    },
+    ...[...new Set([config.OPENAI_MODEL, LEGACY_OPENAI_MODEL])].map(
+      (model) => ({
+        provider: "openai" as const,
+        model,
+        configured: Boolean(config.OPENAI_API_KEY),
+      }),
+    ),
     {
       provider: "anthropic" as const,
       model: config.ANTHROPIC_MODEL,
@@ -49,7 +52,7 @@ export function configureProviders(config: ReturnType<typeof loadConfig>) {
         model,
         messages: createMessages(documents),
         preparation:
-          "Job-only relevance classification precedes comparison. These are the complete source inputs; contextual passages are removed only after that explicit model classification.",
+          "Job-only relevance classification and canonical atomic criterion planning precede comparison. Equivalent criteria retain all original quotations; differing conditions are preserved with warnings. These are the complete source inputs before model preparation.",
       }),
     ),
   }));

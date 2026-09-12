@@ -29,7 +29,7 @@ const StoredJob = AnalysisJob.extend({
               .passthrough(),
           }),
         )
-        .max(MAX_COMPARISON_BATCHES + 1),
+        .max(MAX_COMPARISON_BATCHES + 2),
     })
     .nullable(),
 });

@@ -37,6 +37,7 @@ export const Interpretation = z
 
 export const finding = z
   .object({
+    jobQuotes: z.array(z.string()).optional(),
     clarificationQuote: z.string().nullable().optional(),
     subject: z.string(),
     interpretation: Interpretation,
@@ -143,6 +144,9 @@ export const AnalysisResponse = z.object({
   analysis: Analysis,
   metadata: z.object({
     preparationVersion: z.string().optional(),
+    offerWarnings: z
+      .array(z.object({ explanation: z.string(), quotes: z.array(z.string()) }))
+      .optional(),
     contextPassages: z
       .array(z.object({ quote: z.string(), reason: z.string() }))
       .optional(),

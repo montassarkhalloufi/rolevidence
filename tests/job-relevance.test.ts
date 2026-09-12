@@ -1,3 +1,4 @@
+import { identityPlan } from "./plan-fixture.ts";
 import test from "node:test";
 import { createLangChainGateway } from "../src/server/adapters/models/gateway.ts";
 import assert from "node:assert/strict";
@@ -95,6 +96,10 @@ await test("gateway compares retained sources only, exposes omissions and totals
 
   const gateway = createLangChainGateway("openai", async (request) => {
     names.push(request.name);
+    if (request.name === "atomic_job_criteria") {
+      return { value: identityPlan(request), metadata };
+    }
+
     if (request.name === "job_passage_relevance") {
       return {
         value: { passages: [{ id: "J1", kind: "company_background" }] },
@@ -106,7 +111,7 @@ await test("gateway compares retained sources only, exposes omissions and totals
     assert.match(request.messages[1]?.content ?? "", /tests unitaires/);
 
     return {
-      value: { J2: [unknownRequirement], J3: [unknownRequirement] },
+      value: { J1: [unknownRequirement], J2: [unknownRequirement] },
       metadata,
     };
   });
@@ -119,15 +124,23 @@ await test("gateway compares retained sources only, exposes omissions and totals
     model: "fake",
   });
 
-  assert.deepEqual(names, ["job_passage_relevance", "requirements_evidence"]);
+  assert.deepEqual(names, [
+    "job_passage_relevance",
+    "atomic_job_criteria",
+    "requirements_evidence",
+  ]);
   assert.equal(result.metadata.contextPassages?.length, 1);
-  assert.equal(result.metadata.inputTokens, 2);
-  assert.equal(result.metadata.durationMs, 2);
+  assert.equal(result.metadata.inputTokens, 3);
+  assert.equal(result.metadata.durationMs, 3);
   assert.equal(result.extraction.unassessedJobQuotes?.length, 0);
 });
 
 await test("reviewed exact job passages are reintroduced without admitting invented text", async () => {
   const gateway = createLangChainGateway("openai", async (request) => {
+    if (request.name === "atomic_job_criteria") {
+      return { value: identityPlan(request), metadata };
+    }
+
     if (request.name === "job_passage_relevance") {
       return {
         value: { passages: [{ id: "J1", kind: "company_background" }] },

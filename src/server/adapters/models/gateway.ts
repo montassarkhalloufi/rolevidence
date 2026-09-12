@@ -1,3 +1,4 @@
+import { planCriteria, PLAN_VERSION } from "./criterion-plan.ts";
 import { checkpointInvoker } from "./checkpoint-invoker.ts";
 import { createJobRelevance, RELEVANCE_VERSION } from "./job-relevance.ts";
 import type { ModelGateway } from "../../application/analyze.ts";
@@ -14,7 +15,7 @@ export function createLangChainGateway(
   return async ({ documents, model }, signal, execution) => {
     const resumeInvoke = checkpointInvoker(invoke, execution, signal);
 
-    execution?.onProgress({ stage: "preparation", completed: 0, total: 1 });
+    execution?.onProgress({ stage: "preparation", completed: 0, total: 2 });
     const catalog = createSourceCatalog(documents);
 
     const relevance = await createJobRelevance(resumeInvoke)(
@@ -34,16 +35,28 @@ export function createLangChainGateway(
       ),
     };
 
+    execution?.onProgress({ stage: "preparation", completed: 1, total: 2 });
+    const plan = await planCriteria(
+      resumeInvoke,
+      selectedCatalog.job,
+      { provider, model },
+      signal,
+    );
+
     const comparison = await compareComplete(
       resumeInvoke,
       documents,
-      selectedCatalog,
+      { ...selectedCatalog, job: plan.passages },
       { provider, model },
       signal,
       execution?.onProgress,
     );
 
-    const stages = [relevance.metadata, ...comparison.metadata];
+    const stages = [
+      relevance.metadata,
+      ...plan.metadata,
+      ...comparison.metadata,
+    ];
 
     const metadata = stages.at(-1) ?? relevance.metadata;
 
@@ -57,7 +70,8 @@ export function createLangChainGateway(
         contextPassages: relevance.contextPassages.filter(
           (passage) => !reviewed.has(passage.quote),
         ),
-        preparationVersion: RELEVANCE_VERSION,
+        preparationVersion: `${RELEVANCE_VERSION}/${PLAN_VERSION}`,
+        offerWarnings: plan.warnings,
         promptVersion: COMPARISON_VERSION,
         durationMs: stages.reduce((sum, stage) => sum + stage.durationMs, 0),
         inputTokens: stages.reduce<number | null>(

@@ -2,6 +2,10 @@
 
 ## 0.4.0 — Unreleased
 
+- Canonical atomic criteria with grouped source quotations and visible warnings for differing offer conditions.
+- GPT-5.4 default with explicit legacy model selection; calibrated provider comparisons and corrupted-output rejection.
+- Correct salary JSON-LD lower-bound handling, fullstack/backend scope isolation and employer-context filtering.
+
 - Local campaigns with 2–10 independent offer/profile dossiers and side-by-side saved evidence.
 - Recruiter member CV import, source isolation, transactional creation and replay-safe campaign IDs.
 - Human status, notes and interview preparation/accounts stored separately from model inputs.

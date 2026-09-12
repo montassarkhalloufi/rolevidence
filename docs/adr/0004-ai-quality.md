@@ -104,3 +104,43 @@ The job-only relevance model can mark hiring logistics as recruitment_process;
 employee duties involving interviews and mixed passages must remain retained.
 Prompt versions change to invalidate incompatible interrupted checkpoints. Existing
 completed snapshots remain immutable and require an explicit new analysis.
+
+## Amendment — Canonical criteria before evidence comparison
+
+After job-only relevance selection, a fixed job-only planning call creates atomic
+criteria and groups equivalent mentions while retaining every original source ID.
+It has no CV or preference access. All retained passage IDs must be covered;
+unknown references or missing passage coverage reject the analysis. One source
+paragraph can support multiple atomic criteria. Distinct levels, durations, locations
+and work arrangements remain separate. Differences between prose and structured
+metadata produce sourced offer warnings, outside candidate conclusion counts.
+
+Comparison runs in batches of eight canonical criteria, at most 128 criteria,
+with exactly one finding per planned criterion. Every consolidated job quote is
+materialized from the source catalog and independently checked against the original
+document. Source planning is still an untrusted semantic interpretation: ID coverage
+does not prove correct grouping or exhaustive decomposition. No lexical skill
+merging, automatic paid retry, tool access or agent loop is introduced.
+
+Planning adds at most one paid call, included in latency/token totals and resumable
+checkpoints (maximum 18 calls: relevance, planning, 16 comparisons). Old prompt
+checkpoints are incompatible; completed saved results remain unchanged. Optional
+jobQuotes and metadata.offerWarnings preserve old snapshots while exposing grouped
+sources and ambiguity in the UI and exports. The backend duration policy now applies
+only to backend requirements; it must not overwrite a fullstack comparison.
+
+GPT-5.4 becomes the default following six targeted real executions passing versus
+two of six for GPT-4.1-mini on identical final prompts and fixtures. Mini remains
+selectable to preserve existing dossier choices; no analysis silently switches
+providers/models. These small calibration results justify a local default, not a
+universal accuracy claim. Pricing and account access depend on the provider; the
+model remains configurable in .env. See RELIABILITY.md for failed and successful
+runs. Official capability reference: https://developers.openai.com/api/docs/models/gpt-5.4
+(Responses and structured output supported; default reasoning effort unchanged).
+
+A real follow-up exposed a JSON-LD salary minimum misclassified as a ceiling and an
+employer HR label counted as a candidate requirement. Extend the conservative salary
+field guard to baseSalary; unsupported gross/fixed units cannot establish a match
+or gap even when the JSON supplies numeric bounds. Job-only relevance distinguishes
+employer branding/training opportunities/HR certifications from requested employee
+duties. This remains semantic model classification, not a company-name denylist.
