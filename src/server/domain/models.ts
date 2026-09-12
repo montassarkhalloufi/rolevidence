@@ -14,6 +14,8 @@ export type Interpretation = {
 };
 
 export type PreferencesInput = {
+  salaryPriority?: "required" | "preferred" | undefined;
+  workModePriority?: "required" | "preferred" | undefined;
   minimumAnnualSalary: number | null;
   workMode: "onsite" | "hybrid" | "remote" | null;
   remoteDaysPerWeek: number | null;
@@ -27,7 +29,19 @@ export type DocumentsInput = {
   preferences?: PreferencesInput | undefined;
 };
 
+export type EducationComparison = {
+  candidateLevel: number;
+  requiredLevel: number;
+  basis: "explicit_level" | "recognized_qualification" | "uncertain";
+};
+
 export type Evidence = {
+  assessment?:
+    | "possible_compatibility"
+    | "declared_education_gap"
+    | "negotiable_preference"
+    | undefined;
+  educationComparison?: EducationComparison | null | undefined;
   jobQuotes?: string[] | undefined;
   clarificationQuote?: string | null | undefined;
   subject: string;

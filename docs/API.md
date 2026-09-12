@@ -111,3 +111,19 @@ Metadata optionally includes `offerWarnings: [{ explanation, quotes }]` for ambi
 or differing offer conditions. These warnings are separate from candidate findings.
 Older saved payloads without either field remain valid. Generated OpenAPI includes
 both additions; upgrade local frontend and backend together.
+
+## Qualified assessments and preference priorities
+
+Preferences accept optional `salaryPriority` and `workModePriority` (`required` or
+`preferred`); omission preserves the earlier required semantics. Work-mode priority
+also applies to the requested remote-day minimum. Explicit changes belong to the
+saved document revision and analysis fingerprint, never an update to old results.
+
+Findings optionally carry domain-owned `assessment` values (`possible_compatibility`,
+`declared_education_gap`, `negotiable_preference`) and a nullable `educationComparison`
+with interpreted candidate/required levels and basis. These refine presentation,
+not the four top-level groups. Provider education proposals are independently checked
+for quote provenance and invalid/incomplete qualification evidence before a declared
+education gap is retained. Old responses without these optional fields remain valid.
+Generated OpenAPI describes the updated contracts. No endpoint/idempotency/retry
+semantics change. Comparison prompt version is evidence-v6.1-qualified-conclusions.

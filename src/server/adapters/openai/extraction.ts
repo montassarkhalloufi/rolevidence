@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { Interpretation } from "../../../shared/analysis.ts";
+import {
+  Interpretation,
+  EducationComparison,
+} from "../../../shared/analysis.ts";
 import type { SourceCatalog, SourcePassage } from "./sources.ts";
 
 function reference(passages: SourcePassage[]) {
@@ -35,6 +38,9 @@ export function createExtractionSchema(catalog: SourceCatalog) {
       preferencesEvidenceId: reference(catalog.preferences),
       jobEvidenceId: reference(catalog.job).describe(
         "Select the entire original job passage, including a shared technology list. Required for every requirement.",
+      ),
+      educationComparison: EducationComparison.nullable().describe(
+        "Only for formal education criteria. Interpret the highest COMPLETED relevant qualification explicitly presented, using the education system and country when known. Recognized licence/LMD may mean Bac+3; never infer a completed degree from dates alone, attendance or an incomplete course. Use uncertain for ambiguous foreign credentials/equivalence. Do not infer this is the candidate's maximum possible education. Null for non-education criteria or missing qualification.",
       ),
       experienceComparison: z
         .object({

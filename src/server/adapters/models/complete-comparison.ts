@@ -10,7 +10,7 @@ import { createMessages } from "../openai/messages.ts";
 import { mapExtraction } from "../openai/map-extraction.ts";
 import { AppError } from "../../application/errors.ts";
 
-export const COMPARISON_VERSION = "evidence-v5.1-canonical-criteria";
+export const COMPARISON_VERSION = "evidence-v6.1-qualified-conclusions";
 
 export const COMPARISON_BATCH_SIZE = 8;
 

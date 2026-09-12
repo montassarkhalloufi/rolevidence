@@ -144,3 +144,34 @@ field guard to baseSalary; unsupported gross/fixed units cannot establish a matc
 or gap even when the JSON supplies numeric bounds. Job-only relevance distinguishes
 employer branding/training opportunities/HR certifications from requested employee
 duties. This remains semantic model classification, not a company-name denylist.
+
+## Amendment — Qualified conclusions and declared education
+
+Keep the four broad result groups while adding domain-owned assessment labels for
+possible salary compatibility, a gap in the qualification presented, and a negotiable
+preference. Partial model evidence remains unknown but is visibly labelled as an
+indication needing clarification. Show the retained explanation prominently instead
+of repeating the job quotation; keep original quotes and rejected reasoning separate.
+
+The model can interpret the highest relevant completed qualification explicitly
+presented, with candidate/required post-baccalaureate levels and an explicit,
+recognized-qualification or uncertain basis. A recognized qualification is a model
+interpretation, not an official equivalence decision. Only source-resolved education
+quotes with provided candidate information and a lower interpreted level support a
+narrowly labelled declared-qualification gap. Missing or uncertain qualifications
+remain unknown. An unfinished course cannot establish an invented intermediate
+degree. No conclusion asserts that the candidate has no other qualification or that
+experience will be accepted/rejected by a recruiter. The quotation-kind guard is
+conservative and not a universal international credential recognizer.
+
+A verified open annual EUR salary minimum has no established upper bound. It stays
+unknown with possible-compatibility wording, never an inferred promise of the desired
+budget. Unrecognised units/currencies, malformed JSON or contradictory bounds do not
+receive this label. Fixed annual gross salary rules are unchanged.
+
+Optional salaryPriority/workModePriority values distinguish required from preferred.
+Absent fields retain legacy required semantics and are not materialized into old
+snapshots. A preferred condition is not a hard gap; preserve the observed difference
+and explain negotiation remains open. No clarification text silently overwrites
+structured preference choices. Priorities are part of saved inputs, request identity
+and model context. Original saved results remain immutable.

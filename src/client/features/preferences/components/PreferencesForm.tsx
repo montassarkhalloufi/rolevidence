@@ -1,3 +1,4 @@
+import { PreferencePriority } from "./PreferencePriority.tsx";
 import { fr } from "../../../shared/i18n/fr.ts";
 import { NativeSelect } from "../../../shared/ui/native-select.tsx";
 import { Input } from "../../../shared/ui/input.tsx";
@@ -92,6 +93,31 @@ export function PreferencesForm({ value, disabled, onChange }: Props) {
           </label>
         )}
       </div>
+      <PreferencePriorities value={value} onChange={onChange} />
     </fieldset>
+  );
+}
+
+function PreferencePriorities({
+  value,
+  onChange,
+}: Pick<Props, "value" | "onChange">) {
+  return (
+    <div className="mt-4 grid gap-4 sm:grid-cols-2 [&>label]:flex [&>label]:flex-col [&>label]:gap-2 [&>label]:text-sm">
+      <PreferencePriority
+        id="salary-priority"
+        label={fr.salaryPriority}
+        value={value.salaryPriority}
+        onChange={(salaryPriority) => onChange({ ...value, salaryPriority })}
+      />
+      <PreferencePriority
+        id="mode-priority"
+        label={fr.workModePriority}
+        value={value.workModePriority}
+        onChange={(workModePriority) =>
+          onChange({ ...value, workModePriority })
+        }
+      />
+    </div>
   );
 }

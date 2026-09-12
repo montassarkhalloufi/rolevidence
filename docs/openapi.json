@@ -1344,6 +1344,20 @@
                         "preferences": {
                           "type": "object",
                           "properties": {
+                            "salaryPriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
+                            "workModePriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
                             "minimumAnnualSalary": {
                               "anyOf": [
                                 {
@@ -1621,6 +1635,20 @@
                                 "preferences": {
                                   "type": "object",
                                   "properties": {
+                                    "salaryPriority": {
+                                      "type": "string",
+                                      "enum": [
+                                        "required",
+                                        "preferred"
+                                      ]
+                                    },
+                                    "workModePriority": {
+                                      "type": "string",
+                                      "enum": [
+                                        "required",
+                                        "preferred"
+                                      ]
+                                    },
                                     "minimumAnnualSalary": {
                                       "anyOf": [
                                         {
@@ -1814,6 +1842,50 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "assessment": {
+                                        "type": "string",
+                                        "enum": [
+                                          "possible_compatibility",
+                                          "declared_education_gap",
+                                          "negotiable_preference"
+                                        ]
+                                      },
+                                      "educationComparison": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "candidateLevel": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 12
+                                              },
+                                              "requiredLevel": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 12
+                                              },
+                                              "basis": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "explicit_level",
+                                                  "recognized_qualification",
+                                                  "uncertain"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "candidateLevel",
+                                              "requiredLevel",
+                                              "basis"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
                                       "jobQuotes": {
                                         "type": "array",
                                         "items": {
@@ -1961,6 +2033,50 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "assessment": {
+                                        "type": "string",
+                                        "enum": [
+                                          "possible_compatibility",
+                                          "declared_education_gap",
+                                          "negotiable_preference"
+                                        ]
+                                      },
+                                      "educationComparison": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "candidateLevel": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 12
+                                              },
+                                              "requiredLevel": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 12
+                                              },
+                                              "basis": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "explicit_level",
+                                                  "recognized_qualification",
+                                                  "uncertain"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "candidateLevel",
+                                              "requiredLevel",
+                                              "basis"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
                                       "jobQuotes": {
                                         "type": "array",
                                         "items": {
@@ -2108,6 +2224,50 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "assessment": {
+                                        "type": "string",
+                                        "enum": [
+                                          "possible_compatibility",
+                                          "declared_education_gap",
+                                          "negotiable_preference"
+                                        ]
+                                      },
+                                      "educationComparison": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "candidateLevel": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 12
+                                              },
+                                              "requiredLevel": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 12
+                                              },
+                                              "basis": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "explicit_level",
+                                                  "recognized_qualification",
+                                                  "uncertain"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "candidateLevel",
+                                              "requiredLevel",
+                                              "basis"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
                                       "jobQuotes": {
                                         "type": "array",
                                         "items": {
@@ -2255,6 +2415,50 @@
                                   "items": {
                                     "type": "object",
                                     "properties": {
+                                      "assessment": {
+                                        "type": "string",
+                                        "enum": [
+                                          "possible_compatibility",
+                                          "declared_education_gap",
+                                          "negotiable_preference"
+                                        ]
+                                      },
+                                      "educationComparison": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "candidateLevel": {
+                                                "type": "integer",
+                                                "minimum": 0,
+                                                "maximum": 12
+                                              },
+                                              "requiredLevel": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 12
+                                              },
+                                              "basis": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "explicit_level",
+                                                  "recognized_qualification",
+                                                  "uncertain"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "candidateLevel",
+                                              "requiredLevel",
+                                              "basis"
+                                            ],
+                                            "additionalProperties": false
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
                                       "jobQuotes": {
                                         "type": "array",
                                         "items": {
@@ -2824,6 +3028,20 @@
                           "preferences": {
                             "type": "object",
                             "properties": {
+                              "salaryPriority": {
+                                "type": "string",
+                                "enum": [
+                                  "required",
+                                  "preferred"
+                                ]
+                              },
+                              "workModePriority": {
+                                "type": "string",
+                                "enum": [
+                                  "required",
+                                  "preferred"
+                                ]
+                              },
                               "minimumAnnualSalary": {
                                 "anyOf": [
                                   {
@@ -3017,6 +3235,50 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "assessment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible_compatibility",
+                                    "declared_education_gap",
+                                    "negotiable_preference"
+                                  ]
+                                },
+                                "educationComparison": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "candidateLevel": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 12
+                                        },
+                                        "requiredLevel": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 12
+                                        },
+                                        "basis": {
+                                          "type": "string",
+                                          "enum": [
+                                            "explicit_level",
+                                            "recognized_qualification",
+                                            "uncertain"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "candidateLevel",
+                                        "requiredLevel",
+                                        "basis"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "jobQuotes": {
                                   "type": "array",
                                   "items": {
@@ -3164,6 +3426,50 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "assessment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible_compatibility",
+                                    "declared_education_gap",
+                                    "negotiable_preference"
+                                  ]
+                                },
+                                "educationComparison": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "candidateLevel": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 12
+                                        },
+                                        "requiredLevel": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 12
+                                        },
+                                        "basis": {
+                                          "type": "string",
+                                          "enum": [
+                                            "explicit_level",
+                                            "recognized_qualification",
+                                            "uncertain"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "candidateLevel",
+                                        "requiredLevel",
+                                        "basis"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "jobQuotes": {
                                   "type": "array",
                                   "items": {
@@ -3311,6 +3617,50 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "assessment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible_compatibility",
+                                    "declared_education_gap",
+                                    "negotiable_preference"
+                                  ]
+                                },
+                                "educationComparison": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "candidateLevel": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 12
+                                        },
+                                        "requiredLevel": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 12
+                                        },
+                                        "basis": {
+                                          "type": "string",
+                                          "enum": [
+                                            "explicit_level",
+                                            "recognized_qualification",
+                                            "uncertain"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "candidateLevel",
+                                        "requiredLevel",
+                                        "basis"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "jobQuotes": {
                                   "type": "array",
                                   "items": {
@@ -3458,6 +3808,50 @@
                             "items": {
                               "type": "object",
                               "properties": {
+                                "assessment": {
+                                  "type": "string",
+                                  "enum": [
+                                    "possible_compatibility",
+                                    "declared_education_gap",
+                                    "negotiable_preference"
+                                  ]
+                                },
+                                "educationComparison": {
+                                  "anyOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "candidateLevel": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 12
+                                        },
+                                        "requiredLevel": {
+                                          "type": "integer",
+                                          "minimum": 1,
+                                          "maximum": 12
+                                        },
+                                        "basis": {
+                                          "type": "string",
+                                          "enum": [
+                                            "explicit_level",
+                                            "recognized_qualification",
+                                            "uncertain"
+                                          ]
+                                        }
+                                      },
+                                      "required": [
+                                        "candidateLevel",
+                                        "requiredLevel",
+                                        "basis"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "null"
+                                    }
+                                  ]
+                                },
                                 "jobQuotes": {
                                   "type": "array",
                                   "items": {
@@ -3912,6 +4306,20 @@
                               "preferences": {
                                 "type": "object",
                                 "properties": {
+                                  "salaryPriority": {
+                                    "type": "string",
+                                    "enum": [
+                                      "required",
+                                      "preferred"
+                                    ]
+                                  },
+                                  "workModePriority": {
+                                    "type": "string",
+                                    "enum": [
+                                      "required",
+                                      "preferred"
+                                    ]
+                                  },
                                   "minimumAnnualSalary": {
                                     "anyOf": [
                                       {
@@ -4105,6 +4513,50 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "assessment": {
+                                      "type": "string",
+                                      "enum": [
+                                        "possible_compatibility",
+                                        "declared_education_gap",
+                                        "negotiable_preference"
+                                      ]
+                                    },
+                                    "educationComparison": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "candidateLevel": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 12
+                                            },
+                                            "requiredLevel": {
+                                              "type": "integer",
+                                              "minimum": 1,
+                                              "maximum": 12
+                                            },
+                                            "basis": {
+                                              "type": "string",
+                                              "enum": [
+                                                "explicit_level",
+                                                "recognized_qualification",
+                                                "uncertain"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "candidateLevel",
+                                            "requiredLevel",
+                                            "basis"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
                                     "jobQuotes": {
                                       "type": "array",
                                       "items": {
@@ -4252,6 +4704,50 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "assessment": {
+                                      "type": "string",
+                                      "enum": [
+                                        "possible_compatibility",
+                                        "declared_education_gap",
+                                        "negotiable_preference"
+                                      ]
+                                    },
+                                    "educationComparison": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "candidateLevel": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 12
+                                            },
+                                            "requiredLevel": {
+                                              "type": "integer",
+                                              "minimum": 1,
+                                              "maximum": 12
+                                            },
+                                            "basis": {
+                                              "type": "string",
+                                              "enum": [
+                                                "explicit_level",
+                                                "recognized_qualification",
+                                                "uncertain"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "candidateLevel",
+                                            "requiredLevel",
+                                            "basis"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
                                     "jobQuotes": {
                                       "type": "array",
                                       "items": {
@@ -4399,6 +4895,50 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "assessment": {
+                                      "type": "string",
+                                      "enum": [
+                                        "possible_compatibility",
+                                        "declared_education_gap",
+                                        "negotiable_preference"
+                                      ]
+                                    },
+                                    "educationComparison": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "candidateLevel": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 12
+                                            },
+                                            "requiredLevel": {
+                                              "type": "integer",
+                                              "minimum": 1,
+                                              "maximum": 12
+                                            },
+                                            "basis": {
+                                              "type": "string",
+                                              "enum": [
+                                                "explicit_level",
+                                                "recognized_qualification",
+                                                "uncertain"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "candidateLevel",
+                                            "requiredLevel",
+                                            "basis"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
                                     "jobQuotes": {
                                       "type": "array",
                                       "items": {
@@ -4546,6 +5086,50 @@
                                 "items": {
                                   "type": "object",
                                   "properties": {
+                                    "assessment": {
+                                      "type": "string",
+                                      "enum": [
+                                        "possible_compatibility",
+                                        "declared_education_gap",
+                                        "negotiable_preference"
+                                      ]
+                                    },
+                                    "educationComparison": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "candidateLevel": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 12
+                                            },
+                                            "requiredLevel": {
+                                              "type": "integer",
+                                              "minimum": 1,
+                                              "maximum": 12
+                                            },
+                                            "basis": {
+                                              "type": "string",
+                                              "enum": [
+                                                "explicit_level",
+                                                "recognized_qualification",
+                                                "uncertain"
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "candidateLevel",
+                                            "requiredLevel",
+                                            "basis"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
                                     "jobQuotes": {
                                       "type": "array",
                                       "items": {
@@ -4946,6 +5530,20 @@
                   "preferences": {
                     "type": "object",
                     "properties": {
+                      "salaryPriority": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "preferred"
+                        ]
+                      },
+                      "workModePriority": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "preferred"
+                        ]
+                      },
                       "minimumAnnualSalary": {
                         "anyOf": [
                           {
@@ -5224,6 +5822,20 @@
                         "preferences": {
                           "type": "object",
                           "properties": {
+                            "salaryPriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
+                            "workModePriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
                             "minimumAnnualSalary": {
                               "anyOf": [
                                 {
@@ -5417,6 +6029,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -5564,6 +6220,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -5711,6 +6411,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -5858,6 +6602,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -6144,6 +6932,20 @@
           "preferences": {
             "type": "object",
             "properties": {
+              "salaryPriority": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "preferred"
+                ]
+              },
+              "workModePriority": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "preferred"
+                ]
+              },
               "minimumAnnualSalary": {
                 "anyOf": [
                   {
@@ -6315,6 +7117,20 @@
               "preferences": {
                 "type": "object",
                 "properties": {
+                  "salaryPriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
+                  "workModePriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
                   "minimumAnnualSalary": {
                     "anyOf": [
                       {
@@ -6572,6 +7388,20 @@
               "preferences": {
                 "type": "object",
                 "properties": {
+                  "salaryPriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
+                  "workModePriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
                   "minimumAnnualSalary": {
                     "anyOf": [
                       {
@@ -6808,6 +7638,20 @@
                   "preferences": {
                     "type": "object",
                     "properties": {
+                      "salaryPriority": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "preferred"
+                        ]
+                      },
+                      "workModePriority": {
+                        "type": "string",
+                        "enum": [
+                          "required",
+                          "preferred"
+                        ]
+                      },
                       "minimumAnnualSalary": {
                         "anyOf": [
                           {
@@ -7152,6 +7996,20 @@
                         "preferences": {
                           "type": "object",
                           "properties": {
+                            "salaryPriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
+                            "workModePriority": {
+                              "type": "string",
+                              "enum": [
+                                "required",
+                                "preferred"
+                              ]
+                            },
                             "minimumAnnualSalary": {
                               "anyOf": [
                                 {
@@ -7345,6 +8203,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -7492,6 +8394,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -7639,6 +8585,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -7786,6 +8776,50 @@
                           "items": {
                             "type": "object",
                             "properties": {
+                              "assessment": {
+                                "type": "string",
+                                "enum": [
+                                  "possible_compatibility",
+                                  "declared_education_gap",
+                                  "negotiable_preference"
+                                ]
+                              },
+                              "educationComparison": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "candidateLevel": {
+                                        "type": "integer",
+                                        "minimum": 0,
+                                        "maximum": 12
+                                      },
+                                      "requiredLevel": {
+                                        "type": "integer",
+                                        "minimum": 1,
+                                        "maximum": 12
+                                      },
+                                      "basis": {
+                                        "type": "string",
+                                        "enum": [
+                                          "explicit_level",
+                                          "recognized_qualification",
+                                          "uncertain"
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "candidateLevel",
+                                      "requiredLevel",
+                                      "basis"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
                               "jobQuotes": {
                                 "type": "array",
                                 "items": {
@@ -8323,6 +9357,20 @@
           "preferences": {
             "type": "object",
             "properties": {
+              "salaryPriority": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "preferred"
+                ]
+              },
+              "workModePriority": {
+                "type": "string",
+                "enum": [
+                  "required",
+                  "preferred"
+                ]
+              },
               "minimumAnnualSalary": {
                 "anyOf": [
                   {
@@ -8399,6 +9447,50 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "assessment": {
+                      "type": "string",
+                      "enum": [
+                        "possible_compatibility",
+                        "declared_education_gap",
+                        "negotiable_preference"
+                      ]
+                    },
+                    "educationComparison": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "candidateLevel": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 12
+                            },
+                            "requiredLevel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12
+                            },
+                            "basis": {
+                              "type": "string",
+                              "enum": [
+                                "explicit_level",
+                                "recognized_qualification",
+                                "uncertain"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "candidateLevel",
+                            "requiredLevel",
+                            "basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "jobQuotes": {
                       "type": "array",
                       "items": {
@@ -8546,6 +9638,50 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "assessment": {
+                      "type": "string",
+                      "enum": [
+                        "possible_compatibility",
+                        "declared_education_gap",
+                        "negotiable_preference"
+                      ]
+                    },
+                    "educationComparison": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "candidateLevel": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 12
+                            },
+                            "requiredLevel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12
+                            },
+                            "basis": {
+                              "type": "string",
+                              "enum": [
+                                "explicit_level",
+                                "recognized_qualification",
+                                "uncertain"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "candidateLevel",
+                            "requiredLevel",
+                            "basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "jobQuotes": {
                       "type": "array",
                       "items": {
@@ -8693,6 +9829,50 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "assessment": {
+                      "type": "string",
+                      "enum": [
+                        "possible_compatibility",
+                        "declared_education_gap",
+                        "negotiable_preference"
+                      ]
+                    },
+                    "educationComparison": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "candidateLevel": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 12
+                            },
+                            "requiredLevel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12
+                            },
+                            "basis": {
+                              "type": "string",
+                              "enum": [
+                                "explicit_level",
+                                "recognized_qualification",
+                                "uncertain"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "candidateLevel",
+                            "requiredLevel",
+                            "basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "jobQuotes": {
                       "type": "array",
                       "items": {
@@ -8840,6 +10020,50 @@
                 "items": {
                   "type": "object",
                   "properties": {
+                    "assessment": {
+                      "type": "string",
+                      "enum": [
+                        "possible_compatibility",
+                        "declared_education_gap",
+                        "negotiable_preference"
+                      ]
+                    },
+                    "educationComparison": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "candidateLevel": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 12
+                            },
+                            "requiredLevel": {
+                              "type": "integer",
+                              "minimum": 1,
+                              "maximum": 12
+                            },
+                            "basis": {
+                              "type": "string",
+                              "enum": [
+                                "explicit_level",
+                                "recognized_qualification",
+                                "uncertain"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "candidateLevel",
+                            "requiredLevel",
+                            "basis"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
                     "jobQuotes": {
                       "type": "array",
                       "items": {
@@ -9110,6 +10334,20 @@
               "preferences": {
                 "type": "object",
                 "properties": {
+                  "salaryPriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
+                  "workModePriority": {
+                    "type": "string",
+                    "enum": [
+                      "required",
+                      "preferred"
+                    ]
+                  },
                   "minimumAnnualSalary": {
                     "anyOf": [
                       {

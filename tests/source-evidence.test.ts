@@ -28,6 +28,7 @@ const item = {
   profileEvidenceQuote: "Camille développe des API TypeScript et Node.js.",
   preferencesEvidenceId: null,
   jobEvidenceId: "J2",
+  educationComparison: null,
   experienceComparison: null,
 };
 
@@ -86,6 +87,7 @@ const experience: Requirement = {
   profileQuote: "9+ ans d’expérience fullstack.",
   jobQuote: "Au moins 12 ans backend.",
   preferencesQuote: null,
+  educationComparison: null,
   experienceComparison: {
     comparableScope: false,
     candidateDuration: "lower_bound",
@@ -100,7 +102,11 @@ await test("A lower bound or different experience scope cannot establish a defin
     const result = classifyRequirements(
       {
         requirements: [
-          { ...experience, experienceComparison: comparison ?? null },
+          {
+            ...experience,
+            educationComparison: null,
+            experienceComparison: comparison ?? null,
+          },
         ],
       },
       {
@@ -121,6 +127,7 @@ await test("Exact comparable backend durations retain a supported contradiction"
   const requirement: Requirement = {
     ...experience,
     profileQuote: "6 ans backend.",
+    educationComparison: null,
     experienceComparison: { comparableScope: true, candidateDuration: "exact" },
   };
 
@@ -138,6 +145,7 @@ await test("An absent described practice cannot become a gap even if the model m
     subject: "Java",
     profileQuote: "JavaScript, TypeScript.",
     jobQuote: "Java requis.",
+    educationComparison: null,
     experienceComparison: null,
     interpretation: {
       describedPractice: null,

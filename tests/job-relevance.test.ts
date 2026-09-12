@@ -31,6 +31,7 @@ const unknownRequirement = {
   profileEvidenceId: null,
   profileEvidenceQuote: null,
   preferencesEvidenceId: null,
+  educationComparison: null,
   experienceComparison: null,
 };
 

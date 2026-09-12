@@ -2,6 +2,8 @@
 
 ## 0.4.0 — Unreleased
 
+- Qualified salary/education/partial-evidence explanations and explicit required versus negotiable preferences.
+
 - Canonical atomic criteria with grouped source quotations and visible warnings for differing offer conditions.
 - GPT-5.4 default with explicit legacy model selection; calibrated provider comparisons and corrupted-output rejection.
 - Correct salary JSON-LD lower-bound handling, fullstack/backend scope isolation and employer-context filtering.

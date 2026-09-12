@@ -78,14 +78,14 @@ test("User submits explicitly, sees evidence, and edits invalidate results (fake
   await user.click(
     screen.getByRole("button", { name: /Analyser la correspondance/ }),
   );
-  await screen.findByText("Pratique déclarée.");
+  await screen.findByText("Déclaration explicite.");
   assert.equal(calls, 1);
   assert.match(key ?? "", /^[a-f0-9-]{36}$/);
   await user.click(screen.getByText("Voir les passages cités"));
   assert.ok(screen.getByText("Déclaration explicite."));
   await user.type(editor, " Nouvelle information.");
   await waitFor(() =>
-    assert.equal(screen.queryByText("Pratique déclarée."), null),
+    assert.equal(screen.queryByText("Déclaration explicite."), null),
   );
   assert.equal(calls, 1);
 });

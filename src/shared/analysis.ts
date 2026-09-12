@@ -35,8 +35,24 @@ export const Interpretation = z
   })
   .strict();
 
+export const EducationComparison = z
+  .object({
+    candidateLevel: z.number().int().min(0).max(12),
+    requiredLevel: z.number().int().min(1).max(12),
+    basis: z.enum(["explicit_level", "recognized_qualification", "uncertain"]),
+  })
+  .strict();
+
 export const finding = z
   .object({
+    assessment: z
+      .enum([
+        "possible_compatibility",
+        "declared_education_gap",
+        "negotiable_preference",
+      ])
+      .optional(),
+    educationComparison: EducationComparison.nullable().optional(),
     jobQuotes: z.array(z.string()).optional(),
     clarificationQuote: z.string().nullable().optional(),
     subject: z.string(),
@@ -88,6 +104,8 @@ export type AnalysisResult = z.infer<typeof Analysis>;
 
 export const Preferences = z
   .object({
+    salaryPriority: z.enum(["required", "preferred"]).optional(),
+    workModePriority: z.enum(["required", "preferred"]).optional(),
     minimumAnnualSalary: z
       .number()
       .int()

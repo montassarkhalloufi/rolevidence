@@ -57,6 +57,7 @@ await test("canonical criteria retain all original evidence and compare each ato
         profileEvidenceId: "P1",
         profileEvidenceQuote: documents.profile,
         preferencesEvidenceId: null,
+        educationComparison: null,
         experienceComparison: null,
       };
 

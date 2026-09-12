@@ -31,6 +31,7 @@ const unknown = {
   profileEvidenceId: null,
   profileEvidenceQuote: null,
   preferencesEvidenceId: null,
+  educationComparison: null,
   experienceComparison: null,
 };
 
@@ -205,6 +206,7 @@ await test("spurious model duration metadata cannot downgrade a technology crite
           profileQuote: profile,
           jobQuote: "Bonne pratique de TypeScript requise.",
           preferencesQuote: null,
+          educationComparison: null,
           experienceComparison: {
             comparableScope: false,
             candidateDuration: "unknown",

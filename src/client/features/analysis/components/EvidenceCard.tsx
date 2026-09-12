@@ -1,3 +1,4 @@
+import { findingLabel } from "../finding-label.ts";
 import { Badge, type BadgeTone } from "../../../shared/ui/badge.tsx";
 import { StatusIcon } from "../../../shared/ui/status-icon.tsx";
 import { fr } from "../../../shared/i18n/fr.ts";
@@ -38,7 +39,7 @@ const verificationLabels = {
 function summary(finding: Finding) {
   return finding.verification
     ? verificationLabels[finding.verification.code]
-    : finding.explanation;
+    : finding.interpretation.justification;
 }
 
 function VerificationDetails({ finding }: { finding: Finding }) {
@@ -119,7 +120,9 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
       <div className="@container/quotes">
         <div className="flex flex-wrap items-center gap-2 [&>h3]:text-xl [&>h3]:font-semibold">
           <h3>{finding.subject}</h3>
-          <Badge tone={group.tone}>{group.singular}</Badge>
+          <Badge tone={group.tone}>
+            {findingLabel(finding, group.singular)}
+          </Badge>
         </div>
         <p>{summary(finding)}</p>
         {expanded && <SourceQuotes finding={finding} />}
@@ -137,10 +140,12 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
               {fr.practice} {finding.interpretation.describedPractice}
             </p>
           )}
-          <p>
-            {corrected && <strong>{fr.originalModelReasoning} </strong>}
-            {finding.interpretation.justification}
-          </p>
+          {finding.verification && (
+            <p>
+              {corrected && <strong>{fr.originalModelReasoning} </strong>}
+              {finding.interpretation.justification}
+            </p>
+          )}
           <p>
             {fr.retainedState}{" "}
             {finding.verification?.code === "UNVERIFIED_QUOTES"

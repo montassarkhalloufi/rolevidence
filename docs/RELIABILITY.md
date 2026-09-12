@@ -211,3 +211,21 @@ degree with its Bac+5 qualifier. The differently worded postgraduate credential
 remained separate because equivalence across qualifications is not established.
 These are observed counts, not verified candidate competence or an accuracy score.
 The saved user snapshot remains local and is not a public evaluation fixture.
+
+## Qualified conclusions — 2026-09-12
+
+`node --env-file-if-exists=.env scripts/eval-qualified-conclusions.ts` is an explicit
+paid suite of eight fictional scenarios. It checks a completed licence below Bac+5,
+an incomplete master, the highest completed degree, JavaScript versus Java, an open
+JSON-LD salary minimum, negotiable salary/work mode and required work mode. Expected
+categories, one finding per scenario and relevant assessment labels are fixed.
+
+The first run (`qualified-conclusions-1789242078438`) passed 7/8. The model wrongly
+invented a completed Bac+4 level from a master in progress. The failed observation is
+preserved. The prompt now explicitly forbids this inference and a source-bound guard
+keeps unfinished qualification evidence unknown. With unchanged expectations,
+`qualified-conclusions-1789242222290` passed **8/8** on GPT-5.4. This is targeted
+calibration, not independent proof of universal qualification/semantic accuracy.
+No private CV is included in these fixtures or committed observations. Offline
+regressions cover invalid references, uncertain qualifications, non-education facts,
+unsupported salary bounds and negotiable/legacy preference behavior.

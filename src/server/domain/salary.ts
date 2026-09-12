@@ -1,3 +1,4 @@
+import { isOpenSalaryMinimum } from "./salary-minimum.ts";
 import type { DocumentsInput, Requirement } from "./models.ts";
 import { resolveQuote } from "./quotes.ts";
 import { preferencesText } from "./preferences.ts";
@@ -50,6 +51,19 @@ export function compareSalary(
   const bounds = salaryBounds(quote);
 
   if (!bounds) {
+    if (isOpenSalaryMinimum(quote)) {
+      return {
+        ...applyEvidenceDecision(
+          normalized,
+          "insufficient_information",
+          numericMessages.salaryOpenMinimum,
+          candidate,
+          quote,
+        ),
+        assessment: "possible_compatibility",
+      };
+    }
+
     return applyEvidenceDecision(
       normalized,
       "insufficient_information",
