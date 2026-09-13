@@ -37,7 +37,8 @@ Acceptance: both audiences can create a campaign, preserve independent dossier n
 
 - Optional explicit campaign-wide execution queue with its own pause/budget controls.
 - Per-analysis cost estimates and user-defined spending budgets.
-- Broader platform/accessibility evaluation and live Anthropic/hosted LangSmith validation.
+- Broader platform/accessibility evaluation and repeated, independent provider benchmarks.
+  Targeted Anthropic and EU LangSmith verification is documented in docs/LIVE_VERIFICATION.md.
 
 LangGraph requires a real branching/resumable orchestration need. Deep Agents and
 RAG remain deferred. Framework adoption is an architectural decision, not a

@@ -114,9 +114,10 @@ manual pasting. Worker isolation is not an OS security sandbox. Unknown newer
 SQLite schemas fail closed. Deletion cannot remove exported copies or OS backups;
 legacy synchronous idempotency entries can remain in process memory until expiry.
 
-OpenAI observations are documented in [RELIABILITY.md](RELIABILITY.md). Live Anthropic
-accuracy, hosted LangSmith delivery, Windows compatibility and a complete assistive
-technology audit remain outside the verified coverage. Follow [OPERATIONS.md](OPERATIONS.md)
+OpenAI observations are documented in [RELIABILITY.md](RELIABILITY.md). Targeted live
+Anthropic and EU LangSmith observations are in [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
+They do not establish general semantic accuracy. Windows compatibility and a complete
+assistive technology audit remain outside verified coverage. Follow [OPERATIONS.md](OPERATIONS.md)
 for upgrades, backup limits, cancellation and checkpoint compatibility.
 
 ## Review corrections (2026-09-13)
@@ -142,3 +143,12 @@ explanations appear only as explicitly labelled diagnostic reasoning in reports.
 Case-file workspace components have separate preparation, settings, tracking,
 navigation, form and result responsibilities. ESLint limits production modules to
 300 nonblank/noncomment lines, and HTTP composition follows the route spacing rule.
+
+### Verified telemetry transport
+
+Optional LangSmith events use a direct POST /runs request with a two-second timeout,
+no redirects or retries, and a ten-event pending limit. The installed SDK's direct
+createRun retry override is avoided. Configure the correct regional endpoint and,
+when necessary, a workspace ID; see OPERATIONS.md. No model input/output content is
+sent. Delivery is best effort, including during process shutdown, and never changes
+analysis success or failure. Verification results are recorded in LIVE_VERIFICATION.md.

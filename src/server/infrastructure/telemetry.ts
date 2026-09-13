@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { Client } from "langsmith";
 import type { StructuredModel } from "../adapters/models/structured.ts";
 import { AppError } from "../application/errors.ts";
 
@@ -61,15 +60,12 @@ export function observeModel(
 export function createLangSmithSink(
   apiKey: string,
   project: string,
+  transport: typeof fetch = fetch,
 ): TelemetrySink {
-  const client = new Client({
-    apiKey,
-    timeout_ms: TELEMETRY_TIMEOUT_MS,
-    autoBatchTracing: false,
-    callerOptions: { maxRetries: 0 },
-    hideInputs: true,
-    hideOutputs: true,
-  });
+  const endpoint =
+    process.env.LANGSMITH_ENDPOINT ?? "https://api.smith.langchain.com";
+
+  const workspace = process.env.LANGSMITH_WORKSPACE_ID;
 
   let pending = 0;
 
@@ -82,18 +78,36 @@ export function createLangSmithSink(
     try {
       const end = Date.now();
 
-      await client.createRun({
-        id: randomUUID(),
-        name: "rolevidence.structured-model",
-        run_type: "llm",
-        project_name: project,
-        inputs: {},
-        outputs: {},
-        start_time: end - event.durationMs,
-        end_time: end,
-        extra: { metadata: { ...event } },
-        ...(event.errorCode ? { error: event.errorCode } : {}),
-      });
+      const response = await transport(
+        new URL("runs", `${endpoint.replace(/\/$/, "")}/`),
+        {
+          method: "POST",
+          redirect: "error",
+          signal: AbortSignal.timeout(TELEMETRY_TIMEOUT_MS),
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+            ...(workspace ? { "x-tenant-id": workspace } : {}),
+          },
+          body: JSON.stringify({
+            id: randomUUID(),
+            name: "rolevidence.structured-model",
+            run_type: "llm",
+            session_name: project,
+            inputs: {},
+            outputs: {},
+            start_time: new Date(end - event.durationMs).toISOString(),
+            end_time: new Date(end).toISOString(),
+            extra: { metadata: { ...event } },
+            ...(event.errorCode ? { error: event.errorCode } : {}),
+          }),
+        },
+      );
+
+      await response.body?.cancel();
+      if (!response.ok) {
+        throw new Error(`Telemetry rejected: HTTP ${response.status}`);
+      }
     } finally {
       pending--;
     }

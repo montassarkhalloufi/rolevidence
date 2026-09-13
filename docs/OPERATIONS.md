@@ -34,3 +34,18 @@ Stop the application and back up its SQLite file before upgrading. Schema 3 adds
 Closing a browser leaves accepted jobs running locally. Reopen the dossier to read current progress. A stopped server leaves interrupted work available for explicit resume; no startup model call is made. Resume uses the original documents/provider selection and completed checkpoints. Cancel/resume controls carry the observed attempt number to reject stale actions. A provider call interrupted before its response was saved can already be billed; explicit resumption can invoke that unfinished step again.
 
 Campaign membership is a grouping of independent copies. Edits to a source dossier do not update members. Recruiter campaigns deliberately start with empty candidate preferences/clarifications. Review each member before analysis. Group deletion retains dossiers; dossier deletion removes its own analyses, jobs and membership. To preserve grouping and in-progress checkpoints, use a whole-database backup while stopped. Per-dossier JSON preserves tracking and completed results only.
+
+## LangSmith regions and verification
+
+Set ROLEVIDENCE_TELEMETRY=true, LANGSMITH_API_KEY and LANGSMITH_PROJECT in .env.
+The default endpoint is https://api.smith.langchain.com (US). For an EU workspace,
+set LANGSMITH_ENDPOINT=https://eu.api.smith.langchain.com. A key associated with
+multiple workspaces also needs LANGSMITH_WORKSPACE_ID. Restart after changing .env.
+A 403 against the wrong region does not establish that the key is invalid.
+
+Successful analysis alone does not prove telemetry delivery: failures are isolated.
+Check the configured LangSmith project for rolevidence.structured-model runs with
+provider/model, prompt version, timing and token metadata. Inputs and outputs are
+empty; original document text, answers and provider response IDs must be absent.
+The explicit REST transport makes one bounded attempt per event. Never enable
+LANGSMITH_TRACING or LANGCHAIN_TRACING_V2 to troubleshoot private documents.

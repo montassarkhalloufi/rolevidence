@@ -15,9 +15,10 @@ export function registerOfferRoutes(
   app: Express,
   providers: ProviderRegistry,
   extract: ReturnType<typeof createJobExtractor>,
+  fetchPage: typeof fetchPublicPage = fetchPublicPage,
 ) {
   async function importOffer(input: z.infer<typeof OfferImportInput>) {
-    const page = await fetchPublicPage(input.url);
+    const page = await fetchPage(input.url);
 
     const text = extractJobText(page.html);
 
