@@ -1,6 +1,6 @@
 import type { z } from "zod";
 import type { ModelMetadata } from "../../application/analyze.ts";
-import type { Selection } from "../../application/dossiers.ts";
+import type { Selection } from "../../application/case-files.ts";
 
 export type StructuredRequest = {
   selection: Selection;

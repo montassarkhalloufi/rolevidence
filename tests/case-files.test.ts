@@ -4,7 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { openDatabase } from "../src/server/infrastructure/persistence/database.ts";
-import { createDossierRepository } from "../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../src/server/infrastructure/persistence/case-files.ts";
 import { emptyPreferences } from "../src/shared/analysis.ts";
 
 const draft = {
@@ -38,7 +38,7 @@ await test("dossiers survive reopen; immutable snapshots and cascade deletion ar
   let db = openDatabase(path);
 
   try {
-    let repo = createDossierRepository(db);
+    let repo = createCaseFileRepository(db);
 
     const first = repo.save(crypto.randomUUID(), draft, 0);
 
@@ -70,7 +70,7 @@ await test("dossiers survive reopen; immutable snapshots and cascade deletion ar
     );
     db.close();
     db = openDatabase(path);
-    repo = createDossierRepository(db);
+    repo = createCaseFileRepository(db);
     assert.equal(repo.get(first.id).documents.profile, "Nouveau profil");
     assert.deepEqual(repo.analyses(first.id, 0, 10).items[0], analysis);
     assert.equal(repo.list("Autre", 0, 20).total, 1);
@@ -94,7 +94,7 @@ await test("dossiers survive reopen; immutable snapshots and cascade deletion ar
 await test("failed local writes do not report success or replace existing content", () => {
   const db = openDatabase(":memory:");
 
-  const repo = createDossierRepository(db);
+  const repo = createCaseFileRepository(db);
 
   const saved = repo.save(crypto.randomUUID(), draft, 0);
 

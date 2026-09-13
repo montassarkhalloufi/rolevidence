@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { Documents, emptyPreferences } from "../src/shared/analysis.ts";
 import { createAnalysisRequest } from "../src/server/adapters/openai/request.ts";
 
-await test("Préférences : valeurs absentes, bornes et cohérence du télétravail", () => {
+await test("Preferences validate missing values, bounds and remote-work consistency", () => {
   const base = { profile: "CV fictif", job: "Offre fictive" };
 
   assert.equal(Documents.safeParse(base).success, true);
@@ -45,7 +45,7 @@ await test("Préférences : valeurs absentes, bornes et cohérence du télétrav
   );
 });
 
-await test("Le contexte conserve CV, offre et préférences séparément, sans appel LLM", () => {
+await test("Preview keeps the CV, job and preferences separate without a model call", () => {
   const preferences = {
     minimumAnnualSalary: 60000,
     workMode: "hybrid" as const,

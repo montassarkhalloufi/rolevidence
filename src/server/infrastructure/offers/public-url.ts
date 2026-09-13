@@ -1,3 +1,5 @@
+import { URL_MAX_CHARACTERS } from "../../../shared/limits.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { lookup } from "node:dns/promises";
 import ipaddr from "ipaddr.js";
 import { AppError } from "../../application/errors.ts";
@@ -14,7 +16,7 @@ export function publicUrl(input: string): URL {
   try {
     url = new URL(input);
   } catch {
-    throw new AppError("INVALID_INPUT", "Le lien est invalide.");
+    throw new AppError("INVALID_INPUT", errorMessages.invalidUrl);
   }
 
   if (
@@ -22,12 +24,9 @@ export function publicUrl(input: string): URL {
     url.username ||
     url.password ||
     url.port ||
-    input.length > 2048
+    input.length > URL_MAX_CHARACTERS
   ) {
-    throw new AppError(
-      "INVALID_INPUT",
-      "Utilisez un lien HTTP(S) public, sans identifiants ni port personnalisé.",
-    );
+    throw new AppError("INVALID_INPUT", errorMessages.unsupportedUrl);
   }
 
   url.hash = "";
@@ -52,10 +51,7 @@ export async function publicAddresses(url: URL) {
     !addresses.length ||
     addresses.some(({ address }) => !isPublicAddress(address))
   ) {
-    throw new AppError(
-      "FORBIDDEN",
-      "Ce lien ne désigne pas une adresse Internet publique autorisée.",
-    );
+    throw new AppError("FORBIDDEN", errorMessages.privateAddress);
   }
 
   return addresses;

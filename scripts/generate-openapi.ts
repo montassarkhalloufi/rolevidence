@@ -1,4 +1,9 @@
 import {
+  PAGE_MAX_OFFSET,
+  PAGE_MAX_SIZE,
+  CASE_FILE_PAGE_SIZE,
+} from "../src/shared/limits.ts";
+import {
   Campaign,
   CampaignInput,
   CampaignPage,
@@ -8,12 +13,12 @@ import {
 } from "../src/shared/workflows.ts";
 import {
   Backup,
-  Dossier,
-  DossierDraft,
-  DossierSave,
-  DossierPage,
+  CaseFile,
+  CaseFileDraft,
+  CaseFileSave,
+  CaseFilePage,
   AnalysisPage,
-} from "../src/shared/dossiers.ts";
+} from "../src/shared/case-files.ts";
 import {
   OfferImportInput,
   OfferImportResponse,
@@ -71,7 +76,7 @@ const contract = {
     title: "Rolevidence local API",
     version: "1.3.0",
     description:
-      "Single-user localhost API. Not authenticated or suitable for public exposure.",
+      "Single-user localhost API. Host must be localhost, 127.0.0.1 or [::1], with an optional port. Foreign hosts return 403 before any route. Not authenticated or suitable for public exposure.",
   },
   servers: [{ url: "http://127.0.0.1:3001" }],
   paths: {
@@ -84,7 +89,7 @@ const contract = {
             schema: {
               type: "integer",
               minimum: 0,
-              maximum: 100000,
+              maximum: PAGE_MAX_OFFSET,
               default: 0,
             },
           },
@@ -214,14 +219,19 @@ const contract = {
             schema: {
               type: "integer",
               minimum: 0,
-              maximum: 100000,
+              maximum: PAGE_MAX_OFFSET,
               default: 0,
             },
           },
           {
             in: "query",
             name: "limit",
-            schema: { type: "integer", minimum: 1, maximum: 50, default: 20 },
+            schema: {
+              type: "integer",
+              minimum: 1,
+              maximum: PAGE_MAX_SIZE,
+              default: CASE_FILE_PAGE_SIZE,
+            },
           },
         ],
         responses: { 200: response("DossierPage"), default: problem },
@@ -275,14 +285,19 @@ const contract = {
             schema: {
               type: "integer",
               minimum: 0,
-              maximum: 100000,
+              maximum: PAGE_MAX_OFFSET,
               default: 0,
             },
           },
           {
             in: "query",
             name: "limit",
-            schema: { type: "integer", minimum: 1, maximum: 50, default: 20 },
+            schema: {
+              type: "integer",
+              minimum: 1,
+              maximum: PAGE_MAX_SIZE,
+              default: CASE_FILE_PAGE_SIZE,
+            },
           },
         ],
         responses: { 200: response("AnalysisPage"), default: problem },
@@ -413,10 +428,10 @@ const contract = {
       JobResume: schema(JobResume),
       Backup: schema(Backup),
       AnalysisInput: schema(AnalysisInput),
-      Dossier: schema(Dossier),
-      DossierDraft: schema(DossierDraft),
-      DossierSave: schema(DossierSave),
-      DossierPage: schema(DossierPage),
+      Dossier: schema(CaseFile),
+      DossierDraft: schema(CaseFileDraft),
+      DossierSave: schema(CaseFileSave),
+      DossierPage: schema(CaseFilePage),
       AnalysisPage: schema(AnalysisPage),
       OfferImportInput: schema(OfferImportInput),
       OfferImportResponse: schema(OfferImportResponse),

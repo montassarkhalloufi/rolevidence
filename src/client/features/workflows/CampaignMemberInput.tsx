@@ -1,3 +1,7 @@
+import {
+  DOCUMENT_MAX_CHARACTERS,
+  TITLE_MAX_CHARACTERS,
+} from "../../../shared/limits.ts";
 import { workflowsFr as t } from "../../shared/i18n/workflows-fr.ts";
 import { Button } from "../../shared/ui/button.tsx";
 import { Input } from "../../shared/ui/input.tsx";
@@ -28,7 +32,7 @@ export function CampaignMemberInput({
         {t.memberTitle} {index + 1}
         <Input
           required
-          maxLength={120}
+          maxLength={TITLE_MAX_CHARACTERS}
           value={member.title}
           onChange={(event) =>
             onChange({ ...member, title: event.target.value })
@@ -41,7 +45,7 @@ export function CampaignMemberInput({
           aria-label={`${recruiting ? t.profileText : t.jobText} ${index + 1}`}
           required
           rows={5}
-          maxLength={16000}
+          maxLength={DOCUMENT_MAX_CHARACTERS}
           value={member.text}
           onChange={(event) =>
             onChange({ ...member, text: event.target.value })

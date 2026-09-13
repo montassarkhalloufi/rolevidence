@@ -1,11 +1,13 @@
+import { runtimeMessages } from "./locales/runtime-fr.ts";
+import { errorMessages } from "./locales/errors-fr.ts";
 import { executeJob } from "./execute-job.ts";
 import type { AnalysisCheckpoint, AnalysisProgress } from "./execution.ts";
 import type {
-  Dossier,
-  DossierRepository,
+  CaseFile,
+  CaseFileRepository,
   SavedAnalysis,
   Selection,
-} from "./dossiers.ts";
+} from "./case-files.ts";
 import type { AnalysisService } from "./analyze.ts";
 import { AppError } from "./errors.ts";
 
@@ -23,20 +25,20 @@ export type AnalysisJob = {
 };
 
 export type JobRecord = AnalysisJob & {
-  snapshot: Dossier;
+  snapshot: CaseFile;
   checkpoint: AnalysisCheckpoint | null;
 };
 
 export interface JobRepository {
   get(id: string): JobRecord;
-  latest(dossierId: string): JobRecord | null;
+  latest(caseFileId: string): JobRecord | null;
   put(job: JobRecord): void;
   recover(): void;
 }
 
 export function createJobRunner(
   repository: JobRepository,
-  dossiers: DossierRepository,
+  caseFiles: CaseFileRepository,
   resolve: (selection: Selection) => AnalysisService,
   now: () => string,
 ) {
@@ -46,12 +48,23 @@ export function createJobRunner(
 
   repository.recover();
 
+  const get = (id: string) => current(repository.get(id), active?.id);
+
+  function latest(id: string) {
+    const running = active ? findExisting(repository, active.id) : null;
+
+    if (running?.dossierId === id) {
+      return running;
+    }
+
+    const job = repository.latest(id);
+
+    return job ? current(job, active?.id) : null;
+  }
+
   function launch(job: JobRecord) {
     if (active) {
-      throw new AppError(
-        "BUSY",
-        "Une analyse est déjà en cours. Attendez ou annulez-la.",
-      );
+      throw new AppError("BUSY", errorMessages.jobBusy);
     }
 
     const service = resolve(job.snapshot.selection);
@@ -65,7 +78,7 @@ export function createJobRunner(
       service,
       controller,
       repository,
-      dossiers,
+      caseFiles,
       now,
     ).finally(() => {
       active = null;
@@ -75,46 +88,37 @@ export function createJobRunner(
   }
 
   return {
-    get: repository.get,
-    latest: repository.latest,
-    start(id: string, dossierId: string, revision: number) {
-      const previous = findExisting(repository, id);
+    get,
+    latest,
+    start(id: string, caseFileId: string, revision: number) {
+      const previous = findExisting({ get }, id);
 
       if (previous) {
         if (
-          previous.dossierId !== dossierId ||
+          previous.dossierId !== caseFileId ||
           previous.revision !== revision
         ) {
           throw new AppError(
             "IDEMPOTENCY_CONFLICT",
-            "Cette demande correspond à un autre dossier ou une autre version.",
+            errorMessages.jobIdentityConflict,
           );
         }
 
         return previous;
       }
 
-      const snapshot = dossiers.get(dossierId);
+      const snapshot = caseFiles.get(caseFileId);
 
-      if (
-        snapshot.revision !== revision ||
-        !snapshot.documents.job.trim() ||
-        !snapshot.documents.profile.trim()
-      ) {
-        throw new AppError(
-          "INVALID_INPUT",
-          "Enregistrez un profil et une offre complets avant l’analyse.",
-        );
-      }
+      assertCompleteRevision(snapshot, revision);
 
       return launch(newJob(id, snapshot, now()));
     },
     resume(id: string, attempt: number) {
-      const job = repository.get(id);
+      const job = get(id);
 
       assertResumable(job, attempt);
 
-      dossiers.get(job.dossierId);
+      caseFiles.get(job.dossierId);
 
       return launch({
         ...job,
@@ -125,12 +129,12 @@ export function createJobRunner(
       });
     },
     cancel(id: string, attempt: number) {
-      const job = repository.get(id);
+      const job = get(id);
 
       if (job.attempt !== attempt) {
         throw new AppError(
           "IDEMPOTENCY_CONFLICT",
-          "Cette annulation concerne une tentative précédente.",
+          errorMessages.staleCancellation,
         );
       }
 
@@ -149,7 +153,7 @@ export function createJobRunner(
   };
 }
 
-function findExisting(repository: JobRepository, id: string) {
+function findExisting(repository: Pick<JobRepository, "get">, id: string) {
   try {
     return repository.get(id);
   } catch (error) {
@@ -161,7 +165,7 @@ function findExisting(repository: JobRepository, id: string) {
   }
 }
 
-function newJob(id: string, snapshot: Dossier, timestamp: string): JobRecord {
+function newJob(id: string, snapshot: CaseFile, timestamp: string): JobRecord {
   return {
     id,
     dossierId: snapshot.id,
@@ -184,9 +188,28 @@ function assertResumable(job: JobRecord, attempt: number) {
     job.status === "running" ||
     job.status === "completed"
   ) {
-    throw new AppError(
-      "IDEMPOTENCY_CONFLICT",
-      "L’état de cette analyse a changé. Actualisez avant de reprendre.",
-    );
+    throw new AppError("IDEMPOTENCY_CONFLICT", errorMessages.unsupportedResume);
+  }
+}
+
+function current(job: JobRecord, activeId: string | undefined): JobRecord {
+  if (job.status !== "running" || activeId === job.id) {
+    return job;
+  }
+
+  return {
+    ...job,
+    status: "interrupted",
+    error: runtimeMessages.jobStorageInterrupted,
+  };
+}
+
+function assertCompleteRevision(snapshot: CaseFile, revision: number) {
+  if (
+    snapshot.revision !== revision ||
+    !snapshot.documents.job.trim() ||
+    !snapshot.documents.profile.trim()
+  ) {
+    throw new AppError("INVALID_INPUT", errorMessages.incompleteSavedInputs);
   }
 }

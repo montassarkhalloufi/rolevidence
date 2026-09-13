@@ -1,6 +1,7 @@
+import { DOCUMENT_MAX_CHARACTERS } from "../../../shared/limits.ts";
 import { useOfferImport } from "./useOfferImport.ts";
 import type { ModelSelectionData } from "../../../shared/providers.ts";
-import type { OfferSourceData } from "../../../shared/dossiers.ts";
+import type { OfferSourceData } from "../../../shared/case-files.ts";
 import { workspaceFr as t } from "../../shared/i18n/workspace-fr.ts";
 import { Input } from "../../shared/ui/input.tsx";
 import { Textarea } from "../../shared/ui/textarea.tsx";
@@ -124,7 +125,7 @@ function OfferPreview({
             {t.source}
             <Textarea
               rows={10}
-              maxLength={16000}
+              maxLength={DOCUMENT_MAX_CHARACTERS}
               value={text}
               onChange={(event) => setText(event.target.value)}
             />

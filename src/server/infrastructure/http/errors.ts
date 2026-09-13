@@ -1,3 +1,4 @@
+import { runtimeMessages } from "../../application/locales/runtime-fr.ts";
 import { STATUS_CODES } from "node:http";
 import type { ErrorRequestHandler } from "express";
 import multer from "multer";
@@ -46,7 +47,7 @@ function describeError(error: unknown) {
     return {
       status: error.code === "LIMIT_FILE_SIZE" ? 413 : 400,
       code: "INVALID_UPLOAD",
-      detail: "Import refusé : un seul fichier de 5 Mo maximum.",
+      detail: runtimeMessages.uploadInvalid,
     };
   }
 
@@ -56,14 +57,14 @@ function describeError(error: unknown) {
     return {
       status: type === "entity.too.large" ? 413 : 400,
       code: "INVALID_BODY",
-      detail: "Corps JSON invalide ou trop volumineux.",
+      detail: runtimeMessages.bodyInvalid,
     };
   }
 
   return {
     status: 500,
     code: "INTERNAL",
-    detail: "Erreur interne du serveur.",
+    detail: runtimeMessages.internalError,
   };
 }
 

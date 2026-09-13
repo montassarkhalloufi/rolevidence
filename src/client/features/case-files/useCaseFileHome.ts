@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { dossierApi } from "./api.ts";
+import { caseFileApi } from "./api.ts";
 import { emptyPreferences } from "../../../shared/analysis.ts";
 import type { BootstrapData } from "../../../shared/analysis.ts";
 
-export function useDossierHome(
+export function useCaseFileHome(
   bootstrap: BootstrapData,
   onOpen: (id: string) => void,
 ) {
@@ -20,7 +20,7 @@ export function useDossierHome(
 
   const list = useQuery({
     queryKey: ["dossiers", query, offset],
-    queryFn: ({ signal }) => dossierApi.list(query, offset, signal),
+    queryFn: ({ signal }) => caseFileApi.list(query, offset, signal),
   });
 
   const create = useMutation({
@@ -29,7 +29,7 @@ export function useDossierHome(
         bootstrap.providers?.find((value) => value.configured) ??
         bootstrap.providers?.[0];
 
-      return dossierApi.save(
+      return caseFileApi.save(
         crypto.randomUUID(),
         {
           title,
@@ -44,12 +44,12 @@ export function useDossierHome(
         0,
       );
     },
-    onSuccess: (dossier) => onOpen(dossier.id),
+    onSuccess: (caseFile) => onOpen(caseFile.id),
   });
 
   const remove = useMutation({
     mutationFn: ({ id, revision }: { id: string; revision: number }) =>
-      dossierApi.delete(id, revision),
+      caseFileApi.delete(id, revision),
     onSuccess: async () => {
       setRemoving(null);
       await client.invalidateQueries({ queryKey: ["dossiers"] });

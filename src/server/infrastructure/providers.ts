@@ -4,7 +4,7 @@ import { observeModel, createLangSmithSink } from "./telemetry.ts";
 import { createLangChainGateway } from "../adapters/models/gateway.ts";
 import { createAnalysisService } from "../application/analyze.ts";
 import { createProviderRegistry } from "../application/provider-registry.ts";
-import { createMessages } from "../adapters/openai/messages.ts";
+import { createMessages } from "../adapters/models/messages.ts";
 import type { loadConfig } from "./config.ts";
 import { createJobExtractor } from "../adapters/models/job-extraction.ts";
 

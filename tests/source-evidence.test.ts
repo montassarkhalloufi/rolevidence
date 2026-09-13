@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createSourceCatalog } from "../src/server/adapters/openai/sources.ts";
-import { createExtractionSchema } from "../src/server/adapters/openai/extraction.ts";
-import { mapExtraction } from "../src/server/adapters/openai/map-extraction.ts";
+import { createSourceCatalog } from "../src/server/adapters/models/sources.ts";
+import { createExtractionSchema } from "../src/server/adapters/models/extraction.ts";
+import { mapExtraction } from "../src/server/adapters/models/map-extraction.ts";
 import { classifyRequirements } from "../src/server/domain/classify.ts";
 import type { Requirement } from "../src/server/domain/models.ts";
 

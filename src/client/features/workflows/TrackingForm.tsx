@@ -1,5 +1,5 @@
 import { Button } from "../../shared/ui/button.tsx";
-import type { DossierDraftData } from "../../../shared/dossiers.ts";
+import type { CaseFileDraftData } from "../../../shared/case-files.ts";
 import {
   Tracking,
   TRACKING_MAX_CHARACTERS,
@@ -16,8 +16,8 @@ export function TrackingForm({
   canSave,
   error,
 }: {
-  value: DossierDraftData["tracking"];
-  onChange: (value: NonNullable<DossierDraftData["tracking"]>) => void;
+  value: CaseFileDraftData["tracking"];
+  onChange: (value: NonNullable<CaseFileDraftData["tracking"]>) => void;
   disabled: boolean;
   onSave: () => void;
   canSave: boolean;

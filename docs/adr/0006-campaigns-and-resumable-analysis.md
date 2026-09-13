@@ -25,3 +25,16 @@ A stopped process marks unfinished jobs interrupted on reopening, without contac
 SQLite schema migrations preserve v0.3 dossiers/history. Job checkpoints contain private model responses and remain local; completed jobs discard checkpoints. Dossier deletion cascades through jobs. Portable dossier backups preserve tracking and completed analyses, but not campaign grouping or unfinished checkpoints; stopped-server database backup preserves the whole workspace. Run one application process per database.
 
 Tests cover source isolation in both campaign directions, transactional failure/replay, immutable snapshots, cancellation, stale attempt rejection, restart recovery, schema/version rejection, no repeated completed model calls, lost storage acknowledgement, source privacy and API/browser journeys. Real provider cancellation and billing behavior cannot be established by fake transport tests. Existing semantic checks remain necessary: resumability does not prove model accuracy.
+
+## Amendment — Visible recovery after storage failures (2026-09-13)
+
+The runner reconciles persisted running records with its active execution identity
+on reads. A record with no active execution is exposed as interrupted without
+requiring an immediately successful database write. Explicit resume must persist
+the new attempt before invoking a model. This avoids permanent polling after a
+failed terminal-state write and retains the last durable checkpoint as authority.
+
+Latest selection prioritizes the active execution and then update time, creation time
+and ID. Resuming an older job makes it visible to the existing latest-job endpoint.
+Regression tests cover both older-job resumption and storage recovery without a
+process restart. No automatic retry or new database schema is introduced.

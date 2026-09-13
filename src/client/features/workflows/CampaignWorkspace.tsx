@@ -10,11 +10,11 @@ import { ResultsPanel } from "../analysis/components/ResultsPanel.tsx";
 export function CampaignWorkspace({
   id,
   onBack,
-  onDossier,
+  onCaseFile,
 }: {
   id: string;
   onBack: () => void;
-  onDossier: (id: string) => void;
+  onCaseFile: (id: string) => void;
 }) {
   const [confirm, setConfirm] = useState(false);
 
@@ -50,16 +50,17 @@ export function CampaignWorkspace({
       <p className="my-4 text-sm">{t.startHelp}</p>
       {query.data.members.length < 2 && <p role="status">{t.missingMember}</p>}
       <div className="grid items-start gap-5 xl:grid-cols-2">
-        {query.data.members.map(({ dossier, latest }) => (
-          <Card key={dossier.id} className="min-w-0 p-3 sm:p-6">
-            <h2 className="text-xl font-semibold">{dossier.title}</h2>
+        {query.data.members.map(({ dossier: caseFile, latest }) => (
+          <Card key={caseFile.id} className="min-w-0 p-3 sm:p-6">
+            <h2 className="text-xl font-semibold">{caseFile.title}</h2>
             <p className="my-2 text-sm">
-              {t.status} : {t.statuses[dossier.tracking?.status ?? "preparing"]}
+              {t.status} :{" "}
+              {t.statuses[caseFile.tracking?.status ?? "preparing"]}
             </p>
-            <Button className="my-3" onClick={() => onDossier(dossier.id)}>
+            <Button className="my-3" onClick={() => onCaseFile(caseFile.id)}>
               {t.open}
             </Button>
-            {latest && latest.snapshot.revision !== dossier.revision && (
+            {latest && latest.snapshot.revision !== caseFile.revision && (
               <p role="status">{t.stale}</p>
             )}
             {latest ? (
@@ -71,7 +72,7 @@ export function CampaignWorkspace({
         ))}
       </div>
       <div className="my-6 space-y-3">
-        <p>{t.keepDossiers}</p>
+        <p>{t.keepCaseFiles}</p>
         <Button variant="outline" onClick={() => setConfirm(true)}>
           {t.delete}
         </Button>

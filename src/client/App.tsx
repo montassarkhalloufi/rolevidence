@@ -1,6 +1,6 @@
 import { CampaignWorkspace } from "./features/workflows/CampaignWorkspace.tsx";
-import { DossierHome } from "./features/dossiers/DossierHome.tsx";
-import { DossierWorkspace } from "./features/dossiers/DossierWorkspace.tsx";
+import { CaseFileHome } from "./features/case-files/CaseFileHome.tsx";
+import { CaseFileWorkspace } from "./features/case-files/CaseFileWorkspace.tsx";
 import { Alert } from "./shared/ui/alert.tsx";
 import { AnalyzeButton } from "./features/analysis/components/AnalyzeButton.tsx";
 import { PageLayout } from "./app/PageLayout.tsx";
@@ -22,7 +22,7 @@ export function App() {
 
   const [campaignId, setCampaignId] = useState<string | null>(null);
 
-  const [dossierId, setDossierId] = useState<string | null>(null);
+  const [caseFileId, setCaseFileId] = useState<string | null>(null);
 
   if (bootstrap.isPending) {
     return <p role="status">{fr.loadingApp}</p>;
@@ -38,32 +38,32 @@ export function App() {
     );
   }
 
-  if (campaignId && !dossierId) {
+  if (campaignId && !caseFileId) {
     return (
       <CampaignWorkspace
         id={campaignId}
         onBack={() => setCampaignId(null)}
-        onDossier={setDossierId}
+        onCaseFile={setCaseFileId}
       />
     );
   }
 
   if (bootstrap.data.dossiersEnabled) {
-    return dossierId ? (
-      <DossierWorkspace
-        key={dossierId}
-        id={dossierId}
+    return caseFileId ? (
+      <CaseFileWorkspace
+        key={caseFileId}
+        id={caseFileId}
         bootstrap={bootstrap.data}
         onCampaign={(id) => {
-          setDossierId(null);
+          setCaseFileId(null);
           setCampaignId(id);
         }}
-        onBack={() => setDossierId(null)}
+        onBack={() => setCaseFileId(null)}
       />
     ) : (
-      <DossierHome
+      <CaseFileHome
         bootstrap={bootstrap.data}
-        onOpen={setDossierId}
+        onOpen={setCaseFileId}
         onCampaign={setCampaignId}
       />
     );
@@ -132,7 +132,7 @@ function AnalysisWorkbench({ bootstrap }: { bootstrap: BootstrapData }) {
                   onReset={() =>
                     update({
                       ...bootstrap.documents,
-                      preferences: preferences,
+                      preferences,
                     })
                   }
                   onImporting={setImporting}

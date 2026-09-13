@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { ModelSelection } from "./providers.ts";
-import { OfferSource } from "./dossiers.ts";
+import { OfferSource } from "./case-files.ts";
 import { AnalysisResponse } from "./analysis.ts";
 
 export const OfferImportInput = z

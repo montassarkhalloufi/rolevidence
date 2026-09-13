@@ -1,3 +1,5 @@
+import { schemaMessages } from "./locales/schema-fr.ts";
+import { REVIEWED_QUOTES_MAX_COUNT } from "./limits.ts";
 import { ModelSelection, ProviderOption } from "./providers.ts";
 import {
   DOCUMENT_MAX_CHARACTERS,
@@ -18,20 +20,14 @@ export const Interpretation = z
     describedPractice: z
       .string()
       .nullable()
-      .describe(
-        "Pratique réellement décrite dans la source, sans inventer d'expérience.",
-      ),
+      .describe(schemaMessages.describedPracticeDescription),
     relation: z.enum([
       "equivalence",
       "indirect_evidence",
       "contradiction",
       "insufficient_information",
     ]),
-    justification: z
-      .string()
-      .describe(
-        "Explique pourquoi la pratique répond ou non à cette exigence précise, en distinguant niveau et contexte.",
-      ),
+    justification: z.string().describe(schemaMessages.justificationDescription),
   })
   .strict();
 
@@ -76,21 +72,19 @@ export const finding = z
     profileQuote: z
       .string()
       .nullable()
-      .describe("Citation exacte ou null si absente."),
+      .describe(schemaMessages.profileQuoteDescription),
     preferencesQuote: z
       .string()
       .nullable()
-      .describe(
-        "Valeur des préférences utilisée, ou null. Jamais une citation du CV.",
-      ),
+      .describe(schemaMessages.preferencesQuoteDescription),
     jobQuote: z
       .string()
       .nullable()
-      .describe("Citation exacte ou null si absente."),
+      .describe(schemaMessages.jobQuoteDescription),
   })
   .strict();
 
-// Un seul contrat : type TypeScript inféré et validation à l'exécution.
+// One contract for inferred TypeScript types and runtime validation.
 export const Analysis = z
   .object({
     matches: z.array(finding),
@@ -124,8 +118,7 @@ export const Preferences = z
   .refine(
     (value) => value.workMode === "hybrid" || value.remoteDaysPerWeek === null,
     {
-      message:
-        "Les jours de télétravail concernent uniquement le mode hybride.",
+      message: schemaMessages.hybridDaysOnly,
       path: ["remoteDaysPerWeek"],
     },
   );
@@ -140,7 +133,10 @@ export const emptyPreferences: PreferencesInput = {
 
 export const Documents = z
   .object({
-    reviewedJobQuotes: z.array(z.string().max(16000)).max(128).optional(),
+    reviewedJobQuotes: z
+      .array(z.string().max(DOCUMENT_MAX_CHARACTERS))
+      .max(REVIEWED_QUOTES_MAX_COUNT)
+      .optional(),
     clarifications: z.string().max(DOCUMENT_MAX_CHARACTERS).optional(),
     preferences: Preferences.optional(),
     profile: z

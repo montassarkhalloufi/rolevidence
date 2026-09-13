@@ -1,15 +1,17 @@
+import { MAX_PDF_PAGES } from "../../../shared/limits.ts";
+import { runtimeMessages } from "../../application/locales/runtime-fr.ts";
 import { parentPort, workerData } from "node:worker_threads";
 import { PDFParse } from "pdf-parse";
 import mammoth from "mammoth";
 import { DOCUMENT_MAX_CHARACTERS } from "../../../shared/limits.ts";
 
-const MAX_PDF_PAGES = 20;
+const PDF_SIGNATURE = "%PDF-";
 
 class InvalidDocument extends Error {}
 
 async function readPdf(buffer: Buffer) {
-  if (buffer.subarray(0, 5).toString() !== "%PDF-") {
-    throw new InvalidDocument("Le fichier ne correspond pas à un PDF valide.");
+  if (buffer.subarray(0, PDF_SIGNATURE.length).toString() !== PDF_SIGNATURE) {
+    throw new InvalidDocument(runtimeMessages.invalidPdf);
   }
 
   const parser = new PDFParse({ data: buffer });
@@ -18,7 +20,7 @@ async function readPdf(buffer: Buffer) {
     const info = await parser.getInfo();
 
     if (info.total > MAX_PDF_PAGES) {
-      throw new InvalidDocument("Le CV dépasse la limite de 20 pages.");
+      throw new InvalidDocument(runtimeMessages.pdfTooLong);
     }
 
     const result = await parser.getText();
@@ -33,7 +35,7 @@ function readText(buffer: Buffer) {
   const text = new TextDecoder("utf-8", { fatal: true }).decode(buffer);
 
   if (text.includes("\0")) {
-    throw new InvalidDocument("Le fichier TXT doit contenir du texte UTF-8.");
+    throw new InvalidDocument(runtimeMessages.invalidText);
   }
 
   return text;
@@ -47,15 +49,11 @@ const readers: Record<string, (buffer: Buffer) => string | Promise<string>> = {
 
 function validateText(text: string) {
   if (!text) {
-    throw new InvalidDocument(
-      "Aucun texte extrait. Pour un PDF scanné, utilise une version texte : l’OCR n’est pas disponible.",
-    );
+    throw new InvalidDocument(runtimeMessages.emptyDocument);
   }
 
   if (text.length > DOCUMENT_MAX_CHARACTERS) {
-    throw new InvalidDocument(
-      "Le texte dépasse 16 000 caractères. Importe une version plus courte.",
-    );
+    throw new InvalidDocument(runtimeMessages.documentTooLong);
   }
 
   return text;
@@ -70,7 +68,7 @@ try {
   const reader = readers[extension];
 
   if (!reader) {
-    throw new InvalidDocument("Format de document non pris en charge.");
+    throw new InvalidDocument(runtimeMessages.unsupportedDocument);
   }
 
   const text = validateText((await reader(Buffer.from(bytes))).trim());
@@ -81,7 +79,7 @@ try {
   const message =
     error instanceof InvalidDocument
       ? error.message
-      : "Document illisible ou protégé. Essaie une version PDF texte, DOCX ou TXT valide.";
+      : runtimeMessages.unreadableDocument;
 
   parentPort?.postMessage({ kind: "cv-extracted", error: message });
 }

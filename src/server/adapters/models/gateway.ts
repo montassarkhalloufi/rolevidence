@@ -2,11 +2,11 @@ import { planCriteria, PLAN_VERSION } from "./criterion-plan.ts";
 import { checkpointInvoker } from "./checkpoint-invoker.ts";
 import { createJobRelevance, RELEVANCE_VERSION } from "./job-relevance.ts";
 import type { ModelGateway } from "../../application/analyze.ts";
-import type { Selection } from "../../application/dossiers.ts";
+import type { Selection } from "../../application/case-files.ts";
 import type { StructuredModel } from "./structured.ts";
 import { compareComplete, COMPARISON_VERSION } from "./complete-comparison.ts";
-import { createSourceCatalog } from "../openai/sources.ts";
-import { SCHEMA_VERSION } from "../openai/request.ts";
+import { createSourceCatalog } from "./sources.ts";
+import { SCHEMA_VERSION } from "./settings.ts";
 
 export function createLangChainGateway(
   provider: Selection["provider"],

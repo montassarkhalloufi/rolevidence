@@ -1,3 +1,4 @@
+import { MAX_ANNUAL_SALARY_EUR } from "../../../../shared/limits.ts";
 import { PreferencePriority } from "./PreferencePriority.tsx";
 import { fr } from "../../../shared/i18n/fr.ts";
 import { NativeSelect } from "../../../shared/ui/native-select.tsx";
@@ -28,7 +29,7 @@ export function PreferencesForm({ value, disabled, onChange }: Props) {
             id="salary"
             type="number"
             min="1"
-            max="1000000"
+            max={MAX_ANNUAL_SALARY_EUR}
             step="1"
             placeholder="Ex. 60000"
             value={value.minimumAnnualSalary ?? ""}

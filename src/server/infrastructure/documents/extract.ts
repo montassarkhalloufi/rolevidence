@@ -1,3 +1,6 @@
+import { EXTRACTION_TIMEOUT_MS } from "../../../shared/limits.ts";
+import { EXTRACTION_HEAP_MEGABYTES } from "../../../shared/limits.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { RESUME_MAX_BYTES } from "../../../shared/limits.ts";
 import { extname } from "node:path";
 import { Worker } from "node:worker_threads";
@@ -10,33 +13,25 @@ export async function extractCv(
   const extension = extname(filename).toLowerCase();
 
   if (![".pdf", ".docx", ".txt"].includes(extension)) {
-    throw new AppError(
-      "UNSUPPORTED_FILE",
-      "Formats acceptés : PDF, DOCX et TXT.",
-    );
+    throw new AppError("UNSUPPORTED_FILE", errorMessages.unsupportedFile);
   }
 
   if (buffer.length > RESUME_MAX_BYTES) {
-    throw new AppError("FILE_TOO_LARGE", "Le fichier dépasse 5 Mo.");
+    throw new AppError("FILE_TOO_LARGE", errorMessages.oversizedFile);
   }
 
   return new Promise((resolve, reject) => {
-    // Extraction isolée, bornée en temps ; le document n'est jamais écrit sur disque.
+    // Isolated, time-bounded extraction; documents are never written to disk.
     const worker = new Worker(new URL("./extract.worker.ts", import.meta.url), {
       workerData: { bytes: buffer, extension },
-      execArgv: [], // Ne pas hériter du mode --watch du serveur.
-      resourceLimits: { maxOldGenerationSizeMb: 128 },
+      execArgv: [], // Do not inherit the server watch mode.
+      resourceLimits: { maxOldGenerationSizeMb: EXTRACTION_HEAP_MEGABYTES },
     });
 
     const timer = setTimeout(() => {
       void worker.terminate();
-      reject(
-        new AppError(
-          "IMPORT_TIMEOUT",
-          "L’extraction a dépassé 15 secondes. Essaie un document plus simple.",
-        ),
-      );
-    }, 15000);
+      reject(new AppError("IMPORT_TIMEOUT", errorMessages.extractionTimeout));
+    }, EXTRACTION_TIMEOUT_MS);
 
     worker.on(
       "message",
@@ -61,11 +56,13 @@ export async function extractCv(
     );
     worker.once("error", () => {
       clearTimeout(timer);
-      reject(new AppError("IMPORT_FAILED", "Impossible de lire ce document."));
+      reject(new AppError("IMPORT_FAILED", errorMessages.extractionFailed));
     });
     worker.once("exit", () => {
       clearTimeout(timer);
-      reject(new AppError("IMPORT_FAILED", "Extraction interrompue."));
+      reject(
+        new AppError("IMPORT_FAILED", errorMessages.extractionInterrupted),
+      );
     });
   });
 }

@@ -1,4 +1,4 @@
-import type { Dossier, SavedAnalysis, Page } from "./dossiers.ts";
+import type { CaseFile, SavedAnalysis, Page } from "./case-files.ts";
 
 export type CampaignInput = {
   title: string;
@@ -15,7 +15,7 @@ export type CampaignSummary = {
 };
 
 export type Campaign = CampaignSummary & {
-  members: { dossier: Dossier; latest: SavedAnalysis | null }[];
+  members: { dossier: CaseFile; latest: SavedAnalysis | null }[];
 };
 
 export interface CampaignRepository {

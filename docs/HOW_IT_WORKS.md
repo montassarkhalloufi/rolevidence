@@ -61,6 +61,22 @@ The backend is a modular monolith with four inward-dependent layers:
 | Adapters       | HTTP mapping and provider request/response translation                             |
 | Infrastructure | Express composition, provider transports, SQLite, workers and public URL retrieval |
 
+Provider-neutral prompts, source catalogs, extraction schemas and mappings live in
+`server/adapters/models`. The active LangChain SDK configurations are explicit in
+`server/infrastructure/models/openai.ts` and `anthropic.ts`; `model-client.ts`
+shares concurrency, cancellation and response validation. The remaining
+`server/adapters/openai` modules and `infrastructure/openai-client.ts` support the
+historical direct-SDK semantic evaluation script, not the application's provider
+selection. Both active providers use the same evidence pipeline.
+
+HTTP case-file operations live in `server/adapters/http/case-file-routes.ts`.
+Source modules, types and components consistently use `CaseFile`/`case-files`.
+Historical `/api/v1/dossiers` URLs, OpenAPI component names and persisted DTO keys
+remain stable for client and backup compatibility. French product messages live
+in locale catalogues; model prompts and French document grammars are intentional
+language data, preserved without changing the evidence pipeline. Shared HTTP input
+validation lives in `server/adapters/http/input.ts`.
+
 The Vite/React client is organized by feature. Responsibility-focused hooks and
 TanStack Query own server interactions; visual components compose shadcn-based
 primitives and semantic Tailwind tokens. There are no microfrontends. Shared schemas
@@ -102,3 +118,27 @@ OpenAI observations are documented in [RELIABILITY.md](RELIABILITY.md). Live Ant
 accuracy, hosted LangSmith delivery, Windows compatibility and a complete assistive
 technology audit remain outside the verified coverage. Follow [OPERATIONS.md](OPERATIONS.md)
 for upgrades, backup limits, cancellation and checkpoint compatibility.
+
+## Review corrections (2026-09-13)
+
+The HTTP server validates loopback Host names before API or static handling.
+It accepts localhost, 127.0.0.1 and [::1], optionally followed by a port; foreign
+hosts return safe 403 responses. The custom mutation header remains a browser
+guard, not authentication.
+
+A synchronous execution reserves a fresh internal persistence UUID inside its
+idempotency outcome. Replays and storage retries reuse that UUID; a genuinely new
+execution after cache expiry/restart receives another one and retains its own
+snapshot. Durable jobs continue to use their stable job IDs for checkpoint recovery.
+
+Latest-job reads prioritize the active execution and then most recently updated jobs.
+When a persisted running job has no active execution in this process, the runner
+exposes it as interrupted. This lets polling settle even if the failure-state write
+failed. Explicit resume retries storage before contacting a provider; a continuing
+storage failure cannot authorize model work. Restart recovery remains unchanged.
+
+HTML reports and the evidence reader share retained-summary logic. Rejected model
+explanations appear only as explicitly labelled diagnostic reasoning in reports.
+Case-file workspace components have separate preparation, settings, tracking,
+navigation, form and result responsibilities. ESLint limits production modules to
+300 nonblank/noncomment lines, and HTTP composition follows the route spacing rule.

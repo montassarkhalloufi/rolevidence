@@ -1,35 +1,36 @@
+import { ANALYSIS_HISTORY_PAGE_SIZE } from "../../../shared/limits.ts";
 import { z } from "zod";
 import { request, jsonRequest } from "../../shared/api/client.ts";
 import {
   Backup,
-  Dossier,
-  DossierPage,
+  CaseFile,
+  CaseFilePage,
   AnalysisPage,
   OfferSource,
-} from "../../../shared/dossiers.ts";
-import type { DossierDraftData } from "../../../shared/dossiers.ts";
+} from "../../../shared/case-files.ts";
+import type { CaseFileDraftData } from "../../../shared/case-files.ts";
 import type { ModelSelectionData } from "../../../shared/providers.ts";
 
 const root = "/api/v1/dossiers";
 
-export const dossierApi = {
+export const caseFileApi = {
   backup: async (id: string) =>
     Backup.parse(await request(`${root}/${id}/backup`)),
   restore: async (backup: unknown) =>
-    Dossier.parse(
+    CaseFile.parse(
       await request(`${root}/restore`, jsonRequest(Backup.parse(backup))),
     ),
   list: async (q: string, offset: number, signal: AbortSignal) =>
-    DossierPage.parse(
+    CaseFilePage.parse(
       await request(
         `${root}?${new URLSearchParams({ q, offset: String(offset) })}`,
         { signal },
       ),
     ),
   get: async (id: string, signal: AbortSignal) =>
-    Dossier.parse(await request(`${root}/${id}`, { signal })),
-  save: async (id: string, draft: DossierDraftData, revision: number) =>
-    Dossier.parse(
+    CaseFile.parse(await request(`${root}/${id}`, { signal })),
+  save: async (id: string, draft: CaseFileDraftData, revision: number) =>
+    CaseFile.parse(
       await request(`${root}/${id}`, {
         ...jsonRequest({ draft, revision }),
         method: "PUT",
@@ -42,9 +43,12 @@ export const dossierApi = {
     }),
   history: async (id: string, offset: number, signal: AbortSignal) =>
     AnalysisPage.parse(
-      await request(`${root}/${id}/analyses?offset=${offset}&limit=10`, {
-        signal,
-      }),
+      await request(
+        `${root}/${id}/analyses?offset=${offset}&limit=${ANALYSIS_HISTORY_PAGE_SIZE}`,
+        {
+          signal,
+        },
+      ),
     ),
   importOffer: async (
     url: string,

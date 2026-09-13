@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import type { DossierData } from "../../../shared/dossiers.ts";
+import type { CaseFileData } from "../../../shared/case-files.ts";
 import type { MemberDraft } from "./CampaignMemberInput.tsx";
 import { workflowApi } from "./api.ts";
 import { api } from "../../shared/api/client.ts";
@@ -12,7 +12,7 @@ export const emptyMember = (): MemberDraft => ({
 });
 
 export function useCampaignCreate(
-  base: DossierData,
+  base: CaseFileData,
   onOpen: (id: string) => void,
 ) {
   const [title, setTitle] = useState("");

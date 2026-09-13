@@ -1,6 +1,6 @@
 import { findingLabel } from "../finding-label.ts";
 import { OfferWarnings } from "./OfferWarnings.tsx";
-import { ClarificationAnswer } from "../../dossiers/ClarificationAnswer.tsx";
+import { ClarificationAnswer } from "../../case-files/ClarificationAnswer.tsx";
 import { AnalysisProgress } from "./AnalysisProgress.tsx";
 import { Alert } from "../../../shared/ui/alert.tsx";
 import {

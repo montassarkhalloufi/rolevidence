@@ -1,3 +1,4 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import type { StructuredModel } from "./structured.ts";
 import type { AnalysisExecution } from "../../application/execution.ts";
 import { AppError } from "../../application/errors.ts";
@@ -13,10 +14,7 @@ export function checkpointInvoker(
   const checkpoint = execution?.checkpoint;
 
   if (checkpoint && checkpoint.version !== CHECKPOINT_VERSION) {
-    throw new AppError(
-      "INVALID_INPUT",
-      "Cette analyse nécessite une nouvelle demande après la mise à jour.",
-    );
+    throw new AppError("INVALID_INPUT", errorMessages.incompatibleCheckpoint);
   }
 
   const responses = [...(checkpoint?.responses ?? [])];
@@ -34,7 +32,7 @@ export function checkpointInvoker(
       ) {
         throw new AppError(
           "INVALID_INPUT",
-          "Les étapes ont changé. Lancez une nouvelle analyse.",
+          errorMessages.changedCheckpointSteps,
         );
       }
 

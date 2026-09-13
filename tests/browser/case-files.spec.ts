@@ -4,7 +4,7 @@ import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { openDatabase } from "../../src/server/infrastructure/persistence/database.ts";
-import { createDossierRepository } from "../../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../../src/server/infrastructure/persistence/case-files.ts";
 import { createApp } from "../../src/server/infrastructure/http/app.ts";
 import { createAnalysisService } from "../../src/server/application/analyze.ts";
 import { createProviderRegistry } from "../../src/server/application/provider-registry.ts";
@@ -59,7 +59,7 @@ function backend(path: string) {
   const server = createApp({
     service,
     providers,
-    dossiers: createDossierRepository(db),
+    caseFiles: createCaseFileRepository(db),
     readDocuments: async () => ({
       profile: "Camille utilise TypeScript.",
       job: "TypeScript requis.",

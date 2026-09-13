@@ -33,7 +33,7 @@ export function useDocumentEditor(
 
       onChange({ ...documents, profile: text });
       setActive("profile");
-      setNotice(`${file.name} importé. Relisez le texte avant l’analyse.`);
+      setNotice(fr.documentImported(file.name));
     } catch (error) {
       setError(error instanceof Error ? error.message : fr.importError);
       setNotice(fr.previousContent);

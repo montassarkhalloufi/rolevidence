@@ -1,5 +1,6 @@
+import { findingSummary } from "../analysis/finding-summary.ts";
 import { findingLabel } from "../analysis/finding-label.ts";
-import type { SavedAnalysisData } from "../../../shared/dossiers.ts";
+import type { SavedAnalysisData } from "../../../shared/case-files.ts";
 import { fr } from "../../shared/i18n/fr.ts";
 
 function escape(value: string) {
@@ -24,7 +25,7 @@ export function renderReport(saved: SavedAnalysisData) {
       return `<section><h2>${escape(label)}</h2>${findings
         .map(
           (finding) =>
-            `<article><h3>${escape(finding.subject)}</h3><p>${escape(findingLabel(finding, label))}</p><p>${escape(finding.verification ? finding.explanation : finding.interpretation.justification)}</p>${finding.verification ? `<p><strong>${escape(fr.reviewEvidence)}</strong> · ${escape(finding.verification.code)}</p>` : ""}${[
+            `<article><h3>${escape(finding.subject)}</h3><p>${escape(findingLabel(finding, label))}</p><p>${escape(findingSummary(finding))}</p>${finding.verification ? `<details><summary>${escape(fr.originalModelReasoning)}</summary><p>${escape(finding.explanation)}</p><p>${escape(finding.interpretation.justification)}</p></details><p><strong>${escape(fr.reviewEvidence)}</strong> · ${escape(finding.verification.code)}</p>` : ""}${[
               [fr.profileSource, finding.profileQuote],
               [fr.clarificationSource, finding.clarificationQuote],
               [fr.preferencesSource, finding.preferencesQuote],

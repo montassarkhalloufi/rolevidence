@@ -1,16 +1,16 @@
 import { draftKey } from "./draft-key.ts";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { dossierApi } from "./api.ts";
+import { caseFileApi } from "./api.ts";
 import type {
-  DossierData,
-  DossierDraftData,
-} from "../../../shared/dossiers.ts";
+  CaseFileData,
+  CaseFileDraftData,
+} from "../../../shared/case-files.ts";
 
-export function useDossierEditor(initial: DossierData) {
+export function useCaseFileEditor(initial: CaseFileData) {
   const [saved, setSaved] = useState(initial);
 
-  const [draft, setDraft] = useState<DossierDraftData>({
+  const [draft, setDraft] = useState<CaseFileDraftData>({
     tracking: initial.tracking,
     title: initial.title,
     purpose: initial.purpose,
@@ -31,7 +31,7 @@ export function useDossierEditor(initial: DossierData) {
     });
 
   const save = useMutation({
-    mutationFn: () => dossierApi.save(saved.id, draft, saved.revision),
+    mutationFn: () => caseFileApi.save(saved.id, draft, saved.revision),
     onSuccess: setSaved,
   });
 

@@ -1,18 +1,19 @@
+import { ANALYSIS_HISTORY_PAGE_SIZE } from "../../../shared/limits.ts";
 import { BackupExport } from "../exports/BackupControls.tsx";
 import { renderReport } from "../exports/report.ts";
 import { downloadFile } from "../exports/download.ts";
 import { fr } from "../../shared/i18n/fr.ts";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { dossierApi } from "./api.ts";
+import { caseFileApi } from "./api.ts";
 import { workspaceFr as t } from "../../shared/i18n/workspace-fr.ts";
 import { Button } from "../../shared/ui/button.tsx";
 import { Card } from "../../shared/ui/card.tsx";
 import { CodeBlock } from "../../shared/ui/code-block.tsx";
 import { ResultsPanel } from "../analysis/components/ResultsPanel.tsx";
-import type { SavedAnalysisData } from "../../../shared/dossiers.ts";
+import type { SavedAnalysisData } from "../../../shared/case-files.ts";
 
-export function DossierHistory({
+export function CaseFileHistory({
   id,
   generation,
 }: {
@@ -25,7 +26,7 @@ export function DossierHistory({
 
   const history = useQuery({
     queryKey: ["history", id, generation, offset],
-    queryFn: ({ signal }) => dossierApi.history(id, offset, signal),
+    queryFn: ({ signal }) => caseFileApi.history(id, offset, signal),
   });
 
   return (
@@ -49,14 +50,19 @@ export function DossierHistory({
         <Button
           variant="ghost"
           disabled={offset === 0}
-          onClick={() => setOffset(Math.max(0, offset - 10))}
+          onClick={() =>
+            setOffset(Math.max(0, offset - ANALYSIS_HISTORY_PAGE_SIZE))
+          }
         >
           {t.previous}
         </Button>
         <Button
           variant="ghost"
-          disabled={!history.data || offset + 10 >= history.data.total}
-          onClick={() => setOffset(offset + 10)}
+          disabled={
+            !history.data ||
+            offset + ANALYSIS_HISTORY_PAGE_SIZE >= history.data.total
+          }
+          onClick={() => setOffset(offset + ANALYSIS_HISTORY_PAGE_SIZE)}
         >
           {t.next}
         </Button>

@@ -1,8 +1,9 @@
+import { RequestKey } from "../../../shared/request-key.ts";
 import type { Express } from "express";
 import { createHash } from "node:crypto";
-import { z } from "zod";
+import type { z } from "zod";
 import { OfferImportInput } from "../../../shared/offer-imports.ts";
-import { parseInput } from "../../adapters/http/dossier-routes.ts";
+import { parseInput } from "../../adapters/http/input.ts";
 import type { ProviderRegistry } from "../../application/provider-registry.ts";
 import type { createJobExtractor } from "../../adapters/models/job-extraction.ts";
 import { fetchPublicPage } from "./fetch-page.ts";
@@ -41,12 +42,10 @@ export function registerOfferRoutes(
   app.post("/api/v1/offer-imports", async (req, res) => {
     const input = parseInput(OfferImportInput, req.body);
 
-    const key = parseInput(
-      z.string().regex(/^[A-Za-z0-9_-]{16,128}$/),
-      req.get("Idempotency-Key"),
-    );
+    const key = parseInput(RequestKey, req.get("Idempotency-Key"));
 
     providers.resolve(input.selection);
+
     const hash = createHash("sha256")
       .update(JSON.stringify(input))
       .digest("hex");

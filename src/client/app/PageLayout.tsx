@@ -32,7 +32,7 @@ export function PageLayout({
       <main className="mx-auto max-w-[1440px] px-4 py-6 sm:px-8">
         <div className="mb-6">
           <p className="mb-3 text-xs text-muted-foreground">
-            {fr.dossiersLink}
+            {fr.caseFilesLink}
             {title && ` / ${title}`}
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">

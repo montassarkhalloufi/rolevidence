@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
-import { dossierApi } from "../dossiers/api.ts";
-import { Backup, BACKUP_MAX_BYTES } from "../../../shared/dossiers.ts";
+import { caseFileApi } from "../case-files/api.ts";
+import { Backup, BACKUP_MAX_BYTES } from "../../../shared/case-files.ts";
 import { fr } from "../../shared/i18n/fr.ts";
 import { Button } from "../../shared/ui/button.tsx";
 import { Input } from "../../shared/ui/input.tsx";
@@ -8,7 +8,7 @@ import { downloadFile } from "./download.ts";
 
 export function BackupExport({ id }: { id: string }) {
   const exportBackup = useMutation({
-    mutationFn: () => dossierApi.backup(id),
+    mutationFn: () => caseFileApi.backup(id),
     onSuccess: (backup) =>
       downloadFile(
         "rolevidence-backup.json",
@@ -45,9 +45,9 @@ export function BackupRestore({ onOpen }: { onOpen: (id: string) => void }) {
         throw new Error(fr.backupInvalid);
       }
 
-      return dossierApi.restore(parsed.data);
+      return caseFileApi.restore(parsed.data);
     },
-    onSuccess: (dossier) => onOpen(dossier.id),
+    onSuccess: (caseFile) => onOpen(caseFile.id),
   });
 
   return (

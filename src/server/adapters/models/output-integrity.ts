@@ -1,3 +1,4 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { AppError } from "../../application/errors.ts";
 
 function corruptedString(value: string) {
@@ -14,10 +15,7 @@ function corruptedString(value: string) {
 
 export function assertOutputIntegrity(value: unknown): void {
   if (typeof value === "string" && corruptedString(value)) {
-    throw new AppError(
-      "INVALID_OUTPUT",
-      "La réponse contient du texte corrompu. Aucune nouvelle analyse validée ; aucune nouvelle tentative automatique.",
-    );
+    throw new AppError("INVALID_OUTPUT", errorMessages.corruptModelOutput);
   }
 
   if (value && typeof value === "object") {

@@ -1,13 +1,15 @@
+import { comparisonInstructions } from "./prompts/complete-comparison.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import type { AnalysisProgress } from "../../application/execution.ts";
 import { z } from "zod";
 import type { StructuredModel } from "./structured.ts";
-import type { Selection } from "../../application/dossiers.ts";
+import type { Selection } from "../../application/case-files.ts";
 import type { DocumentsInput, Requirement } from "../../domain/models.ts";
-import type { SourceCatalog } from "../openai/sources.ts";
+import type { SourceCatalog } from "./sources.ts";
 import type { ModelMetadata } from "../../application/analyze.ts";
-import { createExtractionSchema } from "../openai/extraction.ts";
-import { createMessages } from "../openai/messages.ts";
-import { mapExtraction } from "../openai/map-extraction.ts";
+import { createExtractionSchema } from "./extraction.ts";
+import { createMessages } from "./messages.ts";
+import { mapExtraction } from "./map-extraction.ts";
 import { AppError } from "../../application/errors.ts";
 
 export const COMPARISON_VERSION = "evidence-v6.1-qualified-conclusions";
@@ -25,10 +27,7 @@ export async function compareComplete(
   onProgress?: (value: AnalysisProgress) => void,
 ) {
   if (catalog.job.length > COMPARISON_BATCH_SIZE * MAX_COMPARISON_BATCHES) {
-    throw new AppError(
-      "INVALID_INPUT",
-      "L’offre contient trop de passages. Regroupez les lignes avant de relancer l’analyse.",
-    );
+    throw new AppError("INVALID_INPUT", errorMessages.tooManyCriteria);
   }
 
   const requirements: Requirement[] = [];
@@ -76,8 +75,7 @@ export async function compareComplete(
           ...createMessages(documents, batch.job),
           {
             role: "user",
-            content:
-              "Si un passage porte criterion, évalue UNIQUEMENT ce critère atomique, une seule conclusion, en utilisant text et sourceQuotes comme preuves. Ne réextrais pas les autres critères de ce paragraphe. Réponds dans chaque clé J demandée avec toutes ses exigences atomiques. Ne regroupe pas plusieurs technologies dans une conclusion. Chaque clé exige au moins une analyse ; un fait non établi reste inconnu. Les autres passages de l’offre peuvent être utiles au contexte mais seules les clés de ce lot sont à évaluer.",
+            content: comparisonInstructions,
           },
         ],
       },

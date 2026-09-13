@@ -154,10 +154,10 @@ await test("provider completion limits are rejected even when the partial JSON p
 
 await test("the full evidence schema closes nested nullable objects for OpenAI strict output", async () => {
   const { createExtractionSchema } =
-    await import("../src/server/adapters/openai/extraction.ts");
+    await import("../src/server/adapters/models/extraction.ts");
 
   const { createSourceCatalog } =
-    await import("../src/server/adapters/openai/sources.ts");
+    await import("../src/server/adapters/models/sources.ts");
 
   const schema = createExtractionSchema(
     createSourceCatalog({

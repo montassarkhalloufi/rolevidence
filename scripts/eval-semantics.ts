@@ -1,5 +1,5 @@
 import { createOpenAITransport } from "../src/server/infrastructure/openai-client.ts";
-// Évaluation LLM réelle et payante, séparée de npm test. Données fictives seulement.
+// Real paid model evaluation, separate from npm test. Fictional data only.
 import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { z } from "zod";
 import { passesEvaluation } from "./lib/evaluation.ts";

@@ -1,25 +1,23 @@
+import { errorMessages } from "../application/locales/errors-fr.ts";
 import OpenAI from "openai";
 import { AppError } from "../application/errors.ts";
 import type { ResponseTransport } from "../adapters/openai/transport.ts";
-import { MODEL_TIMEOUT_MS } from "../adapters/openai/request.ts";
+import { MODEL_TIMEOUT_MS } from "../adapters/models/settings.ts";
 
 function transportError(error: unknown): AppError {
   if (error instanceof OpenAI.APIConnectionTimeoutError) {
-    return new AppError(
-      "TIMEOUT",
-      "Le modèle a dépassé le délai de 120 secondes.",
-    );
+    return new AppError("TIMEOUT", errorMessages.openaiTimeout);
   }
 
   if (error instanceof OpenAI.APIConnectionError) {
-    return new AppError("CONNECTION", "Connexion à OpenAI impossible.");
+    return new AppError("CONNECTION", errorMessages.openaiConnection);
   }
 
   if (error instanceof OpenAI.APIError && error.status === 429) {
-    return new AppError("PROVIDER_ERROR", "Limite ou quota OpenAI atteint.");
+    return new AppError("PROVIDER_ERROR", errorMessages.openaiQuota);
   }
 
-  return new AppError("PROVIDER_ERROR", "L’appel au modèle a échoué.");
+  return new AppError("PROVIDER_ERROR", errorMessages.openaiFailed);
 }
 
 export function createOpenAITransport(
@@ -31,10 +29,7 @@ export function createOpenAITransport(
 
   return async (request, signal) => {
     if (!client) {
-      throw new AppError(
-        "NOT_CONFIGURED",
-        "Le fournisseur IA n’est pas configuré.",
-      );
+      throw new AppError("NOT_CONFIGURED", errorMessages.openaiUnconfigured);
     }
 
     try {

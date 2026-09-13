@@ -1,13 +1,15 @@
+import { runtimeMessages } from "../../application/locales/runtime-fr.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { MAX_COMPARISON_BATCHES } from "../../adapters/models/complete-comparison.ts";
 import type { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
 import type { JobRepository, JobRecord } from "../../application/jobs.ts";
 import { AnalysisJob } from "../../../shared/workflows.ts";
-import { Dossier } from "../../../shared/dossiers.ts";
+import { CaseFile } from "../../../shared/case-files.ts";
 import { AppError } from "../../application/errors.ts";
 
 const StoredJob = AnalysisJob.extend({
-  snapshot: Dossier,
+  snapshot: CaseFile,
   checkpoint: z
     .object({
       version: z.string(),
@@ -48,17 +50,17 @@ export function createJobRepository(db: DatabaseSync): JobRepository {
         .get(id);
 
       if (!row) {
-        throw new AppError("NOT_FOUND", "Analyse introuvable.");
+        throw new AppError("NOT_FOUND", errorMessages.jobMissing);
       }
 
       return read(row);
     },
-    latest(dossierId) {
+    latest(caseFileId) {
       const row = db
         .prepare(
-          "SELECT payload FROM analysis_jobs WHERE dossier_id=? ORDER BY created_at DESC,id DESC LIMIT 1",
+          "SELECT payload FROM analysis_jobs WHERE dossier_id=? ORDER BY json_extract(payload,'$.updatedAt') DESC,created_at DESC,id DESC LIMIT 1",
         )
-        .get(dossierId);
+        .get(caseFileId);
 
       return row ? read(row) : null;
     },
@@ -80,7 +82,7 @@ export function createJobRepository(db: DatabaseSync): JobRepository {
       } catch {
         throw new AppError(
           "STORAGE_ERROR",
-          "Impossible d’enregistrer la progression locale.",
+          errorMessages.progressStorageFailed,
         );
       }
     },
@@ -93,8 +95,7 @@ export function createJobRepository(db: DatabaseSync): JobRepository {
         const job = read(row);
 
         job.status = "interrupted";
-        job.error =
-          "Le serveur a été arrêté. Reprenez explicitement les étapes restantes.";
+        job.error = runtimeMessages.jobInterrupted;
         db.prepare(
           "UPDATE analysis_jobs SET status=?,payload=? WHERE id=?",
         ).run(job.status, JSON.stringify(job), job.id);

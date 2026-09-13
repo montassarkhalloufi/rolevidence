@@ -7,3 +7,39 @@ export const MAX_ANNUAL_SALARY_EUR = 1_000_000;
 export const MIN_HYBRID_REMOTE_DAYS = 1;
 
 export const MAX_HYBRID_REMOTE_DAYS = 4;
+
+export const TITLE_MAX_CHARACTERS = 120;
+
+export const MODEL_NAME_MAX_CHARACTERS = 120;
+
+export const SEARCH_MAX_CHARACTERS = 120;
+
+export const REVIEWED_QUOTES_MAX_COUNT = 128;
+
+export const PAGE_MAX_OFFSET = 100_000;
+
+export const PAGE_MAX_SIZE = 50;
+
+export const CASE_FILE_PAGE_SIZE = 20;
+
+export const CAMPAIGN_PAGE_SIZE = 20;
+
+export const ANALYSIS_HISTORY_PAGE_SIZE = 10;
+
+export const JOB_POLL_INTERVAL_MS = 750;
+
+export const OFFER_FIELD_MAX_CHARACTERS = 4000;
+
+export const OFFER_MAX_FIELDS = 40;
+
+export const URL_MAX_CHARACTERS = 2048;
+
+export const IDEMPOTENCY_KEY_MIN_CHARACTERS = 16;
+
+export const IDEMPOTENCY_KEY_MAX_CHARACTERS = 128;
+
+export const MAX_PDF_PAGES = 20;
+
+export const EXTRACTION_TIMEOUT_MS = 15_000;
+
+export const EXTRACTION_HEAP_MEGABYTES = 128;

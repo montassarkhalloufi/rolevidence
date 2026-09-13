@@ -12,3 +12,9 @@ export const LOCAL_CLIENT_HEADER = "X-Rolevidence";
 export const LOCAL_CLIENT_VALUE = "1";
 
 export const IDEMPOTENCY_HEADER = "Idempotency-Key";
+
+export const ANALYSIS_BODY_LIMIT = "160kb";
+
+export const CASE_FILE_BODY_LIMIT = "2mb";
+
+export const BACKUP_BODY_LIMIT = "8mb";

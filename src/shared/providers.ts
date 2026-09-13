@@ -1,9 +1,10 @@
+import { MODEL_NAME_MAX_CHARACTERS } from "./limits.ts";
 import { z } from "zod";
 
 export const ModelSelection = z
   .object({
     provider: z.enum(["openai", "anthropic"]),
-    model: z.string().min(1).max(120),
+    model: z.string().min(1).max(MODEL_NAME_MAX_CHARACTERS),
   })
   .strict();
 

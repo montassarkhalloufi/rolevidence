@@ -1,6 +1,10 @@
+import {
+  TITLE_MAX_CHARACTERS,
+  CASE_FILE_PAGE_SIZE,
+} from "../../../shared/limits.ts";
 import { CampaignList } from "../workflows/CampaignList.tsx";
 import { BackupRestore } from "../exports/BackupControls.tsx";
-import { useDossierHome } from "./useDossierHome.ts";
+import { useCaseFileHome } from "./useCaseFileHome.ts";
 import type { BootstrapData } from "../../../shared/analysis.ts";
 import { workspaceFr as t } from "../../shared/i18n/workspace-fr.ts";
 import { PageLayout } from "../../app/PageLayout.tsx";
@@ -8,7 +12,7 @@ import { Card } from "../../shared/ui/card.tsx";
 import { Input } from "../../shared/ui/input.tsx";
 import { Button } from "../../shared/ui/button.tsx";
 
-export function DossierHome({
+export function CaseFileHome({
   bootstrap,
   onOpen,
   onCampaign,
@@ -17,7 +21,7 @@ export function DossierHome({
   bootstrap: BootstrapData;
   onOpen: (id: string) => void;
 }) {
-  const state = useDossierHome(bootstrap, onOpen);
+  const state = useCaseFileHome(bootstrap, onOpen);
 
   const { query, setQuery, setOffset, title, setTitle, list, create, remove } =
     state;
@@ -40,7 +44,7 @@ export function DossierHome({
             {t.name}
             <Input
               required
-              maxLength={120}
+              maxLength={TITLE_MAX_CHARACTERS}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
             />
@@ -53,7 +57,7 @@ export function DossierHome({
           {t.search}
           <Input
             value={query}
-            maxLength={120}
+            maxLength={TITLE_MAX_CHARACTERS}
             onChange={(event) => {
               setQuery(event.target.value);
               setOffset(0);
@@ -64,18 +68,18 @@ export function DossierHome({
         {list.isPending && <p role="status">{t.loading}</p>}
         {list.data?.items.length === 0 && <p>{t.empty}</p>}
         <BackupRestore onOpen={onOpen} />
-        <DossierList state={state} onOpen={onOpen} />
+        <CaseFileList state={state} onOpen={onOpen} />
       </Card>
       {bootstrap.workflowsEnabled && <CampaignList onOpen={onCampaign} />}
     </PageLayout>
   );
 }
 
-function DossierList({
+function CaseFileList({
   state,
   onOpen,
 }: {
-  state: ReturnType<typeof useDossierHome>;
+  state: ReturnType<typeof useCaseFileHome>;
   onOpen: (id: string) => void;
 }) {
   const { list, offset, setOffset, removing, setRemoving, remove } = state;
@@ -123,14 +127,16 @@ function DossierList({
         <Button
           variant="outline"
           disabled={offset === 0}
-          onClick={() => setOffset(Math.max(0, offset - 20))}
+          onClick={() => setOffset(Math.max(0, offset - CASE_FILE_PAGE_SIZE))}
         >
           {t.previous}
         </Button>
         <Button
           variant="outline"
-          disabled={!list.data || offset + 20 >= list.data.total}
-          onClick={() => setOffset(offset + 20)}
+          disabled={
+            !list.data || offset + CASE_FILE_PAGE_SIZE >= list.data.total
+          }
+          onClick={() => setOffset(offset + CASE_FILE_PAGE_SIZE)}
         >
           {t.next}
         </Button>

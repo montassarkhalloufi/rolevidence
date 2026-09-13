@@ -1,11 +1,12 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { Documents, emptyPreferences } from "../../../shared/analysis.ts";
 import type { AnalysisInputData } from "../../../shared/analysis.ts";
-import type { DossierRepository } from "../../application/dossiers.ts";
+import type { CaseFileRepository } from "../../application/case-files.ts";
 import { AppError } from "../../application/errors.ts";
 
 export function analysisSnapshot(
   input: AnalysisInputData,
-  repository?: DossierRepository,
+  repository?: CaseFileRepository,
 ) {
   if (!input.dossierId) {
     return undefined;
@@ -14,7 +15,7 @@ export function analysisSnapshot(
   const saved = repository?.get(input.dossierId);
 
   if (!saved) {
-    throw new AppError("NOT_FOUND", "Dossier introuvable.");
+    throw new AppError("NOT_FOUND", errorMessages.caseFileMissing);
   }
 
   const documents = Documents.parse(saved.documents);
@@ -42,7 +43,7 @@ export function analysisSnapshot(
   ) {
     throw new AppError(
       "IDEMPOTENCY_CONFLICT",
-      "Enregistrez le dossier avant de lancer l’analyse.",
+      errorMessages.unsavedAnalysisInput,
     );
   }
 

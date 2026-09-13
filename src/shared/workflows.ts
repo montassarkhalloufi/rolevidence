@@ -1,5 +1,6 @@
+import { DOCUMENT_MAX_CHARACTERS, TITLE_MAX_CHARACTERS } from "./limits.ts";
 import { z } from "zod";
-import { Dossier, DossierDraft, SavedAnalysis } from "./dossiers.ts";
+import { CaseFile, CaseFileDraft, SavedAnalysis } from "./case-files.ts";
 
 export const CAMPAIGN_MAX_MEMBERS = 10;
 
@@ -7,15 +8,15 @@ export { Tracking, TRACKING_MAX_CHARACTERS } from "./tracking.ts";
 
 export const CampaignInput = z
   .object({
-    title: z.string().trim().min(1).max(120),
+    title: z.string().trim().min(1).max(TITLE_MAX_CHARACTERS),
     baseId: z.uuid(),
     baseRevision: z.number().int().positive(),
     members: z
       .array(
         z
           .object({
-            title: z.string().trim().min(1).max(120),
-            text: z.string().trim().min(1).max(16000),
+            title: z.string().trim().min(1).max(TITLE_MAX_CHARACTERS),
+            text: z.string().trim().min(1).max(DOCUMENT_MAX_CHARACTERS),
           })
           .strict(),
       )
@@ -27,10 +28,10 @@ export const CampaignInput = z
 export const Campaign = z.object({
   id: z.uuid(),
   title: z.string(),
-  purpose: DossierDraft.shape.purpose,
+  purpose: CaseFileDraft.shape.purpose,
   createdAt: z.iso.datetime(),
   members: z.array(
-    z.object({ dossier: Dossier, latest: SavedAnalysis.nullable() }),
+    z.object({ dossier: CaseFile, latest: SavedAnalysis.nullable() }),
   ),
 });
 

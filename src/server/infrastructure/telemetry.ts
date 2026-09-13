@@ -3,6 +3,10 @@ import { Client } from "langsmith";
 import type { StructuredModel } from "../adapters/models/structured.ts";
 import { AppError } from "../application/errors.ts";
 
+const TELEMETRY_TIMEOUT_MS = 2000;
+
+const MAX_PENDING_TELEMETRY_EVENTS = 10;
+
 export type TechnicalEvent = {
   provider: string;
   model: string;
@@ -60,7 +64,7 @@ export function createLangSmithSink(
 ): TelemetrySink {
   const client = new Client({
     apiKey,
-    timeout_ms: 2000,
+    timeout_ms: TELEMETRY_TIMEOUT_MS,
     autoBatchTracing: false,
     callerOptions: { maxRetries: 0 },
     hideInputs: true,
@@ -70,7 +74,7 @@ export function createLangSmithSink(
   let pending = 0;
 
   return async (event) => {
-    if (pending >= 10) {
+    if (pending >= MAX_PENDING_TELEMETRY_EVENTS) {
       return;
     }
 
