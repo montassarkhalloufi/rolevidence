@@ -24,7 +24,7 @@ export type OfferProvenance = {
   }[];
 };
 
-export type DossierDraft = {
+export type CaseFileDraft = {
   tracking?:
     | {
         status: "preparing" | "applied" | "interview" | "offer" | "closed";
@@ -42,7 +42,7 @@ export type DossierDraft = {
   offerSource: OfferProvenance | null;
 };
 
-export type Dossier = DossierDraft & {
+export type CaseFile = CaseFileDraft & {
   id: string;
   revision: number;
   createdAt: string;
@@ -53,12 +53,12 @@ export type SavedAnalysis = {
   id: string;
   dossierId: string;
   createdAt: string;
-  snapshot: Dossier;
+  snapshot: CaseFile;
   result: AnalysisOutput;
 };
 
-export type DossierSummary = Pick<
-  Dossier,
+export type CaseFileSummary = Pick<
+  CaseFile,
   "id" | "title" | "purpose" | "revision" | "createdAt" | "updatedAt"
 >;
 
@@ -69,22 +69,22 @@ export type Page<T> = {
   limit: number;
 };
 
-export type DossierBackup = {
+export type CaseFileBackup = {
   format: "rolevidence-backup-v1";
-  dossier: Dossier;
+  dossier: CaseFile;
   analyses: SavedAnalysis[];
 };
 
-export interface DossierRepository {
-  backup(id: string): DossierBackup;
-  restore(backup: DossierBackup): Dossier;
-  list(query: string, offset: number, limit: number): Page<DossierSummary>;
-  get(id: string): Dossier;
-  save(id: string, draft: DossierDraft, revision: number): Dossier;
+export interface CaseFileRepository {
+  backup(id: string): CaseFileBackup;
+  restore(backup: CaseFileBackup): CaseFile;
+  list(query: string, offset: number, limit: number): Page<CaseFileSummary>;
+  get(id: string): CaseFile;
+  save(id: string, draft: CaseFileDraft, revision: number): CaseFile;
   delete(id: string, revision: number): void;
   analyses(id: string, offset: number, limit: number): Page<SavedAnalysis>;
   append(
-    snapshot: Dossier,
+    snapshot: CaseFile,
     result: AnalysisOutput,
     requestKey: string,
   ): SavedAnalysis;

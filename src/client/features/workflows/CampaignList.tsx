@@ -1,3 +1,4 @@
+import { CAMPAIGN_PAGE_SIZE } from "../../../shared/limits.ts";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { workflowApi } from "./api.ts";
@@ -34,14 +35,16 @@ export function CampaignList({ onOpen }: { onOpen: (id: string) => void }) {
         <Button
           variant="outline"
           disabled={offset === 0}
-          onClick={() => setOffset(Math.max(0, offset - 20))}
+          onClick={() => setOffset(Math.max(0, offset - CAMPAIGN_PAGE_SIZE))}
         >
           {t.previous}
         </Button>
         <Button
           variant="outline"
-          disabled={!query.data || offset + 20 >= query.data.total}
-          onClick={() => setOffset(offset + 20)}
+          disabled={
+            !query.data || offset + CAMPAIGN_PAGE_SIZE >= query.data.total
+          }
+          onClick={() => setOffset(offset + CAMPAIGN_PAGE_SIZE)}
         >
           {t.next}
         </Button>

@@ -18,7 +18,7 @@ const requirement: ExtractionResult["requirements"][number] = {
   preferencesQuote: null,
 };
 
-await test("Une interprétation indirecte reste inconnue même avec deux citations exactes", () => {
+await test("Indirect interpretation remains unknown even with two exact quotations", () => {
   const result = classifyRequirements(
     { requirements: [requirement] },
     { profile: "API avec NestJS.", job: "Maîtrise Node.js." },
@@ -31,7 +31,7 @@ await test("Une interprétation indirecte reste inconnue même avec deux citatio
     "indirect_evidence",
   );
 });
-await test("Citation JavaScript présente ne suffit pas : la relation sémantique pilote le classement", () => {
+await test("A JavaScript quotation alone is insufficient: the semantic relation determines classification", () => {
   const result = classifyRequirements(
     {
       requirements: [

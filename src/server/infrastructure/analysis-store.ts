@@ -1,3 +1,4 @@
+import { errorMessages } from "../application/locales/errors-fr.ts";
 import type { AnalysisOutput } from "../application/analyze.ts";
 import type {
   AnalysisEntry,
@@ -19,10 +20,7 @@ export function createMemoryAnalysisStore<T = AnalysisOutput>(
     get: (key) => entries.get(key),
     set: (key, entry) => {
       if (entries.size >= capacity) {
-        throw new AppError(
-          "CAPACITY",
-          "Capacité temporairement atteinte. Réessayez plus tard.",
-        );
+        throw new AppError("CAPACITY", errorMessages.outcomeCapacity);
       }
 
       entries.set(key, entry);

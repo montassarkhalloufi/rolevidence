@@ -23,3 +23,16 @@ This is not exactly-once execution or provider-side deduplication. Restart, TTL 
 Tests cover simultaneous replay, conflict, failures, expiry, capacity and rejection before invocation. See [API contract](../API.md).
 
 Sources: [HTTP semantics](https://www.rfc-editor.org/rfc/rfc9110.html), [Problem Details](https://www.rfc-editor.org/rfc/rfc9457.html). The key header is our explicitly documented application contract, not a claim that POST is safe or standardized exactly-once.
+
+## Amendment — Local host validation and persistence identity (2026-09-13)
+
+Validate the HTTP Host against exact loopback names before all API and static
+routes. A mutation header and absent CORS alone do not protect against untrusted
+hostnames resolving to loopback. Foreign hosts receive safe 403 problem details.
+
+The temporary analysis cache owns an internal execution-specific persistence UUID.
+SQLite deduplicates persistence retries by that UUID, not the expiring external
+request key. After cache expiry/restart, a newly executed result gets its own
+history entry. Durable jobs retain their existing stable job-derived keys.
+Verify foreign-host rejection, replay, fresh-cache reuse and storage-retry tests
+with fictional transports; no live model calls are required for these semantics.

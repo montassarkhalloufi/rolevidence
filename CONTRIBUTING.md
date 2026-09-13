@@ -39,9 +39,9 @@ Public hosting, authentication/authorization, durable jobs, retention policy, re
 
 Run `npm run lint:fix` for safe lint fixes and `npm run format` for formatting. CI runs checks only; it never silently edits a pull request. Generated OpenAPI and raw document fixtures are intentionally excluded from Prettier; OpenAPI has its own drift check.
 
-ESLint owns correctness rules rather than indentation: strict equality, explicit braces, type-only imports, no unused values/explicit any/non-null assertions, no nested ternaries, typed promise handling, Hooks and accessibility rules. Production functions have an initial 100-line ceiling excluding blank lines/comments, complexity 10 and nesting 3. Test scenarios and build/evaluation scripts are exempt from the three size/complexity thresholds, but retain correctness and formatting checks. Review responsibility boundaries even when metrics pass.
+ESLint owns correctness rules rather than indentation: strict equality, explicit braces, type-only imports, no unused values/explicit any/non-null assertions, no nested ternaries, typed promise handling, Hooks and accessibility rules. Production functions have a 100-line ceiling excluding blank lines/comments, complexity 10 and nesting 3. Production modules have a 300-line ceiling excluding blank lines/comments; split by responsibility before approaching it. Test scenarios and build/evaluation scripts are exempt from the three size/complexity thresholds, but retain correctness and formatting checks. Review responsibility boundaries even when metrics pass.
 
-Blank-line separation is enforced by `@stylistic/padding-line-between-statements`: after the import group and declarations, around functions/types/classes/exports and block-like statements, and before returns. Imports remain grouped. `npm run lint:fix` inserts these separators; Prettier then formats and preserves them. There is no Prettier option that infers these structural separators on its own.
+Blank-line separation is enforced by `@stylistic/padding-line-between-statements`: after the import group and declarations, around functions/types/classes/exports and block-like statements, and before returns. Imports remain grouped. HTTP route modules and the main HTTP composition also separate expression statements from the next logical statement, including route registrations. `npm run lint:fix` inserts these separators; Prettier then formats and preserves them. There is no Prettier option that infers these structural separators on its own.
 
 ## Real API reliability observations
 
@@ -54,3 +54,19 @@ Results are checkpointed under timestamped `artifacts/evaluations/api-*/observat
 Start from a passing main branch. Use a short-lived branch for one coherent change and a pull request describing its user-visible behavior and verification. Prefer focused commits such as `feat(profile): save candidate preferences` or `fix(analysis): preserve unknown requirements`. Review staged files for secrets and personal data before committing. Keep the lockfile and fictional fixtures in Git; runtime files stay ignored.
 
 The initial commit records the existing audited baseline honestly. Do not invent historical commits or rewrite published history to simulate incremental development. Tag releases, update CHANGELOG.md and distinguish implemented features from plans. CI must pass before merging; configure repository rules separately from the workflow file.
+
+## Source vocabulary and declarative transformations
+
+Use CaseFile/caseFile/case-files for source types, local variables, components and
+module paths. Historical dossier URL paths, DTO property keys, OpenAPI component
+names and SQLite identifiers are compatibility boundaries; map them explicitly
+instead of renaming persisted data. French product copy belongs in locale
+catalogues, while model prompts and document grammar expressions are intentional
+language data. Keep engineering comments in English.
+
+Use shared limits for repeated document, title, model, pagination and import
+policies. Ordinary counters, standard HTTP status codes and presentation geometry
+do not need artificial constants. Prefer declarative pure transformations, ESM,
+const, object shorthand/spread and async/await. Preserve explicit sequential
+execution for provider calls, checkpoints and transactions. Do not replace a
+bounded sequential loop with parallel paid work as a syntax-only cleanup.

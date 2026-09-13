@@ -1,5 +1,5 @@
-// Tolérance typographique uniquement : aucun rapprochement flou, aucune
-// suppression de mots, nombres ou négations. Le résultat est un extrait original.
+// Typographic tolerance only: no fuzzy matching or removal of words, numbers
+// or negations. The result is an original source excerpt.
 function canonicalCharacter(character: string): string {
   return character
     .normalize("NFKC")
@@ -54,7 +54,7 @@ export function resolveQuote(
 
   const indexed = indexedText(source);
 
-  // Tenter aussi la citation intacte, qui peut légitimement contenir des guillemets.
+  // Also try the intact quotation, which may legitimately contain quote marks.
   for (const candidate of [quote.trim(), stripped]) {
     const normalized = indexedText(candidate).normalized.trim();
 

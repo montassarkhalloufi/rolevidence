@@ -1,43 +1,44 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
-import type { DossierBackup, Dossier } from "../../application/dossiers.ts";
+import type { CaseFileBackup, CaseFile } from "../../application/case-files.ts";
 import {
   Backup,
   BACKUP_MAX_ANALYSES,
   BACKUP_MAX_BYTES,
   SavedAnalysis,
-} from "../../../shared/dossiers.ts";
+} from "../../../shared/case-files.ts";
 import { AppError } from "../../application/errors.ts";
 
-export function restoreBackup(db: DatabaseSync, backup: DossierBackup) {
+export function restoreBackup(db: DatabaseSync, backup: CaseFileBackup) {
   const validated = Backup.parse(backup);
 
-  const dossierId = randomUUID();
+  const caseFileId = randomUUID();
 
-  const dossier = { ...validated.dossier, id: dossierId };
+  const caseFile = { ...validated.dossier, id: caseFileId };
 
   db.exec("BEGIN IMMEDIATE");
   try {
     db.prepare("INSERT INTO dossiers VALUES(?,?,?,?,?,?,?)").run(
-      dossier.id,
-      dossier.title,
-      dossier.purpose,
-      dossier.revision,
-      dossier.createdAt,
-      dossier.updatedAt,
-      JSON.stringify(dossier),
+      caseFile.id,
+      caseFile.title,
+      caseFile.purpose,
+      caseFile.revision,
+      caseFile.createdAt,
+      caseFile.updatedAt,
+      JSON.stringify(caseFile),
     );
     for (const analysis of validated.analyses) {
       const restored = {
         ...analysis,
         id: randomUUID(),
-        dossierId,
-        snapshot: { ...analysis.snapshot, id: dossierId },
+        dossierId: caseFileId,
+        snapshot: { ...analysis.snapshot, id: caseFileId },
       };
 
       db.prepare("INSERT INTO analyses VALUES(?,?,?,?,?)").run(
         restored.id,
-        dossierId,
+        caseFileId,
         restored.createdAt,
         `restore-${randomUUID()}`,
         JSON.stringify(restored),
@@ -46,43 +47,37 @@ export function restoreBackup(db: DatabaseSync, backup: DossierBackup) {
 
     db.exec("COMMIT");
 
-    return dossier;
+    return caseFile;
   } catch {
     db.exec("ROLLBACK");
-    throw new AppError(
-      "STORAGE_ERROR",
-      "La restauration a échoué. Aucun dossier n’a été modifié.",
-    );
+    throw new AppError("STORAGE_ERROR", errorMessages.restoreFailed);
   }
 }
 
 export function exportBackup(
   db: DatabaseSync,
-  dossier: Dossier,
-): DossierBackup {
+  caseFile: CaseFile,
+): CaseFileBackup {
   const rows = db
     .prepare(
       "SELECT payload FROM analyses WHERE dossier_id=? ORDER BY created_at,id LIMIT ?",
     )
-    .all(dossier.id, BACKUP_MAX_ANALYSES + 1);
+    .all(caseFile.id, BACKUP_MAX_ANALYSES + 1);
 
   if (rows.length > BACKUP_MAX_ANALYSES) {
-    throw new AppError(
-      "FILE_TOO_LARGE",
-      "Ce dossier dépasse la limite d’export. Sauvegardez SQLite avec l’application arrêtée.",
-    );
+    throw new AppError("FILE_TOO_LARGE", errorMessages.historyTooLarge);
   }
 
   const backup = Backup.parse({
     format: "rolevidence-backup-v1",
-    dossier,
+    dossier: caseFile,
     analyses: rows.map((row) =>
       SavedAnalysis.parse(JSON.parse(String(row.payload)) as unknown),
     ),
   });
 
   if (Buffer.byteLength(JSON.stringify(backup)) > BACKUP_MAX_BYTES) {
-    throw new AppError("FILE_TOO_LARGE", "Sauvegarde trop volumineuse.");
+    throw new AppError("FILE_TOO_LARGE", errorMessages.backupTooLarge);
   }
 
   return backup;

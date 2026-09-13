@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
-import type { useDossierEditor } from "./useDossierEditor.ts";
+import type { useCaseFileEditor } from "./useCaseFileEditor.ts";
 import type { useAnalysis } from "../analysis/hooks/useAnalysis.ts";
 
 export function useSavedAnalysis(
-  editor: ReturnType<typeof useDossierEditor>,
+  editor: ReturnType<typeof useCaseFileEditor>,
   analysis: ReturnType<typeof useAnalysis>,
 ) {
   const [submitting, setSubmitting] = useState(false);

@@ -1,9 +1,12 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { load } from "cheerio";
 import { DOCUMENT_MAX_CHARACTERS } from "../../../shared/limits.ts";
 import { AppError } from "../../application/errors.ts";
 
+const MAX_JOB_POSTING_DEPTH = 8;
+
 function postings(value: unknown, depth = 0): Record<string, unknown>[] {
-  if (depth > 8 || !value || typeof value !== "object") {
+  if (depth > MAX_JOB_POSTING_DEPTH || !value || typeof value !== "object") {
     return [];
   }
 
@@ -49,10 +52,7 @@ export function extractJobText(html: string) {
     }
   });
   if (jobs.length > 1) {
-    throw new AppError(
-      "IMPORT_FAILED",
-      "Cette page contient plusieurs offres. Ouvrez le lien d’une offre précise.",
-    );
+    throw new AppError("IMPORT_FAILED", errorMessages.ambiguousJobPage);
   }
 
   let text: string;
@@ -102,10 +102,7 @@ export function extractJobText(html: string) {
   }
 
   if (text.length < 40 || text.length > DOCUMENT_MAX_CHARACTERS) {
-    throw new AppError(
-      "IMPORT_FAILED",
-      "Contenu absent ou trop long. Collez uniquement le texte de l’offre.",
-    );
+    throw new AppError("IMPORT_FAILED", errorMessages.invalidJobPage);
   }
 
   return text;

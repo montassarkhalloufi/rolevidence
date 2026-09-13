@@ -5,13 +5,13 @@ import { createApp } from "../src/server/infrastructure/http/app.ts";
 import { createAnalysisService } from "../src/server/application/analyze.ts";
 import { createProviderRegistry } from "../src/server/application/provider-registry.ts";
 import { openDatabase } from "../src/server/infrastructure/persistence/database.ts";
-import { createDossierRepository } from "../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../src/server/infrastructure/persistence/case-files.ts";
 import { emptyPreferences } from "../src/shared/analysis.ts";
 
 await test("HTTP dossiers, optimistic saves, provider selection and storage recovery without another paid call", async (t) => {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
   let calls = 0;
 
@@ -51,7 +51,7 @@ await test("HTTP dossiers, optimistic saves, provider selection and storage reco
   const server = createApp({
     service,
     providers,
-    dossiers,
+    caseFiles,
     model: "fake",
     configured: true,
     readDocuments: async () => documents,
@@ -143,7 +143,7 @@ await test("HTTP dossiers, optimistic saves, provider selection and storage reco
   assert.equal(recovered.status, 200);
   assert.equal(recovered.headers.get("Idempotency-Replayed"), "true");
   assert.equal(calls, 1);
-  assert.equal(dossiers.analyses(id, 0, 10).total, 1);
+  assert.equal(caseFiles.analyses(id, 0, 10).total, 1);
   assert.equal(
     (await send("/analyses", "POST", { ...input, profile: "Changed" }, key))
       .status,
@@ -152,7 +152,7 @@ await test("HTTP dossiers, optimistic saves, provider selection and storage reco
   const replay = await send("/analyses", "POST", input, key);
 
   assert.equal(replay.status, 200);
-  assert.equal(dossiers.analyses(id, 0, 10).total, 1);
+  assert.equal(caseFiles.analyses(id, 0, 10).total, 1);
   assert.equal(
     (await send(`/dossiers/${id}`, "DELETE", { revision: 1 })).status,
     200,

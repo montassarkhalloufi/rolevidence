@@ -1,3 +1,9 @@
+import {
+  ANALYSIS_BODY_LIMIT,
+  CASE_FILE_BODY_LIMIT,
+  BACKUP_BODY_LIMIT,
+} from "../../../shared/api-config.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import type { Express } from "express";
 import { registerWorkflowRoutes } from "../../adapters/http/workflow-routes.ts";
 import type { WorkflowServices } from "../../adapters/http/workflow-routes.ts";
@@ -5,11 +11,15 @@ import type { SavedExecution } from "../../adapters/http/analysis-controller.ts"
 import { registerOfferRoutes } from "../offers/routes.ts";
 import type { createJobExtractor } from "../../adapters/models/job-extraction.ts";
 import type { ProviderRegistry } from "../../application/provider-registry.ts";
-import type { DossierRepository } from "../../application/dossiers.ts";
-import { registerDossierRoutes } from "../../adapters/http/dossier-routes.ts";
+import type { CaseFileRepository } from "../../application/case-files.ts";
+import { registerCaseFileRoutes } from "../../adapters/http/case-file-routes.ts";
 import { RESUME_MAX_BYTES } from "../../../shared/limits.ts";
 import { API_ROOT, API_PATHS } from "../../../shared/api-config.ts";
-import { requestMetadata, localRequestGuard } from "./middleware.ts";
+import {
+  requestMetadata,
+  localRequestGuard,
+  localHostGuard,
+} from "./middleware.ts";
 import type { RequestEvent } from "./middleware.ts";
 import { createAnalysisController } from "../../adapters/http/analysis-controller.ts";
 import { createMemoryAnalysisStore } from "../analysis-store.ts";
@@ -32,7 +42,7 @@ type Dependencies = {
   configured: boolean;
   extractOffer?: ReturnType<typeof createJobExtractor>;
   providers?: ProviderRegistry;
-  dossiers?: DossierRepository;
+  caseFiles?: CaseFileRepository;
   observe?: (event: RequestEvent) => void;
 };
 
@@ -44,32 +54,44 @@ export function createApp({
   configured,
   observe = () => {},
   providers,
-  dossiers,
+  caseFiles,
   extractOffer,
 }: Dependencies) {
   const app = express();
 
   app.disable("x-powered-by");
-  app.use(API_ROOT, requestMetadata(observe), localRequestGuard);
-  app.use("/api/v1/campaigns", express.json({ limit: "2mb" }));
-  app.use("/api/v1/dossiers/restore", express.json({ limit: "8mb" }));
-  app.use("/api/v1/dossiers", express.json({ limit: "2mb" }));
-  app.use(express.json({ limit: "160kb" }));
+
+  app.use(requestMetadata(observe), localHostGuard);
+
+  app.use(API_ROOT, localRequestGuard);
+
+  app.use("/api/v1/campaigns", express.json({ limit: CASE_FILE_BODY_LIMIT }));
+
+  app.use(
+    "/api/v1/dossiers/restore",
+    express.json({ limit: BACKUP_BODY_LIMIT }),
+  );
+
+  app.use("/api/v1/dossiers", express.json({ limit: CASE_FILE_BODY_LIMIT }));
+
+  app.use(express.json({ limit: ANALYSIS_BODY_LIMIT }));
+
   app.get(API_PATHS.bootstrap, async (_req, res) => {
     res.json({
       documents: await readDocuments(),
       model,
       configured,
       providers: providers?.options,
-      dossiersEnabled: Boolean(dossiers),
+      dossiersEnabled: Boolean(caseFiles),
       workflowsEnabled: Boolean(workflows),
     });
   });
+
   if (providers && extractOffer) {
     registerOfferRoutes(app, providers, extractOffer);
   }
 
-  registerWorkspace(app, dossiers, workflows);
+  registerWorkspace(app, caseFiles, workflows);
 
   const upload = multer({
     storage: multer.memoryStorage(),
@@ -83,14 +105,15 @@ export function createApp({
     upload.single("cv"),
     async (req, res) => {
       if (!req.file) {
-        throw new AppError("MISSING_FILE", "Sélectionne un CV.");
+        throw new AppError("MISSING_FILE", errorMessages.missingFile);
       }
 
       if (importing) {
-        throw new AppError("BUSY", "Un import est déjà en cours.");
+        throw new AppError("BUSY", errorMessages.importBusy);
       }
 
       importing = true;
+
       try {
         res.json({
           text: await extractCv(req.file.buffer, req.file.originalname),
@@ -100,23 +123,22 @@ export function createApp({
       }
     },
   );
+
   app.post(
     API_PATHS.analyses,
     createAnalysisController(
       service,
       createMemoryAnalysisStore<SavedExecution>(),
       providers,
-      dossiers,
+      caseFiles,
     ),
   );
+
   app.post(API_PATHS.context, (req, res) => {
     const parsed = AnalysisInput.safeParse(req.body);
 
     if (!parsed.success) {
-      throw new AppError(
-        "INVALID_INPUT",
-        "Documents ou préférences invalides. Vérifie les champs saisis.",
-      );
+      throw new AppError("INVALID_INPUT", errorMessages.invalidDocuments);
     }
 
     res.json(
@@ -126,9 +148,11 @@ export function createApp({
       ).preview(parsed.data),
     );
   });
+
   app.use(API_ROOT, (_req, _res) => {
-    throw new AppError("NOT_FOUND", "Route API introuvable.");
+    throw new AppError("NOT_FOUND", errorMessages.unknownRoute);
   });
+
   const clientDist = fileURLToPath(
     new URL("../../../../dist/client", import.meta.url),
   );
@@ -144,11 +168,11 @@ export function createApp({
 
 function registerWorkspace(
   app: Express,
-  dossiers: DossierRepository | undefined,
+  caseFiles: CaseFileRepository | undefined,
   workflows: WorkflowServices | undefined,
 ) {
-  if (dossiers) {
-    registerDossierRoutes(app, dossiers, (id) => {
+  if (caseFiles) {
+    registerCaseFileRoutes(app, caseFiles, (id) => {
       const job = workflows?.jobs.latest(id);
 
       if (job?.status === "running") {

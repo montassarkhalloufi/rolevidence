@@ -1,6 +1,7 @@
+import { runtimeMessages } from "./locales/runtime-fr.ts";
 import type { JobRecord, JobRepository } from "./jobs.ts";
 import type { AnalysisService } from "./analyze.ts";
-import type { DossierRepository } from "./dossiers.ts";
+import type { CaseFileRepository } from "./case-files.ts";
 import { AppError } from "./errors.ts";
 
 export async function executeJob(
@@ -8,7 +9,7 @@ export async function executeJob(
   service: AnalysisService,
   controller: AbortController,
   repository: JobRepository,
-  dossiers: DossierRepository,
+  caseFiles: CaseFileRepository,
   now: () => string,
 ) {
   function persist() {
@@ -36,7 +37,7 @@ export async function executeJob(
     controller.signal.throwIfAborted();
     job.progress = { stage: "saving", completed: 0, total: 1 };
     persist();
-    job.result = dossiers.append(job.snapshot, output, `job-${job.id}`);
+    job.result = caseFiles.append(job.snapshot, output, `job-${job.id}`);
     job.status = "completed";
     job.progress.completed = 1;
     persist();
@@ -45,7 +46,7 @@ export async function executeJob(
 
     job.status = failureStatus(controller.signal.aborted, stopping);
     job.error = stopping
-      ? "Le serveur a été arrêté. Reprenez explicitement les étapes restantes."
+      ? runtimeMessages.jobInterrupted
       : cancellationMessage(controller.signal.aborted, error);
     try {
       persist();
@@ -56,9 +57,7 @@ export async function executeJob(
 }
 
 function safeJobError(error: unknown) {
-  return error instanceof AppError
-    ? error.message
-    : "L’analyse a été interrompue. Les étapes enregistrées sont conservées.";
+  return error instanceof AppError ? error.message : runtimeMessages.jobFailed;
 }
 
 function failureStatus(aborted: boolean, stopping: boolean) {
@@ -70,5 +69,5 @@ function failureStatus(aborted: boolean, stopping: boolean) {
 }
 
 function cancellationMessage(aborted: boolean, error: unknown) {
-  return aborted ? "Analyse annulée à votre demande." : safeJobError(error);
+  return aborted ? runtimeMessages.jobCancelled : safeJobError(error);
 }

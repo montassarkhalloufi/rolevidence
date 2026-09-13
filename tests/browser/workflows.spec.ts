@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { once } from "node:events";
 import { setTimeout as delay } from "node:timers/promises";
 import { openDatabase } from "../../src/server/infrastructure/persistence/database.ts";
-import { createDossierRepository } from "../../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../../src/server/infrastructure/persistence/case-files.ts";
 import { createCampaignRepository } from "../../src/server/infrastructure/persistence/campaigns.ts";
 import { createJobRepository } from "../../src/server/infrastructure/persistence/jobs.ts";
 import { createJobRunner } from "../../src/server/application/jobs.ts";
@@ -13,7 +13,7 @@ import { createApp } from "../../src/server/infrastructure/http/app.ts";
 function backend() {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
   const service = createAnalysisService(
     "test-workflow",
@@ -60,10 +60,10 @@ function backend() {
   ]);
 
   const workflows = {
-    campaigns: createCampaignRepository(db, dossiers),
+    campaigns: createCampaignRepository(db, caseFiles),
     jobs: createJobRunner(
       createJobRepository(db),
-      dossiers,
+      caseFiles,
       () => service,
       () => new Date().toISOString(),
     ),
@@ -71,7 +71,7 @@ function backend() {
 
   const server = createApp({
     workflows,
-    dossiers,
+    caseFiles,
     providers,
     service,
     model: "test-workflow",

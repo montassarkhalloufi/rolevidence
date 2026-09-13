@@ -29,7 +29,7 @@ Errors use `application/problem+json`: `type`, `title`, `status`, safe French `d
 
 The API uses v1 routes and English JSON keys. Upgrade the local frontend and backend together and reload the page. Contract changes require updating schemas, generated OpenAPI and tests.
 
-Collections, pagination, ETags, authentication and asynchronous jobs are not needed by the present endpoints. Define stable ordering/bounds for future collections and a durable polling/cancellation contract before returning 202. A new breaking public contract needs a new version or an explicit migration plan.
+Collections and durable job polling are defined below. ETags and authentication remain outside the local scope. A new breaking public contract needs a new version or an explicit migration plan.
 
 Application errors can be displayed with an explicit “prepare a new request” action. This resets the draft's logical key without immediately calling the provider; submitting again is a deliberately new, potentially billable attempt. Safe server completion logs contain only request ID, method, matched route, status and duration.
 
@@ -127,3 +127,24 @@ for quote provenance and invalid/incomplete qualification evidence before a decl
 education gap is retained. Old responses without these optional fields remain valid.
 Generated OpenAPI describes the updated contracts. No endpoint/idempotency/retry
 semantics change. Comparison prompt version is evidence-v6.1-qualified-conclusions.
+
+## Host validation and execution recovery (2026-09-13)
+
+All routes, including static assets and read-only endpoints, require a Host of
+`localhost`, `127.0.0.1` or `[::1]`, optionally with a port. Foreign/malformed hosts
+return 403 problem details before resource access. This blocks untrusted hostname
+routing without adding authentication or changing the loopback deployment scope.
+
+Synchronous replay shares an execution-specific internal persistence UUID. After
+cache expiry or process restart, a new execution with the same external key can
+call the provider again, as documented, and must retain its own new history entry.
+Persistence retries within the existing outcome still avoid another provider call.
+
+Latest-job selection prioritizes the active execution, then updatedAt, createdAt and ID
+in descending order. Resuming an older job therefore makes its progress visible.
+A stored running record with no active execution is reported as interrupted, even
+if a failure prevented the terminal state from being written. Resume remains
+explicit, checks attempt identity, and persists its new attempt before model work.
+No new endpoint, DTO key or SQLite migration is introduced. Legacy dossier URLs,
+backup fields and OpenAPI component names remain compatible with renamed CaseFile
+source symbols.

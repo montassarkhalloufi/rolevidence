@@ -3,7 +3,7 @@ import { createJobRepository } from "./infrastructure/persistence/jobs.ts";
 import { createCampaignRepository } from "./infrastructure/persistence/campaigns.ts";
 import { configureProviders } from "./infrastructure/providers.ts";
 import { openDatabase } from "./infrastructure/persistence/database.ts";
-import { createDossierRepository } from "./infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "./infrastructure/persistence/case-files.ts";
 import { loadConfig } from "./infrastructure/config.ts";
 import { readExampleDocuments } from "./infrastructure/documents.ts";
 import { createApp } from "./infrastructure/http/app.ts";
@@ -18,13 +18,13 @@ if (!fallback) {
 
 const database = openDatabase(config.DATABASE_PATH);
 
-const dossiers = createDossierRepository(database);
+const caseFiles = createCaseFileRepository(database);
 
 const workflows = {
-  campaigns: createCampaignRepository(database, dossiers),
+  campaigns: createCampaignRepository(database, caseFiles),
   jobs: createJobRunner(
     createJobRepository(database),
-    dossiers,
+    caseFiles,
     (selection) => providers.resolve(selection),
     () => new Date().toISOString(),
   ),
@@ -35,7 +35,7 @@ const app = createApp({
   service: fallback,
   providers,
   extractOffer,
-  dossiers,
+  caseFiles,
   observe: (event) => console.log(JSON.stringify(event)),
   readDocuments: readExampleDocuments,
   model: config.OPENAI_MODEL,
@@ -43,11 +43,11 @@ const app = createApp({
 });
 
 const server = app.listen(config.PORT, "127.0.0.1", () =>
-  console.log(`Rolevidence : http://127.0.0.1:${config.PORT}`),
+  console.log(`Rolevidence: http://127.0.0.1:${config.PORT}`),
 );
 
 server.on("error", () => {
-  console.error("Serveur indisponible : vérifie notamment le port configuré.");
+  console.error("Server unavailable: check the configured port.");
   process.exitCode = 1;
 });
 let closing = false;

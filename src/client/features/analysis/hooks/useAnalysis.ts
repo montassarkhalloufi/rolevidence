@@ -6,8 +6,8 @@ import type { AnalysisResponseData } from "../../../../shared/analysis.ts";
 import { api } from "../../../shared/api/client.ts";
 import type { AnalysisInputData as DocumentsInput } from "../../../../shared/analysis.ts";
 
-export function useAnalysis(dossierId?: string, revision?: number) {
-  const durable = useDurableAnalysis(dossierId, revision);
+export function useAnalysis(caseFileId?: string, revision?: number) {
+  const durable = useDurableAnalysis(caseFileId, revision);
 
   const request = useRef<{ payload: string; key: string } | null>(null);
 
@@ -46,7 +46,7 @@ export function useAnalysis(dossierId?: string, revision?: number) {
 
   const state = analysisState(mutation);
 
-  if (dossierId) {
+  if (caseFileId) {
     return durable;
   }
 

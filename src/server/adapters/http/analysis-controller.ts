@@ -1,9 +1,11 @@
+import { RequestKey } from "../../../shared/request-key.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { analysisSnapshot } from "./analysis-snapshot.ts";
 import type { AnalysisOutput } from "../../application/analyze.ts";
 import type { ProviderRegistry } from "../../application/provider-registry.ts";
-import type { DossierRepository } from "../../application/dossiers.ts";
+import type { CaseFileRepository } from "../../application/case-files.ts";
 import { IDEMPOTENCY_HEADER } from "../../../shared/api-config.ts";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import type { RequestHandler } from "express";
 import { AnalysisInput, emptyPreferences } from "../../../shared/analysis.ts";
 import type { AnalysisService } from "../../application/analyze.ts";
@@ -15,7 +17,7 @@ export function createAnalysisController(
   service: AnalysisService,
   store: AnalysisStore<SavedExecution>,
   providers?: ProviderRegistry,
-  dossiers?: DossierRepository,
+  caseFiles?: CaseFileRepository,
 ): RequestHandler {
   const run = createIdempotentAnalysis(store);
 
@@ -23,18 +25,15 @@ export function createAnalysisController(
     const parsed = AnalysisInput.safeParse(req.body);
 
     if (!parsed.success) {
-      throw new AppError(
-        "INVALID_INPUT",
-        "Documents ou préférences invalides.",
-      );
+      throw new AppError("INVALID_INPUT", errorMessages.invalidAnalysisInput);
     }
 
     const key = req.get(IDEMPOTENCY_HEADER);
 
-    if (!key || !/^[A-Za-z0-9_-]{16,128}$/.test(key)) {
+    if (!key || !RequestKey.safeParse(key).success) {
       throw new AppError(
         "INVALID_IDEMPOTENCY_KEY",
-        "Une clé de demande de 16 à 128 caractères est requise.",
+        errorMessages.invalidRequestKey,
       );
     }
 
@@ -65,7 +64,7 @@ export function createAnalysisController(
       : service;
 
     const execution = run(key, fingerprint, async () => {
-      const snapshot = analysisSnapshot(parsed.data, dossiers);
+      const snapshot = analysisSnapshot(parsed.data, caseFiles);
 
       const output = await selectedService.analyze({
         reviewedJobQuotes: parsed.data.reviewedJobQuotes,
@@ -75,14 +74,14 @@ export function createAnalysisController(
         preferences,
       });
 
-      return { output, snapshot };
+      return { output, snapshot, persistenceKey: `analysis-${randomUUID()}` };
     });
 
     res.set("Idempotency-Replayed", String(execution.replayed));
-    const { output, snapshot } = await execution.result;
+    const { output, snapshot, persistenceKey } = await execution.result;
 
     if (snapshot) {
-      dossiers?.append(snapshot, output, key);
+      caseFiles?.append(snapshot, output, persistenceKey);
     }
 
     res.json(output);
@@ -90,6 +89,7 @@ export function createAnalysisController(
 }
 
 export type SavedExecution = {
+  persistenceKey: string;
   output: AnalysisOutput;
   snapshot: ReturnType<typeof analysisSnapshot>;
 };

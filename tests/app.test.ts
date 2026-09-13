@@ -26,7 +26,7 @@ const result = {
 
 const headers = { "Content-Type": "application/json", "X-Rolevidence": "1" };
 
-await test("HTTP : validation, contexte sans appel LLM, résultat et erreurs sans secret (gateway simulée)", async (t) => {
+await test("HTTP validation, model-free preview, results and safe errors with a fake gateway", async (t) => {
   let calls = 0;
 
   const service = createAnalysisService(
@@ -134,7 +134,7 @@ await test("HTTP : validation, contexte sans appel LLM, résultat et erreurs san
 });
 
 for (const extension of ["txt", "pdf", "docx"]) {
-  await test(`Extraction réelle locale du CV fictif ${extension}, sans modèle`, async () => {
+  await test(`Real local extraction of fictional ${extension} CV without a model`, async () => {
     const buffer = await readFile(
       new URL(`./fixtures/cv.${extension}`, import.meta.url),
     );
@@ -144,7 +144,7 @@ for (const extension of ["txt", "pdf", "docx"]) {
   });
 }
 
-await test("Import : format interdit, faux PDF, PDF vide et dépassement de taille rejetés", async () => {
+await test("Import rejects unsupported formats, invalid or empty PDFs and oversized files", async () => {
   await assert.rejects(
     extractCv(Buffer.from("x"), "cv.exe"),
     /Formats acceptés/,

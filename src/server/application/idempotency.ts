@@ -1,3 +1,4 @@
+import { errorMessages } from "./locales/errors-fr.ts";
 import type { AnalysisOutput } from "./analyze.ts";
 import { AppError } from "./errors.ts";
 
@@ -24,7 +25,7 @@ export function createIdempotentAnalysis<T = AnalysisOutput>(
       if (previous.fingerprint !== fingerprint) {
         throw new AppError(
           "IDEMPOTENCY_CONFLICT",
-          "Cette clé correspond à une autre demande.",
+          errorMessages.requestConflict,
         );
       }
 
@@ -32,10 +33,7 @@ export function createIdempotentAnalysis<T = AnalysisOutput>(
     }
 
     if (active) {
-      throw new AppError(
-        "BUSY",
-        "Une analyse est déjà en cours. Attendez sa fin.",
-      );
+      throw new AppError("BUSY", errorMessages.analysisBusy);
     }
 
     // Reserve before execution, including synchronous failures. Store failures as well:

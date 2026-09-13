@@ -1,3 +1,4 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { request as httpRequest } from "node:http";
 import { request as httpsRequest } from "node:https";
 import type { LookupFunction } from "node:net";
@@ -27,7 +28,7 @@ export const fetchPinnedPage: PageTransport = async (url, signal) => {
   const address = addresses[0];
 
   if (!address) {
-    throw new AppError("IMPORT_FAILED", "Adresse inaccessible.");
+    throw new AppError("IMPORT_FAILED", errorMessages.missingAddress);
   }
 
   const lookup: LookupFunction = (_host, options, callback) => {
@@ -71,12 +72,7 @@ export const fetchPinnedPage: PageTransport = async (url, signal) => {
             res.headers["content-encoding"] !== "identity")
         ) {
           res.destroy();
-          reject(
-            new AppError(
-              "IMPORT_FAILED",
-              "La page ne contient pas de HTML accessible. Collez le texte de l’offre.",
-            ),
-          );
+          reject(new AppError("IMPORT_FAILED", errorMessages.inaccessibleHtml));
 
           return;
         }
@@ -89,10 +85,7 @@ export const fetchPinnedPage: PageTransport = async (url, signal) => {
           bytes += chunk.length;
           if (bytes > MAX_PAGE_BYTES) {
             res.destroy(
-              new AppError(
-                "FILE_TOO_LARGE",
-                "La page dépasse la taille autorisée.",
-              ),
+              new AppError("FILE_TOO_LARGE", errorMessages.oversizedPage),
             );
 
             return;
@@ -145,27 +138,18 @@ export async function fetchPublicPage(
       }
 
       if (response.status !== 200) {
-        throw new AppError(
-          "IMPORT_FAILED",
-          "La page est inaccessible. Collez le texte de l’offre.",
-        );
+        throw new AppError("IMPORT_FAILED", errorMessages.inaccessiblePage);
       }
 
       return { url: url.href, html: response.html };
     }
 
-    throw new AppError(
-      "IMPORT_FAILED",
-      "Trop de redirections. Collez le texte de l’offre.",
-    );
+    throw new AppError("IMPORT_FAILED", errorMessages.tooManyRedirects);
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
     }
 
-    throw new AppError(
-      "IMPORT_FAILED",
-      "Impossible de récupérer la page publique. Collez son texte.",
-    );
+    throw new AppError("IMPORT_FAILED", errorMessages.pageFetchFailed);
   }
 }

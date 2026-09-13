@@ -1,25 +1,24 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { restoreBackup, exportBackup } from "./backups.ts";
 import { randomUUID } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
 import { z } from "zod";
 import {
-  Dossier as DossierSchema,
+  CaseFile as CaseFileSchema,
   SavedAnalysis as AnalysisSchema,
-  DossierSummary,
-} from "../../../shared/dossiers.ts";
+  CaseFileSummary,
+} from "../../../shared/case-files.ts";
 import type {
-  DossierRepository,
-  DossierDraft,
-} from "../../application/dossiers.ts";
+  CaseFileRepository,
+  CaseFileDraft,
+} from "../../application/case-files.ts";
 import { AppError } from "../../application/errors.ts";
 
-const notFound = () => new AppError("NOT_FOUND", "Dossier introuvable.");
+const notFound = () =>
+  new AppError("NOT_FOUND", errorMessages.caseFileNotFound);
 
 const conflict = () =>
-  new AppError(
-    "IDEMPOTENCY_CONFLICT",
-    "Le dossier a changé. Rouvrez-le avant d’enregistrer.",
-  );
+  new AppError("IDEMPOTENCY_CONFLICT", errorMessages.staleSave);
 
 function payload<T>(row: unknown, schema: z.ZodType<T>): T {
   const { payload } = z.object({ payload: z.string() }).parse(row);
@@ -35,17 +34,14 @@ function safe<T>(operation: () => T): T {
       throw error;
     }
 
-    throw new AppError(
-      "STORAGE_ERROR",
-      "L’enregistrement local a échoué. Votre saisie est conservée à l’écran.",
-    );
+    throw new AppError("STORAGE_ERROR", errorMessages.storageFailed);
   }
 }
 
 function write(
   db: DatabaseSync,
   id: string,
-  draft: DossierDraft,
+  draft: CaseFileDraft,
   revision: number,
 ) {
   const previous = db
@@ -58,7 +54,7 @@ function write(
 
   const now = new Date().toISOString();
 
-  const value = DossierSchema.parse({
+  const value = CaseFileSchema.parse({
     ...draft,
     id,
     revision: revision + 1,
@@ -97,7 +93,7 @@ function transaction<T>(db: DatabaseSync, operation: () => T): T {
   }
 }
 
-export function createDossierRepository(db: DatabaseSync): DossierRepository {
+export function createCaseFileRepository(db: DatabaseSync): CaseFileRepository {
   const get = (id: string) =>
     safe(() => {
       const row = db.prepare("SELECT payload FROM dossiers WHERE id=?").get(id);
@@ -106,7 +102,7 @@ export function createDossierRepository(db: DatabaseSync): DossierRepository {
         throw notFound();
       }
 
-      return payload(row, DossierSchema);
+      return payload(row, CaseFileSchema);
     });
 
   return {
@@ -124,7 +120,7 @@ export function createDossierRepository(db: DatabaseSync): DossierRepository {
             "SELECT id,title,purpose,revision,created_at AS createdAt,updated_at AS updatedAt FROM dossiers WHERE title LIKE ? ESCAPE '\\' ORDER BY updated_at DESC,id DESC LIMIT ? OFFSET ?",
           )
           .all(filter, limit, offset)
-          .map((row) => DossierSummary.parse(row));
+          .map((row) => CaseFileSummary.parse(row));
 
         const total = Number(
           db

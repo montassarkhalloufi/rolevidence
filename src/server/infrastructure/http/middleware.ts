@@ -1,3 +1,4 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
 import { randomUUID } from "node:crypto";
 import type { RequestHandler } from "express";
 import {
@@ -57,10 +58,18 @@ export const localRequestGuard: RequestHandler = (req, _res, next) => {
     req.get(LOCAL_CLIENT_HEADER) !== LOCAL_CLIENT_VALUE ||
     !req.is(expectedType)
   ) {
-    throw new AppError(
-      "FORBIDDEN",
-      "Requête non autorisée. Utilisez l’interface locale.",
-    );
+    throw new AppError("FORBIDDEN", errorMessages.forbiddenMutation);
+  }
+
+  next();
+};
+
+const loopbackAuthority =
+  /^(?:localhost|127\.0\.0\.1|\[::1\])(?::[0-9]{1,5})?$/i;
+
+export const localHostGuard: RequestHandler = (req, _res, next) => {
+  if (!loopbackAuthority.test(req.get("host") ?? "")) {
+    throw new AppError("FORBIDDEN", errorMessages.forbiddenHost);
   }
 
   next();

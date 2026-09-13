@@ -1,11 +1,11 @@
-import { draftKey } from "../src/client/features/dossiers/draft-key.ts";
+import { draftKey } from "../src/client/features/case-files/draft-key.ts";
 import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { compareComplete } from "../src/server/adapters/models/complete-comparison.ts";
-import { createSourceCatalog } from "../src/server/adapters/openai/sources.ts";
+import { createSourceCatalog } from "../src/server/adapters/models/sources.ts";
 import { classifyRequirements } from "../src/server/domain/classify.ts";
-import { createDossierRepository } from "../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../src/server/infrastructure/persistence/case-files.ts";
 import { openDatabase } from "../src/server/infrastructure/persistence/database.ts";
 import { emptyPreferences } from "../src/shared/analysis.ts";
 import { renderReport } from "../src/client/features/exports/report.ts";
@@ -133,7 +133,7 @@ await test("backup restoration preserves snapshots, isolates copies and rejects 
   const db = openDatabase(":memory:");
 
   try {
-    const repo = createDossierRepository(db);
+    const repo = createCaseFileRepository(db);
 
     const saved = repo.save(
       randomUUID(),

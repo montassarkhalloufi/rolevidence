@@ -31,10 +31,10 @@ export const workflowApi = {
     ),
   job: async (id: string, signal: AbortSignal) =>
     AnalysisJob.parse(await request(`/api/v1/analysis-jobs/${id}`, { signal })),
-  start: async (id: string, dossierId: string, revision: number) =>
+  start: async (id: string, caseFileId: string, revision: number) =>
     AnalysisJob.parse(
       await request(`/api/v1/analysis-jobs/${id}`, {
-        ...jsonRequest({ dossierId, revision }),
+        ...jsonRequest({ dossierId: caseFileId, revision }),
         method: "PUT",
       }),
     ),

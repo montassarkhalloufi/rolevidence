@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import type { ModelSelectionData } from "../../../shared/providers.ts";
-import type { OfferSourceData } from "../../../shared/dossiers.ts";
-import { dossierApi } from "./api.ts";
+import type { OfferSourceData } from "../../../shared/case-files.ts";
+import { caseFileApi } from "./api.ts";
 
 export function useOfferImport(
   selection: ModelSelectionData,
@@ -26,7 +26,7 @@ export function useOfferImport(
         key.current = { payload, key: crypto.randomUUID() };
       }
 
-      return dossierApi.importOffer(url, selection, key.current.key);
+      return caseFileApi.importOffer(url, selection, key.current.key);
     },
     onSuccess: (value) => {
       setPreview(value.source);

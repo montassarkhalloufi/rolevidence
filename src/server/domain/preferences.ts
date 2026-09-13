@@ -12,15 +12,12 @@ function salaryLines(preferences: PreferencesInput) {
     return [];
   }
 
-  const lines = [
-    `Salaire minimum : ${preferences.minimumAnnualSalary} EUR brut annuel fixe, hors bonus.`,
+  return [
+    preferenceMessages.salary(preferences.minimumAnnualSalary),
+    ...(preferences.salaryPriority
+      ? [preferenceMessages.salaryPriority(preferences.salaryPriority)]
+      : []),
   ];
-
-  if (preferences.salaryPriority) {
-    lines.push(preferenceMessages.salaryPriority(preferences.salaryPriority));
-  }
-
-  return lines;
 }
 
 function modeLines(preferences: PreferencesInput) {
@@ -28,22 +25,14 @@ function modeLines(preferences: PreferencesInput) {
     return [];
   }
 
-  const lines = [
-    `Mode de travail : ${{ onsite: "présentiel", hybrid: "hybride", remote: "100 % télétravail" }[preferences.workMode]}.`,
-  ];
-
-  if (
-    preferences.workMode === "hybrid" &&
+  return [
+    preferenceMessages.mode(preferences.workMode),
+    ...(preferences.workMode === "hybrid" &&
     preferences.remoteDaysPerWeek !== null
-  ) {
-    lines.push(
-      `Télétravail minimum : ${preferences.remoteDaysPerWeek} jours par semaine.`,
-    );
-  }
-
-  if (preferences.workModePriority) {
-    lines.push(preferenceMessages.modePriority(preferences.workModePriority));
-  }
-
-  return lines;
+      ? [preferenceMessages.remoteDays(preferences.remoteDaysPerWeek)]
+      : []),
+    ...(preferences.workModePriority
+      ? [preferenceMessages.modePriority(preferences.workModePriority)]
+      : []),
+  ];
 }

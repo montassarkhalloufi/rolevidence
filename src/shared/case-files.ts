@@ -1,3 +1,9 @@
+import {
+  OFFER_FIELD_MAX_CHARACTERS,
+  OFFER_MAX_FIELDS,
+  URL_MAX_CHARACTERS,
+} from "./limits.ts";
+import { TITLE_MAX_CHARACTERS, REVIEWED_QUOTES_MAX_COUNT } from "./limits.ts";
 import { Tracking } from "./tracking.ts";
 import { z } from "zod";
 import { AnalysisResponse, Preferences } from "./analysis.ts";
@@ -18,28 +24,31 @@ export const OfferField = z
       "salary",
       "workMode",
     ]),
-    value: z.string().max(4000),
-    quote: z.string().max(4000),
+    value: z.string().max(OFFER_FIELD_MAX_CHARACTERS),
+    quote: z.string().max(OFFER_FIELD_MAX_CHARACTERS),
   })
   .strict();
 
 export const OfferSource = z
   .object({
-    url: z.url().max(2048),
+    url: z.url().max(URL_MAX_CHARACTERS),
     retrievedAt: z.iso.datetime(),
     text: z.string().max(DOCUMENT_MAX_CHARACTERS),
-    fields: z.array(OfferField).max(40),
+    fields: z.array(OfferField).max(OFFER_MAX_FIELDS),
   })
   .strict();
 
-export const DossierDraft = z
+export const CaseFileDraft = z
   .object({
     tracking: Tracking.optional(),
-    title: z.string().trim().min(1).max(120),
+    title: z.string().trim().min(1).max(TITLE_MAX_CHARACTERS),
     purpose: z.enum(["job_search", "recruiting"]),
     documents: z
       .object({
-        reviewedJobQuotes: z.array(z.string().max(16000)).max(128).optional(),
+        reviewedJobQuotes: z
+          .array(z.string().max(DOCUMENT_MAX_CHARACTERS))
+          .max(REVIEWED_QUOTES_MAX_COUNT)
+          .optional(),
         clarifications: z.string().max(DOCUMENT_MAX_CHARACTERS).optional(),
         profile: z.string().max(DOCUMENT_MAX_CHARACTERS),
         job: z.string().max(DOCUMENT_MAX_CHARACTERS),
@@ -51,7 +60,7 @@ export const DossierDraft = z
   })
   .strict();
 
-export const Dossier = DossierDraft.extend({
+export const CaseFile = CaseFileDraft.extend({
   id: z.uuid(),
   revision: z.number().int().positive(),
   createdAt: z.iso.datetime(),
@@ -62,11 +71,11 @@ export const SavedAnalysis = z.object({
   id: z.uuid(),
   dossierId: z.uuid(),
   createdAt: z.iso.datetime(),
-  snapshot: Dossier,
+  snapshot: CaseFile,
   result: AnalysisResponse,
 });
 
-export const DossierSummary = Dossier.pick({
+export const CaseFileSummary = CaseFile.pick({
   id: true,
   title: true,
   purpose: true,
@@ -75,8 +84,8 @@ export const DossierSummary = Dossier.pick({
   updatedAt: true,
 });
 
-export const DossierPage = z.object({
-  items: z.array(DossierSummary),
+export const CaseFilePage = z.object({
+  items: z.array(CaseFileSummary),
   total: z.number().int(),
   offset: z.number().int(),
   limit: z.number().int(),
@@ -89,13 +98,13 @@ export const AnalysisPage = z.object({
   limit: z.number().int(),
 });
 
-export const DossierSave = z
-  .object({ draft: DossierDraft, revision: z.number().int().nonnegative() })
+export const CaseFileSave = z
+  .object({ draft: CaseFileDraft, revision: z.number().int().nonnegative() })
   .strict();
 
-export type DossierData = z.infer<typeof Dossier>;
+export type CaseFileData = z.infer<typeof CaseFile>;
 
-export type DossierDraftData = z.infer<typeof DossierDraft>;
+export type CaseFileDraftData = z.infer<typeof CaseFileDraft>;
 
 export type SavedAnalysisData = z.infer<typeof SavedAnalysis>;
 
@@ -108,7 +117,7 @@ export const BACKUP_MAX_ANALYSES = 100;
 export const Backup = z
   .object({
     format: z.literal("rolevidence-backup-v1"),
-    dossier: Dossier,
+    dossier: CaseFile,
     analyses: z.array(SavedAnalysis).max(BACKUP_MAX_ANALYSES),
   })
   .strict()

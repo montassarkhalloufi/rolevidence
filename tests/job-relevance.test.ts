@@ -2,7 +2,7 @@ import { identityPlan } from "./plan-fixture.ts";
 import test from "node:test";
 import { createLangChainGateway } from "../src/server/adapters/models/gateway.ts";
 import assert from "node:assert/strict";
-import { createSourceCatalog } from "../src/server/adapters/openai/sources.ts";
+import { createSourceCatalog } from "../src/server/adapters/models/sources.ts";
 import { createJobRelevance } from "../src/server/adapters/models/job-relevance.ts";
 
 const passages = createSourceCatalog({

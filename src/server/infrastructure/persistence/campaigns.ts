@@ -1,3 +1,5 @@
+import { errorMessages } from "../../application/locales/errors-fr.ts";
+import { CAMPAIGN_PAGE_SIZE } from "../../../shared/limits.ts";
 import { emptyPreferences } from "../../../shared/analysis.ts";
 import { randomUUID, createHash } from "node:crypto";
 import type { DatabaseSync } from "node:sqlite";
@@ -7,13 +9,13 @@ import {
   CampaignInput,
 } from "../../../shared/workflows.ts";
 import type { CampaignRepository } from "../../application/campaigns.ts";
-import type { DossierRepository } from "../../application/dossiers.ts";
-import { Dossier } from "../../../shared/dossiers.ts";
+import type { CaseFileRepository } from "../../application/case-files.ts";
+import { CaseFile } from "../../../shared/case-files.ts";
 import { AppError } from "../../application/errors.ts";
 
 export function createCampaignRepository(
   db: DatabaseSync,
-  dossiers: DossierRepository,
+  caseFiles: CaseFileRepository,
 ): CampaignRepository {
   function get(id: string) {
     const row = db
@@ -23,7 +25,7 @@ export function createCampaignRepository(
       .get(id);
 
     if (!row) {
-      throw new AppError("NOT_FOUND", "Campagne introuvable.");
+      throw new AppError("NOT_FOUND", errorMessages.campaignMissing);
     }
 
     const members = db
@@ -32,11 +34,11 @@ export function createCampaignRepository(
       )
       .all(id)
       .map((member) => {
-        const dossier = dossiers.get(String(member.dossier_id));
+        const caseFile = caseFiles.get(String(member.dossier_id));
 
         return {
-          dossier,
-          latest: dossiers.analyses(dossier.id, 0, 1).items[0] ?? null,
+          dossier: caseFile,
+          latest: caseFiles.analyses(caseFile.id, 0, 1).items[0] ?? null,
         };
       });
 
@@ -56,19 +58,19 @@ export function createCampaignRepository(
         if (existing.request_fingerprint !== fingerprint(parsed)) {
           throw new AppError(
             "IDEMPOTENCY_CONFLICT",
-            "Cette demande correspond à une autre campagne.",
+            errorMessages.campaignConflict,
           );
         }
 
         return get(id);
       }
 
-      const base = dossiers.get(parsed.baseId);
+      const base = caseFiles.get(parsed.baseId);
 
       if (base.revision !== parsed.baseRevision) {
         throw new AppError(
           "IDEMPOTENCY_CONFLICT",
-          "Le dossier source a changé. Rouvrez-le.",
+          errorMessages.staleCampaignSource,
         );
       }
 
@@ -80,7 +82,7 @@ export function createCampaignRepository(
       if (!sharedText.trim()) {
         throw new AppError(
           "INVALID_INPUT",
-          "Complétez le document commun avant de créer une campagne.",
+          errorMessages.missingSharedDocument,
         );
       }
 
@@ -106,14 +108,14 @@ export function createCampaignRepository(
       return CampaignPage.parse({
         items: db
           .prepare(
-            "SELECT id,title,purpose,created_at AS createdAt FROM campaigns ORDER BY created_at DESC,id DESC LIMIT 20 OFFSET ?",
+            "SELECT id,title,purpose,created_at AS createdAt FROM campaigns ORDER BY created_at DESC,id DESC LIMIT ? OFFSET ?",
           )
-          .all(offset),
+          .all(CAMPAIGN_PAGE_SIZE, offset),
         total: Number(
           db.prepare("SELECT count(*) AS count FROM campaigns").get()?.count,
         ),
         offset,
-        limit: 20,
+        limit: CAMPAIGN_PAGE_SIZE,
       });
     },
     delete(id) {
@@ -131,7 +133,7 @@ function insertMembers(
   db: DatabaseSync,
   id: string,
   parsed: ReturnType<typeof CampaignInput.parse>,
-  base: ReturnType<typeof Dossier.parse>,
+  base: ReturnType<typeof CaseFile.parse>,
 ) {
   parsed.members.forEach((member, position) => {
     const now = new Date().toISOString();
@@ -145,7 +147,7 @@ function insertMembers(
             preferences: emptyPreferences,
           };
 
-    const dossier = Dossier.parse({
+    const caseFile = CaseFile.parse({
       ...base,
       id: randomUUID(),
       title: member.title,
@@ -158,17 +160,17 @@ function insertMembers(
     });
 
     db.prepare("INSERT INTO dossiers VALUES(?,?,?,?,?,?,?)").run(
-      dossier.id,
-      dossier.title,
-      dossier.purpose,
+      caseFile.id,
+      caseFile.title,
+      caseFile.purpose,
       1,
       now,
       now,
-      JSON.stringify(dossier),
+      JSON.stringify(caseFile),
     );
     db.prepare("INSERT INTO campaign_members VALUES(?,?,?)").run(
       id,
-      dossier.id,
+      caseFile.id,
       position,
     );
   });

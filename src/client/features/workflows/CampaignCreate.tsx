@@ -1,6 +1,7 @@
+import { TITLE_MAX_CHARACTERS } from "../../../shared/limits.ts";
 import { useCampaignCreate, emptyMember } from "./useCampaignCreate.ts";
 import { CampaignMemberInput } from "./CampaignMemberInput.tsx";
-import type { DossierData } from "../../../shared/dossiers.ts";
+import type { CaseFileData } from "../../../shared/case-files.ts";
 import { CAMPAIGN_MAX_MEMBERS } from "../../../shared/workflows.ts";
 import { workflowsFr as t } from "../../shared/i18n/workflows-fr.ts";
 import { Button } from "../../shared/ui/button.tsx";
@@ -11,7 +12,7 @@ export function CampaignCreate({
   disabled,
   onOpen,
 }: {
-  base: DossierData;
+  base: CaseFileData;
   disabled: boolean;
   onOpen: (id: string) => void;
 }) {
@@ -39,7 +40,7 @@ export function CampaignCreate({
             {t.title}
             <Input
               required
-              maxLength={120}
+              maxLength={TITLE_MAX_CHARACTERS}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
             />

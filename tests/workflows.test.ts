@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { z } from "zod";
 import { openDatabase } from "../src/server/infrastructure/persistence/database.ts";
-import { createDossierRepository } from "../src/server/infrastructure/persistence/dossiers.ts";
+import { createCaseFileRepository } from "../src/server/infrastructure/persistence/case-files.ts";
 import { createCampaignRepository } from "../src/server/infrastructure/persistence/campaigns.ts";
 import { createJobRepository } from "../src/server/infrastructure/persistence/jobs.ts";
 import { createJobRunner } from "../src/server/application/jobs.ts";
@@ -85,11 +85,11 @@ await test("campaign creation is transactional and replayable; shared sources ar
   const db = openDatabase(":memory:");
 
   try {
-    const dossiers = createDossierRepository(db);
+    const caseFiles = createCaseFileRepository(db);
 
-    const repository = createCampaignRepository(db, dossiers);
+    const repository = createCampaignRepository(db, caseFiles);
 
-    const source = dossiers.save(randomUUID(), draft, 0);
+    const source = caseFiles.save(randomUUID(), draft, 0);
 
     const input = {
       title: "Offres",
@@ -112,7 +112,7 @@ await test("campaign creation is transactional and replayable; shared sources ar
     );
     assert.equal(campaign.members[0]?.dossier.tracking, undefined);
     assert.deepEqual(repository.create(id, input), campaign);
-    assert.equal(dossiers.list("", 0, 20).total, 3);
+    assert.equal(caseFiles.list("", 0, 20).total, 3);
     assert.throws(
       () => repository.create(id, { ...input, title: "Changed" }),
       /autre campagne/,
@@ -120,7 +120,7 @@ await test("campaign creation is transactional and replayable; shared sources ar
     const member = campaign.members[0]?.dossier;
 
     assert.ok(member);
-    dossiers.save(
+    caseFiles.save(
       source.id,
       {
         ...draft,
@@ -132,12 +132,12 @@ await test("campaign creation is transactional and replayable; shared sources ar
       repository.get(id).members[0]?.dossier.documents.profile,
       draft.documents.profile,
     );
-    dossiers.delete(member.id, member.revision);
+    caseFiles.delete(member.id, member.revision);
     assert.equal(repository.get(id).members.length, 1);
     repository.delete(id);
-    assert.equal(dossiers.list("", 0, 20).total, 2);
+    assert.equal(caseFiles.list("", 0, 20).total, 2);
 
-    const recruiter = dossiers.save(
+    const recruiter = caseFiles.save(
       randomUUID(),
       {
         ...draft,
@@ -155,13 +155,13 @@ await test("campaign creation is transactional and replayable; shared sources ar
       baseId: recruiter.id,
     });
 
-    for (const { dossier } of candidates.members) {
-      assert.equal(dossier.documents.job, draft.documents.job);
-      assert.deepEqual(dossier.documents.preferences, emptyPreferences);
-      assert.equal(dossier.documents.clarifications, undefined);
+    for (const { dossier: caseFile } of candidates.members) {
+      assert.equal(caseFile.documents.job, draft.documents.job);
+      assert.deepEqual(caseFile.documents.preferences, emptyPreferences);
+      assert.equal(caseFile.documents.clarifications, undefined);
     }
 
-    const before = dossiers.list("", 0, 20).total;
+    const before = caseFiles.list("", 0, 20).total;
 
     db.exec(
       "CREATE TRIGGER fail_second_member BEFORE INSERT ON campaign_members WHEN NEW.position=1 BEGIN SELECT RAISE(ABORT, 'test storage failure'); END;",
@@ -169,7 +169,7 @@ await test("campaign creation is transactional and replayable; shared sources ar
     assert.throws(() =>
       repository.create(randomUUID(), { ...input, baseId: recruiter.id }),
     );
-    assert.equal(dossiers.list("", 0, 20).total, before);
+    assert.equal(caseFiles.list("", 0, 20).total, before);
   } finally {
     db.close();
   }
@@ -178,11 +178,11 @@ await test("campaign creation is transactional and replayable; shared sources ar
 await test("cancel and explicit resume reuse validated checkpoints, freeze sources, and save one history record", async () => {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
   const repository = createJobRepository(db);
 
-  const source = dossiers.save(randomUUID(), draft, 0);
+  const source = caseFiles.save(randomUUID(), draft, 0);
 
   let calls = 0;
 
@@ -244,7 +244,7 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
 
   const runner = createJobRunner(
     repository,
-    dossiers,
+    caseFiles,
     () => service,
     () => new Date().toISOString(),
   );
@@ -268,8 +268,8 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
     );
     runner.cancel(id, 1);
     assert.equal((await terminal(() => runner.get(id))).status, "cancelled");
-    assert.equal(dossiers.analyses(source.id, 0, 20).total, 0);
-    dossiers.save(
+    assert.equal(caseFiles.analyses(source.id, 0, 20).total, 0);
+    caseFiles.save(
       source.id,
       { ...draft, documents: { ...draft.documents, profile: "New profile" } },
       1,
@@ -286,7 +286,7 @@ await test("cancel and explicit resume reuse validated checkpoints, freeze sourc
     );
     assert.equal(done.result?.snapshot.tracking?.notes, "PRIVATE_HUMAN_NOTE");
     assert.equal(done.checkpoint, null);
-    assert.equal(dossiers.analyses(source.id, 0, 20).total, 1);
+    assert.equal(caseFiles.analyses(source.id, 0, 20).total, 1);
     assert.throws(() => runner.resume(id, 1), /changé/);
     runner.start(id, source.id, 1);
     assert.equal(calls, 5);
@@ -303,7 +303,7 @@ await test("server reopening marks unfinished work interrupted without any model
   let db = openDatabase(path);
 
   try {
-    const source = createDossierRepository(db).save(randomUUID(), draft, 0);
+    const source = createCaseFileRepository(db).save(randomUUID(), draft, 0);
 
     const job: JobRecord = {
       id: randomUUID(),
@@ -333,14 +333,14 @@ await test("server reopening marks unfinished work interrupted without any model
 
     const runner = createJobRunner(
       createJobRepository(db),
-      createDossierRepository(db),
+      createCaseFileRepository(db),
       () => service,
       () => new Date().toISOString(),
     );
 
     assert.equal(runner.get(job.id).status, "interrupted");
     assert.equal(calls, 0);
-    createDossierRepository(db).delete(source.id, 1);
+    createCaseFileRepository(db).delete(source.id, 1);
     assert.throws(() => runner.get(job.id), /introuvable/);
   } finally {
     db.close();
@@ -351,9 +351,9 @@ await test("server reopening marks unfinished work interrupted without any model
 await test("HTTP workflow contracts expose progress without checkpoints and preserve mutation guard/replay", async () => {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
-  const source = dossiers.save(randomUUID(), draft, 0);
+  const source = caseFiles.save(randomUUID(), draft, 0);
 
   let calls = 0;
 
@@ -364,10 +364,10 @@ await test("HTTP workflow contracts expose progress without checkpoints and pres
   });
 
   const workflows = {
-    campaigns: createCampaignRepository(db, dossiers),
+    campaigns: createCampaignRepository(db, caseFiles),
     jobs: createJobRunner(
       createJobRepository(db),
-      dossiers,
+      caseFiles,
       () => service,
       () => new Date().toISOString(),
     ),
@@ -375,7 +375,7 @@ await test("HTTP workflow contracts expose progress without checkpoints and pres
 
   const server = createApp({
     workflows,
-    dossiers,
+    caseFiles,
     service,
     configured: true,
     model: "fake",
@@ -478,9 +478,9 @@ await test("HTTP workflow contracts expose progress without checkpoints and pres
 await test("storage failure after paid stages resumes from checkpoints without repeating model work", async () => {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
-  const source = dossiers.save(
+  const source = caseFiles.save(
     randomUUID(),
     { ...draft, documents: { ...draft.documents, job: "TypeScript requis." } },
     0,
@@ -510,9 +510,9 @@ await test("storage failure after paid stages resumes from checkpoints without r
   const runner = createJobRunner(
     repository,
     {
-      ...dossiers,
+      ...caseFiles,
       append: (...args) => {
-        const saved = dossiers.append(...args);
+        const saved = caseFiles.append(...args);
 
         if (failing) {
           throw new Error("Simulated lost storage acknowledgement");
@@ -531,12 +531,12 @@ await test("storage failure after paid stages resumes from checkpoints without r
     runner.start(id, source.id, 1);
     assert.equal((await terminal(() => runner.get(id))).status, "failed");
     assert.equal(calls, 2);
-    assert.equal(dossiers.analyses(source.id, 0, 20).total, 1);
+    assert.equal(caseFiles.analyses(source.id, 0, 20).total, 1);
     failing = false;
     runner.resume(id, 1);
     assert.equal((await terminal(() => runner.get(id))).status, "completed");
     assert.equal(calls, 2);
-    assert.equal(dossiers.analyses(source.id, 0, 20).total, 1);
+    assert.equal(caseFiles.analyses(source.id, 0, 20).total, 1);
   } finally {
     db.close();
   }
@@ -572,11 +572,11 @@ await test("v0.3 SQLite migration retains dossiers and history and supports new 
   let db = openDatabase(path);
 
   try {
-    const dossiers = createDossierRepository(db);
+    const caseFiles = createCaseFileRepository(db);
 
-    const source = dossiers.save(randomUUID(), draft, 0);
+    const source = caseFiles.save(randomUUID(), draft, 0);
 
-    dossiers.append(
+    caseFiles.append(
       source,
       {
         analysis: { matches: [], gaps: [], unknowns: [], needsReview: [] },
@@ -589,7 +589,7 @@ await test("v0.3 SQLite migration retains dossiers and history and supports new 
     );
     db.close();
     db = openDatabase(path);
-    const upgraded = createDossierRepository(db);
+    const upgraded = createCaseFileRepository(db);
 
     assert.deepEqual(upgraded.get(source.id), source);
     assert.equal(upgraded.analyses(source.id, 0, 10).total, 1);
@@ -617,9 +617,9 @@ await test("v0.3 SQLite migration retains dossiers and history and supports new 
 await test("graceful shutdown aborts active transport and persists interruption before closing storage", async () => {
   const db = openDatabase(":memory:");
 
-  const dossiers = createDossierRepository(db);
+  const caseFiles = createCaseFileRepository(db);
 
-  const source = dossiers.save(randomUUID(), draft, 0);
+  const source = caseFiles.save(randomUUID(), draft, 0);
 
   const service = createAnalysisService("fake", async (_request, signal) => {
     await new Promise<void>((_resolve, reject) =>
@@ -632,7 +632,7 @@ await test("graceful shutdown aborts active transport and persists interruption 
 
   const runner = createJobRunner(
     createJobRepository(db),
-    dossiers,
+    caseFiles,
     () => service,
     () => new Date().toISOString(),
   );
@@ -644,7 +644,7 @@ await test("graceful shutdown aborts active transport and persists interruption 
     await runner.shutdown();
     assert.equal(runner.get(id).status, "interrupted");
     assert.equal(runner.isBusy(), false);
-    assert.equal(dossiers.analyses(source.id, 0, 10).total, 0);
+    assert.equal(caseFiles.analyses(source.id, 0, 10).total, 0);
   } finally {
     db.close();
   }

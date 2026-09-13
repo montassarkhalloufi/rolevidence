@@ -25,7 +25,8 @@ export const workflowsFr = {
     "Certains dossiers ont été supprimés. Les autres restent disponibles.",
   delete: "Supprimer la campagne",
   confirmDelete: "Confirmer : supprimer le regroupement uniquement",
-  keepDossiers: "Les dossiers et leurs analyses sont conservés dans l’accueil.",
+  keepCaseFiles:
+    "Les dossiers et leurs analyses sont conservés dans l’accueil.",
   compareHelp:
     "Comparez les preuves dans chaque colonne. Les critères d’offres différentes ne sont pas supposés équivalents. Aucun classement automatique n’est calculé.",
   stale:

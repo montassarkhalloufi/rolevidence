@@ -2,7 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { planCriteria } from "../src/server/adapters/models/criterion-plan.ts";
 import { compareComplete } from "../src/server/adapters/models/complete-comparison.ts";
-import { createSourceCatalog } from "../src/server/adapters/openai/sources.ts";
+import { createSourceCatalog } from "../src/server/adapters/models/sources.ts";
 import { classifyRequirements } from "../src/server/domain/classify.ts";
 
 const selection = { provider: "openai" as const, model: "fake" };

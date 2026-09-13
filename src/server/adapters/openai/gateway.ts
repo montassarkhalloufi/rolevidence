@@ -1,22 +1,17 @@
-import {
-  createAnalysisRequest,
-  PROMPT_VERSION,
-  SCHEMA_VERSION,
-} from "./request.ts";
-import { createExtractionSchema } from "./extraction.ts";
-import { createSourceCatalog } from "./sources.ts";
-import type { SourceCatalog } from "./sources.ts";
-import { mapExtraction } from "./map-extraction.ts";
+import { errorMessages } from "../../application/locales/errors-fr.ts";
+import { createAnalysisRequest } from "./request.ts";
+import { PROMPT_VERSION, SCHEMA_VERSION } from "../models/settings.ts";
+import { createExtractionSchema } from "../models/extraction.ts";
+import { createSourceCatalog } from "../models/sources.ts";
+import type { SourceCatalog } from "../models/sources.ts";
+import { mapExtraction } from "../models/map-extraction.ts";
 import { AppError } from "../../application/errors.ts";
 import type { ModelGateway } from "../../application/analyze.ts";
 import type { ResponseTransport, ProviderResponse } from "./transport.ts";
 
 function parseExtraction(response: ProviderResponse, catalog: SourceCatalog) {
   if (response.status !== "completed") {
-    throw new AppError(
-      "INCOMPLETE",
-      "La réponse du modèle est incomplète. Aucune analyse validée.",
-    );
+    throw new AppError("INCOMPLETE", errorMessages.incompleteExtraction);
   }
 
   if (
@@ -26,7 +21,7 @@ function parseExtraction(response: ProviderResponse, catalog: SourceCatalog) {
         item.content?.some((content) => content.type === "refusal"),
     )
   ) {
-    throw new AppError("REFUSAL", "Le modèle a refusé la demande.");
+    throw new AppError("REFUSAL", errorMessages.extractionRefused);
   }
 
   try {
@@ -34,10 +29,7 @@ function parseExtraction(response: ProviderResponse, catalog: SourceCatalog) {
       JSON.parse(response.output_text) as unknown,
     );
   } catch {
-    throw new AppError(
-      "INVALID_OUTPUT",
-      "La réponse ne respecte pas le contrat de données.",
-    );
+    throw new AppError("INVALID_OUTPUT", errorMessages.invalidExtraction);
   }
 }
 

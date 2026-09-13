@@ -23,7 +23,7 @@ const base: ExtractionResult["requirements"][number] = {
   preferencesQuote: null,
 };
 
-await test("Anglais absent et Java sans preuve ne deviennent jamais des écarts", () => {
+await test("Missing English and unsupported Java experience never become gaps", () => {
   const result = classifyRequirements(
     {
       requirements: [
@@ -48,7 +48,7 @@ await test("Anglais absent et Java sans preuve ne deviennent jamais des écarts"
     "MISSING_CANDIDATE_INFORMATION",
   );
 });
-await test("Écart explicite conservé ; citation inventée neutralisée", () => {
+await test("Explicit gaps are retained and fabricated quotations are rejected", () => {
   const requirement = {
     ...base,
     subject: "Expérience",
@@ -70,7 +70,7 @@ await test("Écart explicite conservé ; citation inventée neutralisée", () =>
   assert.equal(invalid.needsReview.length, 1);
   assert.equal(invalid.needsReview[0]?.profileQuote, null);
 });
-await test("Préférences : une citation du CV ne peut pas soutenir une condition de travail", () => {
+await test("Preferences cannot use a CV quotation as evidence for a working condition", () => {
   const result = classifyRequirements(
     {
       requirements: [

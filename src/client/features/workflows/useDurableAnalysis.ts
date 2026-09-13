@@ -1,24 +1,25 @@
+import { JOB_POLL_INTERVAL_MS } from "../../../shared/limits.ts";
 import { useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { workflowApi } from "./api.ts";
 import type { AnalysisInputData } from "../../../shared/analysis.ts";
 import type { AnalysisJobData } from "../../../shared/workflows.ts";
 
-export function useDurableAnalysis(dossierId?: string, revision?: number) {
+export function useDurableAnalysis(caseFileId?: string, revision?: number) {
   const client = useQueryClient();
 
   const [hidden, setHidden] = useState<string | null>(null);
 
   const requestKey = useRef<{ id: string; identity: string } | null>(null);
 
-  const queryKey = ["latest-job", dossierId];
+  const queryKey = ["latest-job", caseFileId];
 
   const query = useQuery({
     queryKey,
-    queryFn: ({ signal }) => workflowApi.latest(dossierId ?? "", signal),
-    enabled: Boolean(dossierId),
+    queryFn: ({ signal }) => workflowApi.latest(caseFileId ?? "", signal),
+    enabled: Boolean(caseFileId),
     refetchInterval: (query) =>
-      query.state.data?.status === "running" ? 750 : false,
+      query.state.data?.status === "running" ? JOB_POLL_INTERVAL_MS : false,
   });
 
   function received(job: AnalysisJobData) {

@@ -40,6 +40,12 @@ export const evidenceMessages = {
 };
 
 export const preferenceMessages = {
+  salary: (amount: number) =>
+    `Salaire minimum : ${amount} EUR brut annuel fixe, hors bonus.`,
+  mode: (mode: "onsite" | "hybrid" | "remote") =>
+    `Mode de travail : ${{ onsite: "présentiel", hybrid: "hybride", remote: "100 % télétravail" }[mode]}.`,
+  remoteDays: (days: number) =>
+    `Télétravail minimum : ${days} jours par semaine.`,
   salaryPriority: (priority: "required" | "preferred") =>
     `Priorité salaire : ${priority === "preferred" ? "souhait négociable" : "contrainte obligatoire"}.`,
   modePriority: (priority: "required" | "preferred") =>

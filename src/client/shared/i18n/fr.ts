@@ -1,4 +1,6 @@
 export const fr = {
+  documentImported: (name: string) =>
+    `${name} importé. Relisez le texte avant l’analyse.`,
   includeCriterion: "Inclure dans la prochaine analyse",
   clarifyAction: "Apporter une précision",
   clarifyQuestion:
@@ -45,7 +47,7 @@ export const fr = {
   noFilteredResults: "Aucun critère dans cette catégorie.",
   editDocuments: "Documents et préférences · modifier",
   localStorage: "Stockage local",
-  dossiersLink: "Mes dossiers",
+  caseFilesLink: "Mes dossiers",
   evidenceLimits:
     "Les faits cités sont déclaratifs ; ils ne constituent pas une évaluation du niveau réel.",
   filterResults: "Filtrer les conclusions",

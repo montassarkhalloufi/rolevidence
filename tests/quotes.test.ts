@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { resolveQuote } from "../src/server/domain/quotes.ts";
 import { classifyRequirements } from "../src/server/domain/classify.ts";
 
-await test("Citation PDF : espaces, retours à la ligne et guillemets typographiques", () => {
+await test("PDF quotations tolerate whitespace, line breaks and typographic quotation marks", () => {
   const source =
     "Stack : TypeScript, Node.js,\nPostgreSQL.\nDéveloppement d’applications.";
 
@@ -20,7 +20,7 @@ await test("Citation PDF : espaces, retours à la ligne et guillemets typographi
     "Node.js\u00a0et\u202fTypeScript",
   );
 });
-await test("Ne pas accepter une citation qui invente une technologie, omet une négation ou assemble des passages", () => {
+await test("Reject quotations that invent technologies, omit negations or join separate passages", () => {
   assert.equal(
     resolveQuote("Node.js et TypeScript", "Java et TypeScript"),
     null,
@@ -34,7 +34,7 @@ await test("Ne pas accepter une citation qui invente une technologie, omet une n
     null,
   );
 });
-await test("Une correspondance survit à une citation PDF reformatée", () => {
+await test("A match survives PDF quotation reformatting", () => {
   const result = classifyRequirements(
     {
       requirements: [

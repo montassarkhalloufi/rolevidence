@@ -1,3 +1,4 @@
+import { findingSummary } from "../finding-summary.ts";
 import { findingLabel } from "../finding-label.ts";
 import { Badge, type BadgeTone } from "../../../shared/ui/badge.tsx";
 import { StatusIcon } from "../../../shared/ui/status-icon.tsx";
@@ -28,19 +29,6 @@ const stateLabels = {
   contradicted: fr.contradicted,
   insufficient_information: fr.insufficientInformation,
 };
-
-const verificationLabels = {
-  UNVERIFIED_QUOTES: fr.unverifiedConclusion,
-  MISSING_CANDIDATE_INFORMATION: fr.missingInformation,
-  INCOMPARABLE_EXPERIENCE: fr.incomparableExperience,
-  MISSING_REQUIREMENT_ANALYSIS: fr.missingRequirementAnalysis,
-};
-
-function summary(finding: Finding) {
-  return finding.verification
-    ? verificationLabels[finding.verification.code]
-    : finding.interpretation.justification;
-}
 
 function VerificationDetails({ finding }: { finding: Finding }) {
   const issue = finding.verification;
@@ -124,7 +112,7 @@ export function EvidenceCard({ finding, group, expanded = false }: Props) {
             {findingLabel(finding, group.singular)}
           </Badge>
         </div>
-        <p>{summary(finding)}</p>
+        <p>{findingSummary(finding)}</p>
         {expanded && <SourceQuotes finding={finding} />}
         <details>
           <summary>{fr.viewQuotes}</summary>

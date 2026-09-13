@@ -1,16 +1,9 @@
 import { zodTextFormat } from "openai/helpers/zod";
 import type { DocumentsInput } from "../../domain/models.ts";
-import { createExtractionSchema } from "./extraction.ts";
-import { createSourceCatalog } from "./sources.ts";
-import { createMessages } from "./messages.ts";
-
-export const MODEL_TIMEOUT_MS = 120_000;
-
-export const MAX_OUTPUT_TOKENS = 9000;
-
-export const PROMPT_VERSION = "evidence-v3.8-job-relevance";
-
-export const SCHEMA_VERSION = "analysis-v1.1";
+import { createExtractionSchema } from "../models/extraction.ts";
+import { createSourceCatalog } from "../models/sources.ts";
+import { createMessages } from "../models/messages.ts";
+import { MAX_OUTPUT_TOKENS } from "../models/settings.ts";
 
 export function createAnalysisRequest(
   documents: DocumentsInput,
