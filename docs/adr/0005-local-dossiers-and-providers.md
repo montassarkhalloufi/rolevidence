@@ -44,3 +44,18 @@ but an interrupted paid request is not automatically resumed or retried.
 ## Amendment — Portable copies and reports (2026-09-12)
 
 JSON backups include saved documents, attributed clarifications, model selection, provenance and history. Validate schema and dossier linkage, bound size/count and restore all records in one SQLite transaction under fresh IDs. Do not overwrite existing dossiers. Each explicit restoration creates a copy; this is not an idempotent import API. HTML reports escape untrusted content, deny active/external content via CSP and retain exact snapshots and model metadata. Exports contain private data and are not encrypted.
+
+## Amendment — Bounded telemetry transport (2026-09-13)
+
+Live verification identified an EU workspace configured against the default US
+endpoint. Document LANGSMITH_ENDPOINT and optional LANGSMITH_WORKSPACE_ID.
+Deterministic transport tests also found that the installed LangSmith SDK overrides
+callerOptions.maxRetries for direct createRun requests. Send the same content-free
+allowlisted event through the documented POST /runs REST endpoint instead, with
+one fetch, a two-second deadline, redirects disabled and at most ten pending events.
+Cancel response bodies without reading or exposing remote errors. Analysis never
+awaits telemetry and telemetry failures remain isolated. Automatic LangChain tracing
+stays disabled. Tests cover actual serialization, region selection, saturation,
+failure recovery, timeout and no retry. Live EU ingestion is checked separately.
+
+Reference: https://docs.langchain.com/langsmith/trace-with-api

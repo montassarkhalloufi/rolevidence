@@ -229,3 +229,10 @@ calibration, not independent proof of universal qualification/semantic accuracy.
 No private CV is included in these fixtures or committed observations. Offline
 regressions cover invalid references, uncertain qualifications, non-education facts,
 unsupported salary bounds and negotiable/legacy preference behavior.
+
+## Live provider verification — 2026-09-13
+
+The earlier statements about missing Anthropic/LangSmith credentials describe those
+historical runs. New real Anthropic and EU LangSmith observations, configuration
+corrections and disclosed limits are recorded in [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md).
+The earlier failed observations remain unchanged.

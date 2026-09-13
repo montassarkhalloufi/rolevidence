@@ -9,6 +9,15 @@ import {
   LOCAL_CLIENT_VALUE,
 } from "../src/shared/api-config.ts";
 import { assess } from "./lib/http-assessment.ts";
+import { ModelSelection } from "../src/shared/providers.ts";
+
+const selection =
+  process.env.EVAL_PROVIDER || process.env.EVAL_MODEL
+    ? ModelSelection.parse({
+        provider: process.env.EVAL_PROVIDER,
+        model: process.env.EVAL_MODEL,
+      })
+    : undefined;
 
 const expectation = z.object({
   subjectPattern: z.string(),
@@ -62,6 +71,7 @@ console.log(
     directory: directory.pathname,
     scenarios: selected.length,
     repetitions,
+    selection,
   }),
 );
 
@@ -81,7 +91,10 @@ for (const scenario of selected) {
             [LOCAL_CLIENT_HEADER]: LOCAL_CLIENT_VALUE,
             [IDEMPOTENCY_HEADER]: randomUUID(),
           },
-          body: JSON.stringify(documents),
+          body: JSON.stringify({
+            ...documents,
+            ...(selection ? { selection } : {}),
+          }),
           signal: AbortSignal.timeout(75000),
         },
       );
@@ -135,6 +148,7 @@ for (const scenario of selected) {
         {
           kind: "real-http-provider-evaluation",
           repetitions,
+          selection,
           failures,
           observations,
         },
